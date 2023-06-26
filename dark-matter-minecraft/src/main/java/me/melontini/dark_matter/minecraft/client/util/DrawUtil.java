@@ -226,6 +226,7 @@ public class DrawUtil {
 
         protected FakeScreen() {
             super(null);
+            this.reset(MinecraftClient.getInstance(), MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight());
         }
 
         public void reset(MinecraftClient client, int width, int height) {
