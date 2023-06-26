@@ -30,7 +30,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.function.*;
+import java.util.function.BooleanSupplier;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
+import java.util.function.ToIntFunction;
 
 /**
  * Most things don't work without Fabric API.
@@ -339,18 +342,6 @@ public class ContentBuilder {
         public BlockBuilder<T> resistance(float resistance) {
             MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
             this.settings.resistance(resistance);
-            return this;
-        }
-
-        public BlockBuilder<T> offsetType(AbstractBlock.OffsetType offsetType) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.offsetType(offsetType);
-            return this;
-        }
-
-        public BlockBuilder<T> offsetType(Function<BlockState, AbstractBlock.OffsetType> offsetType) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.offsetType(offsetType);
             return this;
         }
 
