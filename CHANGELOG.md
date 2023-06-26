@@ -1,9 +1,5 @@
-### What's new:
+## What's new:
 
-## Base
+### CrackerUtil is now Dark Matter!
 
-* DrawUtil's FAKE_SCREEN will get updated on screen init.
-
-## Analytics
-
-* Added Minecraft version to the Prop enum.
+There are a lot of internal changes and renames, so everything needs to be updated.
