@@ -14,7 +14,7 @@
   "entrypoints": {
   },
   "mixins": [
-    "dark-matter-screen-particles.mixins.json"
+    "dark-matter-glitter.mixins.json"
   ],
   "depends": {
     "fabricloader": "*",
