@@ -1,0 +1,135 @@
+plugins {
+    id 'fabric-loom' version "${loom_version}" apply false
+    id 'maven-publish'
+    id 'io.github.juuxel.loom-quiltflower' version "${quiltflower_version}" apply false
+}
+
+def targetJavaVersion = 17
+
+allprojects {
+    group = project.maven_group
+    version = project.mod_version
+
+    repositories {
+        maven {
+            url 'https://jitpack.io'
+        }
+    }
+
+    apply plugin: "fabric-loom"
+    apply plugin: "io.github.juuxel.loom-quiltflower"
+    apply plugin: "maven-publish"
+
+    tasks.withType(JavaCompile).configureEach {
+        it.options.encoding = "UTF-8"
+        it.options.release = targetJavaVersion
+    }
+
+    java {
+        withSourcesJar()
+    }
+
+    processResources {
+        inputs.property "version", project.version
+        filteringCharset "UTF-8"
+
+        filesMatching("fabric.mod.json") {
+            expand "version": project.version
+        }
+    }
+
+    jar {
+        from("LICENSE") {
+            rename { "${it}_${project.archivesBaseName}" }
+        }
+    }
+
+    remapSourcesJar {
+        doLast {
+            copy {
+                from "$project.buildDir/libs"
+                into "$rootProject.buildDir/all_output"
+                include "*sources.jar"
+            }
+        }
+    }
+
+    remapJar {
+        doLast {
+            copy {
+                from "$project.buildDir/libs"
+                into "$rootProject.buildDir/all_output"
+                include "*.jar"
+            }
+        }
+    }
+
+    clean {
+        doLast {
+            delete "$rootProject.buildDir/all_output"
+        }
+    }
+
+    dependencies {
+        minecraft("com.mojang:minecraft:${project.minecraft_version}")
+        mappings("net.fabricmc:yarn:${project.yarn_mappings}:v2")
+        modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
+
+        if (project.name != "dark-matter-base" && project.name != rootProject.name) {
+            implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+            api(project(path: ':dark-matter-base', configuration: 'namedElements'))
+        }
+    }
+
+    allprojects.forEach { p ->
+        loom.mods.register(p.name) {
+            sourceSet p.sourceSets.main
+        }
+    }
+
+    sourceSets {
+        main {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+        }
+    }
+
+    loom {
+        accessWidenerPath = file("${getRootProject().projectDir.absolutePath}/dark-matter-minecraft/src/main/resources/dark-matter.accesswidener")
+    }
+
+    publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from(components["java"])
+            }
+        }
+
+        repositories {
+        }
+    }
+}
+
+dependencies {
+    localRuntime(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+    localRuntime("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}")
+    localRuntime("com.mixpanel:mixpanel-java:${project.mixpanel_version}")
+    localRuntime("org.json:json:${project.org_json_version}")
+
+    for (Project pj : subprojects) {
+        api(include(project(path: ":${pj.name}", configuration: 'namedElements')))
+    }
+}
+
+tasks.register('printVersionName') {
+    doLast {
+        println version.split("-")[0] + " (${version.split("-")[1]})"
+    }
+}
+
+tasks.register('printVersion') {
+    doLast {
+        println version
+    }
+}
+

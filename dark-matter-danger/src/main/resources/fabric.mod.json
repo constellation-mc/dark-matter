@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-danger",
+  "version": "${version}",
+  "name": "Dark Matter Danger",
+  "description": "Things that nobody should use",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "me.melontini.dark_matter.danger.instrumentation.InstrumentationAccess::init"
+    ]
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

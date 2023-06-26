@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-base",
+  "version": "${version}",
+  "name": "Dark Matter Base",
+  "description": "This will be the basis, for your revolution",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

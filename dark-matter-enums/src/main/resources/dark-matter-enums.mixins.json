@@ -1,0 +1,23 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "me.melontini.dark_matter.enums.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "plugin": "me.melontini.dark_matter.enums.util.DarkMatterEnumsPlugin",
+  "mixins": [
+    "compat.UnsafeExtensibleEnumMixin",
+    "enhanced_enums.AbstractMinecraftEntityTypeMixin",
+    "enhanced_enums.BoatEntityTypeMixin",
+    "enhanced_enums.EnchantmentTargetMixin",
+    "enhanced_enums.FormattingMixin",
+    "enhanced_enums.RaidMemberMixin",
+    "enhanced_enums.RarityMixin",
+    "enhanced_enums.RecipeBookCategoryMixin"
+  ],
+  "client": [
+    "enhanced_enums.RecipeBookGroupMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

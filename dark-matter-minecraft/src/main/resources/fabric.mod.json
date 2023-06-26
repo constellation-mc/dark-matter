@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-minecraft",
+  "version": "${version}",
+  "name": "Dark Matter Minecraft",
+  "description": "Version dependant? Imagine!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "accessWidener" : "dark-matter.accesswidener",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-minecraft.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.19",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

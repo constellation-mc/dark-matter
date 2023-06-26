@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-analytics-mixpanel",
+  "version": "${version}",
+  "name": "Dark Matter Mixpanel Analytics",
+  "description": "Mixpanel-based analytics module",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*",
+    "dark-matter-analytics": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

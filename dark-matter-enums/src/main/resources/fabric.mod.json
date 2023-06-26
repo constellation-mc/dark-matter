@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-enums",
+  "version": "${version}",
+  "name": "Dark Matter Enums",
+  "description": "Unsafe enum extension!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-enums.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1814": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_5421": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_314": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_124": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_1688\u0024class_1689": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_1690\u0024class_1692": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_1886": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"],
+      "net/minecraft/class_3765\u0024class_3766": ["me/melontini/dark_matter/enums/interfaces/ExtendableEnum"]
+    }
+  }
+}

@@ -1,0 +1,22 @@
+pluginManagement {
+    repositories {
+        maven {
+            name = 'Fabric'
+            url = 'https://maven.fabricmc.net/'
+        }
+        gradlePluginPortal()
+    }
+}
+
+rootProject.name = "dark-matter"
+
+include("${rootProject.name}-base")
+include("${rootProject.name}-analytics")
+include("${rootProject.name}-analytics-mixpanel")
+include("${rootProject.name}-content")
+include("${rootProject.name}-danger")
+include("${rootProject.name}-enums")
+include("${rootProject.name}-minecraft")
+include("${rootProject.name}-mirage")
+include("${rootProject.name}-recipe-book")
+include("${rootProject.name}-screen-particles")

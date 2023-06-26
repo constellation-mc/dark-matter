@@ -1,0 +1,5 @@
+dependencies {
+    implementation(include("com.mixpanel:mixpanel-java:${project.mixpanel_version}"))
+    implementation(include("org.json:json:${project.org_json_version}"))
+    api(project(path: ':dark-matter-analytics', configuration: 'namedElements'))
+}

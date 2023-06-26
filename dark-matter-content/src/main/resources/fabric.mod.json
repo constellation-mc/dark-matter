@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-content",
+  "version": "${version}",
+  "name": "Dark Matter Content",
+  "description": "Register and modify in-game content",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-content.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.19",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/class_1761": ["me/melontini/dark_matter/content/interfaces/ItemGroupExtensions"]
+    }
+  }
+}

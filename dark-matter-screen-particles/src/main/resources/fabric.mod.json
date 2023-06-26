@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-glitter",
+  "version": "${version}",
+  "name": "Dark Matter Glitter",
+  "description": "Draw particles on screen, including vanilla!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-screen-particles.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.19",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

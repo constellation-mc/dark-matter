@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-mirage",
+  "version": "${version}",
+  "name": "Dark Matter Mirage",
+  "description": "Provides a fake client world",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-mirage.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.19",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

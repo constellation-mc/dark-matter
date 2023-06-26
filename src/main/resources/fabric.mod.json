@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter",
+  "version": "${version}",
+  "name": "Dark Matter",
+  "description": "The invisible force that holds galaxies together",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": ">=1.19"
+  },
+  "custom": {
+    "modmenu": {
+      "badges": [ "library" ]
+    }
+  }
+}

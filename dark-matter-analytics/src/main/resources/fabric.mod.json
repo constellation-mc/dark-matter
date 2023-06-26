@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-analytics",
+  "version": "${version}",
+  "name": "Dark Matter Analytics",
+  "description": "The base Analytics/Crashlytics module!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

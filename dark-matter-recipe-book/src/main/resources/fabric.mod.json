@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-recipe-book",
+  "version": "${version}",
+  "name": "Dark Matter Recipe Book",
+  "description": "Makes supporting the recipe book a little easier",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-recipe-book.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*",
+    "dark-matter-enums": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/class_507": ["me/melontini/dark_matter/recipe_book/interfaces/PaginatedRecipeBookWidget"],
+      "net/minecraft/class_512": ["me/melontini/dark_matter/recipe_book/interfaces/PaginatedRecipeGroupButtonWidget"]
+    }
+  }
+}
