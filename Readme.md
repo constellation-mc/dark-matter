@@ -1,6 +1,6 @@
 ## Dark Matter
 
-A small collection of random might-be-useful utils and patches.
+The invisible force that holds galaxies together.
 
 [![](https://jitpack.io/v/me.melontini/dark-matter.svg)](https://jitpack.io/#me.melontini/dark-matter)
 
