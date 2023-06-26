@@ -7,7 +7,7 @@ import java.util.function.Predicate;
 
 @ApiStatus.Internal
 public interface EnchantmentTargetHack {
-    default void setPredicate(Predicate<Item> predicate) {
+    default void dark_matter$setPredicate(Predicate<Item> predicate) {
         throw new IllegalStateException("Interface not implemented");
     }
 }
