@@ -11,10 +11,10 @@ import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
-import net.minecraft.util.registry.Registry;
 
 /**
  * Render vanilla particle types on screen!
@@ -75,7 +75,7 @@ public class VanillaParticle extends AbstractScreenParticle {
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
 
-        RenderSystem.setShader(GameRenderer::getParticleShader);
+        RenderSystem.setShader(GameRenderer::getParticleProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
         particle.getType().begin(bufferBuilder, client.getTextureManager());
 
@@ -107,7 +107,7 @@ public class VanillaParticle extends AbstractScreenParticle {
     }
 
     public static <T extends ParticleEffect> Particle createScreenParticle(T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
-        ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(parameters.getType()));
+        ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registries.PARTICLE_TYPE.getRawId(parameters.getType()));
         return particleFactory == null ? null : particleFactory.createParticle(parameters, FakeWorld.FAKE_WORLD, x/24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
     }
 }

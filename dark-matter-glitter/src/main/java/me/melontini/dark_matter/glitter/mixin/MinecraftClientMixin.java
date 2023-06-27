@@ -28,7 +28,7 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
-    private void dark_matter$tickScreen(String levelName, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader, CallbackInfo ci) {
+    private void dark_matter$tickScreen(CallbackInfo ci) {
         if (this.dark_matter$init) ScreenParticleHelper.tickParticles();
     }
 }

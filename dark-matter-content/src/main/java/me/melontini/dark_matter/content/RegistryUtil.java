@@ -9,10 +9,12 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -20,6 +22,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -33,7 +36,7 @@ public class RegistryUtil {
     }
     private static boolean DONE;
     protected static final Map<Block, BlockEntityType<?>> BLOCK_ENTITY_LOOKUP = Utilities.consume(new HashMap<>(), map -> {
-        Registry.BLOCK_ENTITY_TYPE.forEach(beType -> {
+        Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
             for (Block block : beType.blocks) {
                 map.putIfAbsent(block, beType);
             }
@@ -47,8 +50,8 @@ public class RegistryUtil {
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> getBlockEntityFromBlock(@NotNull Block block) {
         if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return (BlockEntityType<T>) BLOCK_ENTITY_LOOKUP.get(block);
         else {
-            if (((SimpleRegistry<?>) Registry.BLOCK_ENTITY_TYPE).frozen && !DONE) {
-                Registry.BLOCK_ENTITY_TYPE.forEach(beType -> {
+            if (((SimpleRegistry<?>) Registries.BLOCK_ENTITY_TYPE).frozen && !DONE) {
+                Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
                     for (Block block1 : beType.blocks) {
                         BLOCK_ENTITY_LOOKUP.putIfAbsent(block1, beType);
                     }
@@ -74,11 +77,25 @@ public class RegistryUtil {
     }
 
     public static <T extends Item> T createItem(Class<T> itemClass, Identifier id, Object... params) {
-        return createItem(true, itemClass, id, params);
+        return createItem(true, itemClass, id, Optional.empty(), params);
+    }
+
+    public static <T extends Item> T createItem(Class<T> itemClass, Identifier id, ItemGroup group, Object... params) {
+        return createItem(true, itemClass, id, Optional.of(group), params);
     }
 
     @Contract("false, _, _, _ -> null")
-    public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, Object... params) {
+    public static <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, Object... params) {
+        return createItem(shouldRegister, itemClass, id, Optional.empty(), params);
+    }
+
+    @Contract("false, _, _, _, _ -> null")
+    public static <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, ItemGroup group, Object... params) {
+        return createItem(shouldRegister, itemClass, id, Optional.of(group), params);
+    }
+
+    @Contract("false, _, _, _, _ -> null")
+    public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, Optional<ItemGroup> group, Object... params) {
         if (shouldRegister) {
             T item;
             try {
@@ -87,7 +104,8 @@ public class RegistryUtil {
                 throw new RuntimeException(String.format("[" + id.getNamespace() + "] couldn't create item. identifier: %s", id), e);
             }
 
-            Registry.register(Registry.ITEM, id, item);
+            Registry.register(Registries.ITEM, id, item);
+            group.ifPresent(itemGroup -> ItemGroupHelper.addItemGroupInjection(itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item)));
             return item;
         } else {
             return null;
@@ -102,7 +120,7 @@ public class RegistryUtil {
         if (shouldRegister) {
             T item = supplier.get();
 
-            Registry.register(Registry.ITEM, id, item);
+            Registry.register(Registries.ITEM, id, item);
             return item;
         } else {
             return null;
@@ -117,7 +135,7 @@ public class RegistryUtil {
     public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, EntityType.Builder<T> builder) {
         if (shouldRegister) {
             EntityType<T> type = builder.build(Pattern.compile("[\\W]").matcher(id.toString()).replaceAll("_"));
-            Registry.register(Registry.ENTITY_TYPE, id, type);
+            Registry.register(Registries.ENTITY_TYPE, id, type);
             return type;
         }
         return null;
@@ -137,7 +155,7 @@ public class RegistryUtil {
                 throw new RuntimeException(String.format("[" + id.getNamespace() + "] couldn't create block. identifier: %s", id), e);
             }
 
-            Registry.register(Registry.BLOCK, id, block);
+            Registry.register(Registries.BLOCK, id, block);
             return block;
         }
         return null;
@@ -151,7 +169,7 @@ public class RegistryUtil {
         if (shouldRegister) {
             T block = supplier.get();
 
-            Registry.register(Registry.BLOCK, id, block);
+            Registry.register(Registries.BLOCK, id, block);
             return block;
         }
         return null;
@@ -165,7 +183,7 @@ public class RegistryUtil {
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
         if (shouldRegister) {
             BlockEntityType<T> type = builder.build(null);
-            Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, id, type);
             return type;
         }
         return null;

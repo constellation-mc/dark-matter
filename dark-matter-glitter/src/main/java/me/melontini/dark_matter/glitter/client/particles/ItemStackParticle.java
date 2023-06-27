@@ -6,7 +6,7 @@ import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3f;
+import net.minecraft.util.math.RotationAxis;
 
 public class ItemStackParticle extends AbstractScreenParticle {
 
@@ -24,7 +24,7 @@ public class ItemStackParticle extends AbstractScreenParticle {
         matrices.push();
         matrices.translate(x, y, 500);
         float angle = (float) Math.toDegrees(Math.atan2(velY, velX) * 0.5);
-        matrices.multiply(Vec3f.POSITIVE_Z.getDegreesQuaternion(angle));
+        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angle));
         BakedModel model = client.getItemRenderer().getModel(stack, null, null, 0);
         DrawUtil.renderGuiItemModelCustomMatrix(matrices, stack, -8, -8, model);
         matrices.pop();
