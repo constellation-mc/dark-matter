@@ -6,6 +6,7 @@ import me.melontini.dark_matter.util.ColorUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
@@ -35,71 +36,58 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class DrawUtil {
     public static final FakeScreen FAKE_SCREEN = new FakeScreen();
+
     private DrawUtil() {
         throw new UnsupportedOperationException();
     }
 
-    public static void renderTooltip(MatrixStack matrices, ItemStack stack, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, FAKE_SCREEN.getTooltipFromItem(stack), stack.getTooltipData(), (int) x, (int) y);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderTooltip(DrawContext context, ItemStack stack, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawItemTooltip(MinecraftClient.getInstance().textRenderer, stack, (int) x, (int) y);
+        context.getMatrices().push();
     }
 
-    public static void renderTooltip(MatrixStack matrices, Text text, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, text, (int) x, (int) y);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderTooltip(DrawContext context, Text text, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, text, (int) x, (int) y);
+        context.getMatrices().push();
     }
 
-    public static void renderTooltip(MatrixStack matrices, List<Text> lines, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, lines, (int) x, (int) y);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderTooltip(DrawContext context, List<Text> lines, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, (int) x, (int) y);
+        context.getMatrices().push();
     }
 
-    public void renderTooltip(MatrixStack matrices, List<Text> lines, Optional<TooltipData> data, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, lines, data, (int) x, (int) y);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public void renderTooltip(DrawContext context, List<Text> lines, Optional<TooltipData> data, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, data, (int) x, (int) y);
+        context.getMatrices().push();
     }
 
-    public static void renderOrderedTooltip(MatrixStack matrices, List<? extends OrderedText> lines, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderOrderedTooltip(matrices, lines, (int) x, (int) y);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderOrderedTooltip(DrawContext context, List<? extends OrderedText> lines, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawOrderedTooltip(MinecraftClient.getInstance().textRenderer, lines, (int) x, (int) y);
+        context.getMatrices().push();
     }
 
-    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y, HoveredTooltipPositioner.INSTANCE);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, components, (int) x, (int) y, HoveredTooltipPositioner.INSTANCE);
+        context.getMatrices().push();
     }
 
-    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
-        RenderSystem.getModelViewStack().push();
-        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
-        RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y, positioner);
-        RenderSystem.getModelViewStack().pop();
-        RenderSystem.applyModelViewMatrix();
+    public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
+        context.getMatrices().push();
+        context.getMatrices().translate(x - (int) x, y - (int) y, 0);
+        context.drawTooltip(MinecraftClient.getInstance().textRenderer, components, (int) x, (int) y, positioner);
+        context.getMatrices().push();
     }
 
     public static void fillGradient(MatrixStack matrices, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
@@ -238,7 +226,6 @@ public class DrawUtil {
 
         public void reset(MinecraftClient client, int width, int height) {
             this.client = client;
-            this.itemRenderer = client.getItemRenderer();
             this.textRenderer = client.textRenderer;
             this.width = width;
             this.height = height;

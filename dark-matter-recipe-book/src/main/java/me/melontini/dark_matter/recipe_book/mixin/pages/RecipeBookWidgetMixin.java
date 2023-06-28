@@ -3,12 +3,12 @@ package me.melontini.dark_matter.recipe_book.mixin.pages;
 import me.melontini.dark_matter.recipe_book.interfaces.PaginatedRecipeBookWidget;
 import me.melontini.dark_matter.util.MathStuff;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.client.recipebook.ClientRecipeBook;
 import net.minecraft.client.recipebook.RecipeBookGroup;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
@@ -69,14 +69,14 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V", shift = At.Shift.BEFORE), method = "render")
-    private void dark_matter$render(MatrixStack matrices, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        dark_matter$renderPageText(matrices);
-        this.prevPageButton.render(matrices, mouseX, mouseY, delta);
-        this.nextPageButton.render(matrices, mouseX, mouseY, delta);
+    private void dark_matter$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        dark_matter$renderPageText(context);
+        this.prevPageButton.render(context, mouseX, mouseY, delta);
+        this.nextPageButton.render(context, mouseX, mouseY, delta);
     }
 
     @Unique
-    private void dark_matter$renderPageText(MatrixStack matrices) {
+    private void dark_matter$renderPageText(DrawContext context) {
         int x = (this.parentWidth - 135) / 2 - this.leftOffset - 30;
         int y = (this.parentHeight + 169) / 2 + 3;
         int displayPage = this.page + 1;
@@ -84,7 +84,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         if (this.pages > 1) {
             String string = "" + displayPage + "/" + displayPages;
             int textLength = this.client.textRenderer.getWidth(string);
-            this.client.textRenderer.draw(matrices, string, (x - textLength / 2F + 20F), y, -1);
+            context.drawText(this.client.textRenderer, string, (int) (x - textLength / 2F + 20F), y, -1, false);
         }
     }
 
