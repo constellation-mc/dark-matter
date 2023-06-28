@@ -69,9 +69,8 @@ public class ContentBuilder {
             if (this.register.getAsBoolean()) {
                 T item = this.itemSupplier.get();
 
-
-
                 Registry.register(Registries.ITEM, this.identifier, item);
+                if (this.itemGroup != null) ItemGroupHelper.addItemGroupInjection(this.itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item));
                 return item;
             }
             return null;
