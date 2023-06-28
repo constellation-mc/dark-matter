@@ -6,7 +6,7 @@ jar {
     manifest {
         attributes(
                 "Manifest-Version": "1.0",
-                "Agent-Class": "me.melontini.dark_matter.danger.InstrumentationAgent",
+                "Agent-Class": "me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent",
                 "Can-Retransform-Classes": "true",
                 "Can-Redefine-Classes": "true"
         )
