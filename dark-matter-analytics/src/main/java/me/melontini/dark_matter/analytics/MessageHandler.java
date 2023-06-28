@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.dark_matter;
+package me.melontini.dark_matter.analytics;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
