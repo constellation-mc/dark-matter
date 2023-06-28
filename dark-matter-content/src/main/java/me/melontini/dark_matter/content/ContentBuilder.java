@@ -73,7 +73,7 @@ public class ContentBuilder {
             if (this.register.getAsBoolean()) {
                 T item = this.itemSupplier.get();
 
-                ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
+                if (this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
 
                 Registry.register(Registry.ITEM, this.identifier, item);
                 return item;
