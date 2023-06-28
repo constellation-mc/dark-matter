@@ -164,7 +164,7 @@ public class InstrumentationAccess {
 
         try {
             final String name = ManagementFactory.getRuntimeMXBean().getName();
-            final Path jarPath = Paths.get(GAME_DIR, AGENT_DIR, "instrumentation_agent.jar");
+            final Path jarPath = Paths.get(GAME_DIR, AGENT_DIR, "dark_matter_instrumentation_agent.jar");
             final File jar = jarPath.toFile();
 
             DarkMatterLog.info("Attaching instrumentation agent to VM.");
@@ -172,7 +172,7 @@ public class InstrumentationAccess {
             if (!Files.exists(jarPath)) {
                 createAgentJar(jarPath, jar);
             } else {
-                try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/instrumentation_agent.jar")) {
+                try (InputStream stream = InstrumentationAccess.class.getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
                     if (stream != null) {
                         byte[] bytes = stream.readAllBytes();
                         if (!Arrays.equals(Files.readAllBytes(jarPath), bytes)) {
@@ -181,7 +181,7 @@ public class InstrumentationAccess {
                             createAgentJar(jarPath, jar);
                         }
                     } else {
-                        throw new NullPointerException("Couldn't find included \"jar/instrumentation_agent.jar\"!");
+                        throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"!");
                     }
                 }
             }
@@ -202,13 +202,13 @@ public class InstrumentationAccess {
 
     private static void createAgentJar(Path jarPath, File jar) throws IOException {
         Files.createDirectories(jarPath.getParent());
-        try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/instrumentation_agent.jar")) {
+        try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
             if (stream != null) {
                 try (FileOutputStream outputStream = new FileOutputStream(jar)) {
                     outputStream.write(stream.readAllBytes());
                 }
             } else {
-                throw new NullPointerException("Couldn't find included \"jar/instrumentation_agent.jar\"!");
+                throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"!");
             }
         }
     }

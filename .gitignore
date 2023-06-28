@@ -117,4 +117,4 @@ run/
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
 !gradle-wrapper.jar
 ##Don't ignore the agent
-!dark-matter-danger/src/main/resources/jar/instrumentation_agent.jar
+!dark-matter-danger/src/main/resources/jar/dark_matter_instrumentation_agent.jar
