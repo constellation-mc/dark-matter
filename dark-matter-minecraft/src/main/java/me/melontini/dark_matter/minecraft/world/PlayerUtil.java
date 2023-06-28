@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.world;
+package me.melontini.dark_matter.minecraft.world;
 
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;

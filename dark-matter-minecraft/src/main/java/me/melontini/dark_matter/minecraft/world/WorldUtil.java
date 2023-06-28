@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.world;
+package me.melontini.dark_matter.minecraft.world;
 
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.MathStuff;
