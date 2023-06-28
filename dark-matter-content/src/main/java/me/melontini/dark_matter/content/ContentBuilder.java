@@ -4,25 +4,19 @@ import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.DarkMatterLog;
 import me.melontini.dark_matter.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.content.interfaces.internal.ItemGroupArrayExtender;
+import me.melontini.dark_matter.content.mixin.item_group_builder.ItemAccessor;
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.Utilities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.block.AbstractBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.MapColor;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
-import net.minecraft.entity.EntityType;
-import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Rarity;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
@@ -33,7 +27,6 @@ import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
-import java.util.function.ToIntFunction;
 
 /**
  * Most things don't work without Fabric API.
@@ -44,353 +37,113 @@ public class ContentBuilder {
         throw new UnsupportedOperationException();
     }
     public static class ItemBuilder<T extends Item> {
-        private final Class<T> itemClass;
         private final Identifier identifier;
-        private final Item.Settings settings;
-        private final Object[] params;
-        private BooleanSupplier shouldLoad = () -> true;
+        private final Supplier<T> itemSupplier;
+        private BooleanSupplier register = () -> true;
+        private ItemGroup itemGroup;
 
-        private ItemBuilder(Class<T> itemClass, Identifier id, Object... params) {
-            this.itemClass = itemClass;
-            this.identifier = id;
-            this.params = params;
-
-            Item.Settings temp = null;
-            for (Object param : params) {
-                if (param instanceof Item.Settings settings1) {
-                    temp = settings1;//lazy
-                }
-            }
-            this.settings = temp;
+        public ItemBuilder(Identifier identifier, Supplier<T> itemSupplier) {
+            this.identifier = identifier;
+            this.itemSupplier = itemSupplier;
         }
 
-        public static <T extends Item> ItemBuilder<T> create(Class<T> itemClass, Identifier id, Object... params) {
-            MakeSure.notNull(id, "null identifier provided. Possible method caller: " + Utilities.getCallerName());
-            MakeSure.notNull(itemClass, "couldn't build: " + id);
+        public static <T extends Item> ItemBuilder<T> create(Identifier identifier, Supplier<T> itemSupplier) {
+            MakeSure.notNull(identifier, "null identifier provided.");
 
-            return new ItemBuilder<>(itemClass, id, params);
+            return new ItemBuilder<>(identifier, itemSupplier);
         }
 
-        public ItemBuilder<T> loadCondition(BooleanSupplier booleanSupplier) {
+        public ItemBuilder<T> registerCondition(BooleanSupplier booleanSupplier) {
             MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
-            this.shouldLoad = booleanSupplier;
+            this.register = booleanSupplier;
             return this;
         }
 
-        public ItemBuilder<T> loadCondition(boolean bool) {
-            this.shouldLoad = () -> bool;
+        public ItemBuilder<T> registerCondition(boolean bool) {
+            this.register = () -> bool;
             return this;
         }
 
         public ItemBuilder<T> itemGroup(ItemGroup group) {
-            return group(group);
-        }
-
-        public ItemBuilder<T> group(ItemGroup group) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            MakeSure.notNull(group, "couldn't build: " + identifier);
-            this.settings.group(group);
+            this.itemGroup = group;
             return this;
-        }
-
-        public ItemBuilder<T> food(FoodComponent foodComponent) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            MakeSure.notNull(foodComponent, "couldn't build: " + identifier);
-            this.settings.food(foodComponent);
-            return this;
-        }
-
-        public ItemBuilder<T> maxCount(int maxCount) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            this.settings.maxCount(maxCount);
-            return this;
-        }
-
-        public ItemBuilder<T> maxDamageIfAbsent(int maxDamage) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            this.settings.maxDamageIfAbsent(maxDamage);
-            return this;
-        }
-
-        public ItemBuilder<T> maxDamage(int maxDamage) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            this.settings.maxDamage(maxDamage);
-            return this;
-        }
-
-        public ItemBuilder<T> recipeRemainder(Item recipeRemainder) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            MakeSure.notNull(recipeRemainder, "couldn't build: " + identifier);
-            this.settings.recipeRemainder(recipeRemainder);
-            return this;
-        }
-
-        public ItemBuilder<T> rarity(Rarity rarity) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            MakeSure.notNull(rarity, "couldn't build: " + identifier);
-            this.settings.rarity(rarity);
-            return this;
-        }
-
-        public ItemBuilder<T> fireproof() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", Item.Settings not found");
-            this.settings.fireproof();
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "ItemBuilder{" +
-                    "itemClass=" + itemClass.getSimpleName() +
-                    ", identifier=" + identifier +
-                    '}';
         }
 
         public T build() {
-            if (shouldLoad.getAsBoolean()) {
-                return RegistryUtil.createItem(true, itemClass, identifier, params);
+            if (this.register.getAsBoolean()) {
+                T item = this.itemSupplier.get();
+
+                ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
+
+                Registry.register(Registry.ITEM, this.identifier, item);
+                return item;
             }
             return null;
         }
     }
 
     public static class BlockBuilder<T extends Block> {
-        private final Class<T> blockClass;
         private final Identifier identifier;
-        private final AbstractBlock.Settings settings;
-        private final Object[] params;
-        private BooleanSupplier shouldLoad = () -> true;
-        private BuilderFactory builder;
-        private BlockEntityFactory blockEntityBuilder;
+        private final Supplier<T> blockSupplier;
+        private BooleanSupplier register = () -> true;
+        private ItemFactory<?> itemFactory;
+        private BlockEntityFactory<?> blockEntityFactory;
 
-        private BlockBuilder(Class<T> blockClass, Identifier id, Object... params) {
-            this.blockClass = blockClass;
-            this.identifier = id;
-            this.params = params;
-
-            AbstractBlock.Settings temp = null;
-            for (Object param : params) {
-                if (param instanceof AbstractBlock.Settings settings1) {
-                    temp = settings1;//lazy
-                }
-            }
-            this.settings = temp;
+        public BlockBuilder(Identifier identifier, Supplier<T> blockSupplier) {
+            this.identifier = identifier;
+            this.blockSupplier = blockSupplier;
         }
 
-        public static <T extends Block> BlockBuilder<T> create(Class<T> blockClass, Identifier id, Object... params) {
-            MakeSure.notNull(id, "null identifier provided. Possible method caller: " + Utilities.getCallerName());
-            MakeSure.notNull(blockClass, "couldn't build: " + id);
+        public static <T extends Block> BlockBuilder<T> create(Identifier identifier, Supplier<T> blockSupplier) {
+            MakeSure.notNull(identifier, "null identifier provided.");
 
-            return new BlockBuilder<>(blockClass, id, params);
+            return new BlockBuilder<>(identifier, blockSupplier);
         }
 
-        public BlockBuilder<T> loadCondition(BooleanSupplier booleanSupplier) {
+        public BlockBuilder<T> registerCondition(BooleanSupplier booleanSupplier) {
             MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
-            this.shouldLoad = booleanSupplier;
+            this.register = booleanSupplier;
             return this;
         }
 
-        public BlockBuilder<T> loadCondition(boolean bool) {
-            this.shouldLoad = () -> bool;
+        public BlockBuilder<T> registerCondition(boolean bool) {
+            this.register = () -> bool;
             return this;
         }
 
-        public BlockBuilder<T> noCollision() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.noCollision();
+        public <I extends Item> BlockBuilder<T> item(ItemFactory<I> factory) {
+            MakeSure.notNull(factory, "couldn't build: " + identifier);
+            this.itemFactory = factory;
             return this;
         }
 
-        public BlockBuilder<T> nonOpaque() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.nonOpaque();
+        public <B extends BlockEntity> BlockBuilder<T> blockEntity(BlockEntityFactory<B> factory) {
+            MakeSure.notNull(factory, "couldn't build: " + identifier);
+            this.blockEntityFactory = factory;
             return this;
-        }
-
-        public BlockBuilder<T> slipperiness(float slipperiness) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.slipperiness(slipperiness);
-            return this;
-        }
-
-        public BlockBuilder<T> velocityMultiplier(float velocityMultiplier) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.velocityMultiplier(velocityMultiplier);
-            return this;
-        }
-
-        public BlockBuilder<T> jumpVelocityMultiplier(float jumpVelocityMultiplier) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.jumpVelocityMultiplier(jumpVelocityMultiplier);
-            return this;
-        }
-
-        public BlockBuilder<T> sounds(BlockSoundGroup soundGroup) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.sounds(soundGroup);
-            return this;
-        }
-
-        public BlockBuilder<T> luminance(ToIntFunction<BlockState> luminance) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.luminance(luminance);
-            return this;
-        }
-
-        public BlockBuilder<T> strength(float hardness, float resistance) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.strength(hardness, resistance);
-            return this;
-        }
-
-        public BlockBuilder<T> breakInstantly() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.breakInstantly();
-            return this;
-        }
-
-        public BlockBuilder<T> strength(float strength) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.strength(strength, strength);
-            return this;
-        }
-
-        public BlockBuilder<T> ticksRandomly() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.ticksRandomly();
-            return this;
-        }
-
-        public BlockBuilder<T> dynamicBounds() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.dynamicBounds();
-            return this;
-        }
-
-        public BlockBuilder<T> dropsNothing() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.dropsNothing();
-            return this;
-        }
-
-        public BlockBuilder<T> dropsLike(Block source) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.dropsLike(source);
-            return this;
-        }
-
-        public BlockBuilder<T> air() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.air();
-            return this;
-        }
-
-        public BlockBuilder<T> allowsSpawning(AbstractBlock.TypedContextPredicate<EntityType<?>> predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.allowsSpawning(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> solidBlock(AbstractBlock.ContextPredicate predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.solidBlock(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> suffocates(AbstractBlock.ContextPredicate predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.suffocates(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> blockVision(AbstractBlock.ContextPredicate predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.blockVision(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> postProcess(AbstractBlock.ContextPredicate predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.postProcess(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> emissiveLighting(AbstractBlock.ContextPredicate predicate) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.emissiveLighting(predicate);
-            return this;
-        }
-
-        public BlockBuilder<T> requiresTool() {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.requiresTool();
-            return this;
-        }
-
-        public BlockBuilder<T> mapColor(MapColor color) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.mapColor(color);
-            return this;
-        }
-
-        public BlockBuilder<T> hardness(float hardness) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.hardness(hardness);
-            return this;
-        }
-
-        public BlockBuilder<T> resistance(float resistance) {
-            MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.resistance(resistance);
-            return this;
-        }
-
-        public BlockBuilder<T> itemBuilder(BuilderFactory builder) {
-            return this.item(builder);
-        }
-
-        public BlockBuilder<T> item(BuilderFactory builder) {
-            MakeSure.notNull(builder, "couldn't build: " + identifier);
-            this.builder = builder;
-            return this;
-        }
-
-        public BlockBuilder<T> blockEntityBuilder(BlockEntityFactory builder) {
-            return blockEntity(builder);
-        }
-
-        public BlockBuilder<T> blockEntity(BlockEntityFactory builder) {
-            MakeSure.notNull(builder, "couldn't build: " + identifier);
-            this.blockEntityBuilder = builder;
-            return this;
-        }
-
-        @Override
-        public String toString() {
-            return "BlockBuilder{" +
-                    "blockClass=" + blockClass.getSimpleName() +
-                    ", identifier=" + identifier +
-                    '}';
         }
 
         public T build() {
-            if (shouldLoad.getAsBoolean()) {
-                T block = RegistryUtil.createBlock(true, blockClass, identifier, params);
-                if (builder != null) builder.factory(block, identifier).build();
-                if (blockEntityBuilder != null) blockEntityBuilder.factory(block, identifier).build();
+            if (this.register.getAsBoolean()) {
+                T block = this.blockSupplier.get();
+
+                if (itemFactory != null) itemFactory.produce(block, this.identifier).build();
+                if (blockEntityFactory != null) blockEntityFactory.produce(block, this.identifier).build();
+
+                Registry.register(Registry.BLOCK, this.identifier, block);
                 return block;
             }
             return null;
         }
 
         @FunctionalInterface
-        public interface BuilderFactory {
-            ItemBuilder<? extends Item> factory(Block block, Identifier id);
+        public interface ItemFactory<B extends Item> {
+            ItemBuilder<B> produce(Block block, Identifier identifier);
         }
 
         @FunctionalInterface
-        public interface BlockEntityFactory {
-            BlockEntityBuilder<? extends BlockEntity> factory(Block block, Identifier id);
+        public interface BlockEntityFactory<I extends BlockEntity> {
+            BlockEntityBuilder<I> produce(Block block, Identifier identifier);
         }
     }
 
@@ -398,7 +151,7 @@ public class ContentBuilder {
         private final BlockEntityType.BlockEntityFactory<? extends T> factory;
         private final Set<Block> blocks;
         private final Identifier identifier;
-        private BooleanSupplier shouldLoad = () -> true;
+        private BooleanSupplier register = () -> true;
 
         private BlockEntityBuilder(Identifier id, BlockEntityType.BlockEntityFactory<? extends T> factory, Block... blocks) {
             this.identifier = id;
@@ -415,14 +168,14 @@ public class ContentBuilder {
             return new BlockEntityBuilder<>(id, factory, blocks);
         }
 
-        public BlockEntityBuilder<T> loadCondition(BooleanSupplier booleanSupplier) {
+        public BlockEntityBuilder<T> registerCondition(BooleanSupplier booleanSupplier) {
             MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
-            this.shouldLoad = booleanSupplier;
+            this.register = booleanSupplier;
             return this;
         }
 
-        public BlockEntityBuilder<T> loadCondition(boolean bool) {
-            this.shouldLoad = () -> bool;
+        public BlockEntityBuilder<T> registerCondition(boolean bool) {
+            this.register = () -> bool;
             return this;
         }
 
@@ -438,7 +191,7 @@ public class ContentBuilder {
         }
 
         public BlockEntityType<T> build(Type<?> type) {
-            if (shouldLoad.getAsBoolean()) {
+            if (this.register.getAsBoolean()) {
                 BlockEntityType<T> t = BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type);
                 Registry.register(Registry.BLOCK_ENTITY_TYPE, identifier, t);
                 for (Block block : blocks) {
