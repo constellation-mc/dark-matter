@@ -13,7 +13,7 @@ import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
-import net.minecraft.client.render.model.json.ModelTransformation;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -103,7 +103,6 @@ public class DrawUtil {
     }
 
     public static void fillGradient(MatrixStack matrices, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
-        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -113,7 +112,6 @@ public class DrawUtil {
         fillGradient(matrices.peek().getPositionMatrix(), bufferBuilder, startX, startY, endX, endY, z, colorStart, colorEnd);
         tessellator.draw();
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
     }
 
     public static void fillGradient(Matrix4f matrix, BufferBuilder builder, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
@@ -126,7 +124,6 @@ public class DrawUtil {
     }
 
     public static void fillGradientHorizontal(MatrixStack matrices, float startX, float startY, float endX, float endY, int colorStart, int colorEnd, float z) {
-        RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -136,7 +133,6 @@ public class DrawUtil {
         fillGradientHorizontal(matrices.peek().getPositionMatrix(), bufferBuilder, startX, startY, endX, endY, z, colorStart, colorEnd);
         tessellator.draw();
         RenderSystem.disableBlend();
-        RenderSystem.enableTexture();
     }
 
     public static void fillGradientHorizontal(Matrix4f matrix, BufferBuilder builder, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
@@ -194,7 +190,7 @@ public class DrawUtil {
             DiffuseLighting.disableGuiDepthLighting();
         }
 
-        client.getItemRenderer().renderItem(stack, ModelTransformation.Mode.GUI, false, matrixStack, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, model);
+        client.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, model);
         immediate.draw();
         RenderSystem.enableDepthTest();
         if (bl) {
@@ -212,7 +208,7 @@ public class DrawUtil {
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
 
         matrixStack.push();
-        matrixStack.translate(x, y, 100.0F + client.getItemRenderer().zOffset);
+        matrixStack.translate(x, y, 100.0F);
         matrixStack.translate(8.0, 8.0, 0.0);
         matrixStack.scale(1.0F, -1.0F, 1.0F);
         matrixStack.scale(16.0F, 16.0F, 16.0F);
@@ -223,7 +219,7 @@ public class DrawUtil {
             DiffuseLighting.disableGuiDepthLighting();
         }
 
-        client.getItemRenderer().renderItem(stack, ModelTransformation.Mode.GUI, false, matrixStack, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, model);
+        client.getItemRenderer().renderItem(stack, ModelTransformationMode.GUI, false, matrixStack, immediate, LightmapTextureManager.MAX_LIGHT_COORDINATE, OverlayTexture.DEFAULT_UV, model);
         immediate.draw();
         RenderSystem.enableDepthTest();
         if (bl) {

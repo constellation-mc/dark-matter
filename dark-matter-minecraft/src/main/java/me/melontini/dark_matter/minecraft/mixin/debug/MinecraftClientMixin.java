@@ -5,6 +5,7 @@ import me.melontini.dark_matter.minecraft.debug.ValueTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,25 +18,22 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
-@Mixin(MinecraftClient.class)
+@Mixin(GameRenderer.class)
 public class MinecraftClientMixin {
-    @Shadow
-    @Final
-    public TextRenderer textRenderer;
     private final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/util/math/MatrixStack;)V", shift = At.Shift.AFTER), method = "render")
-    private void dark_matter$renderValueTrack(boolean tick, CallbackInfo ci) {
+    private void dark_matter$renderValueTrack(float tickDelta, long startTime, boolean tick, CallbackInfo ci) {
         try {
             if (!DARK_MATTER$VALUES_TO_RENDER.isEmpty()) {
                 MatrixStack stack = new MatrixStack();
                 for (int i = 0; i < DARK_MATTER$VALUES_TO_RENDER.size(); ++i) {
                     String string = DARK_MATTER$VALUES_TO_RENDER.get(i);
                     if (!Strings.isNullOrEmpty(string)) {
-                        int k = textRenderer.getWidth(string);
+                        int k = MinecraftClient.getInstance().textRenderer.getWidth(string);
                         int m = 2 + 9 * i;
                         DrawableHelper.fill(stack, 1, m - 1, 2 + k + 1, m + 9 - 1, -1873784752);
-                        textRenderer.draw(stack, string, 2.0F, (float) m, 14737632);
+                        MinecraftClient.getInstance().textRenderer.draw(stack, string, 2.0F, (float) m, 14737632);
                     }
                 }
             }

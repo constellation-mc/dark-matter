@@ -23,7 +23,6 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
     private void cracker_util$drawGroupIcon(MatrixStack matrices, ItemGroup group, CallbackInfo ci, boolean bl, boolean bl2, int i, int j, int k, int l, int m) {
         if (group.shouldAnimateIcon()) {
             group.getIconAnimation().animateIcon(matrices, l, m, bl, bl2);
-            this.itemRenderer.zOffset = 0.0F;
             ci.cancel();
         }
     }

@@ -339,13 +339,13 @@ public class ContentBuilder {
 
         public BlockBuilder<T> offsetType(AbstractBlock.OffsetType offsetType) {
             MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.offsetType(offsetType);
+            this.settings.offset(offsetType);
             return this;
         }
 
-        public BlockBuilder<T> offsetType(Function<BlockState, AbstractBlock.OffsetType> offsetType) {
+        public BlockBuilder<T> offset(AbstractBlock.OffsetType offsetType) {
             MakeSure.notNull(settings, "couldn't build: " + identifier + ", AbstractBlock.Settings not found");
-            this.settings.offsetType(offsetType);
+            this.settings.offset(offsetType);
             return this;
         }
 
@@ -529,7 +529,7 @@ public class ContentBuilder {
                     throw new RuntimeException("couldn't build: " + identifier, e1);
                 }
             }
-            builder.entries((enabledFeatures, entries, operatorEnabled) -> {
+            builder.entries((displayContext, entries) -> {
                 var list = ((ItemGroup.EntriesImpl) entries).parentTabStacks = new ArrayList<>();
                 var set = ((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>();
 
