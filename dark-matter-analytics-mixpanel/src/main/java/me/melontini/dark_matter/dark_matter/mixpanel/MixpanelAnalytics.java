@@ -57,7 +57,7 @@ public class MixpanelAnalytics {
             this.mixpanel = eu ? MIXPANEL_EU : MIXPANEL;
         }
 
-        protected void send0(MessageProvider consumer, boolean wait, boolean errors) {
+        protected void sendInternal(MessageProvider consumer, boolean wait, boolean errors) {
             if (!Analytics.isEnabled()) return;
             Future<?> future = EXECUTOR.submit(() -> {
                 try {
