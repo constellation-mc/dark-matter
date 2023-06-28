@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.content;
 
-import me.melontini.dark_matter.reflect.ReflectionUtil;
 import me.melontini.dark_matter.util.Utilities;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWithEntity;
@@ -9,7 +8,6 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.SimpleRegistry;
@@ -19,10 +17,8 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -76,42 +72,6 @@ public class RegistryUtil {
         return block != null ? (T) block.asItem() : null;
     }
 
-    public static <T extends Item> T createItem(Class<T> itemClass, Identifier id, Object... params) {
-        return createItem(true, itemClass, id, Optional.empty(), params);
-    }
-
-    public static <T extends Item> T createItem(Class<T> itemClass, Identifier id, ItemGroup group, Object... params) {
-        return createItem(true, itemClass, id, Optional.of(group), params);
-    }
-
-    @Contract("false, _, _, _ -> null")
-    public static <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, Object... params) {
-        return createItem(shouldRegister, itemClass, id, Optional.empty(), params);
-    }
-
-    @Contract("false, _, _, _, _ -> null")
-    public static <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, ItemGroup group, Object... params) {
-        return createItem(shouldRegister, itemClass, id, Optional.of(group), params);
-    }
-
-    @Contract("false, _, _, _, _ -> null")
-    public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Class<T> itemClass, Identifier id, Optional<ItemGroup> group, Object... params) {
-        if (shouldRegister) {
-            T item;
-            try {
-                item = ReflectionUtil.findConstructor(itemClass, params).newInstance(params);
-            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new RuntimeException(String.format("[" + id.getNamespace() + "] couldn't create item. identifier: %s", id), e);
-            }
-
-            Registry.register(Registries.ITEM, id, item);
-            group.ifPresent(itemGroup -> ItemGroupHelper.addItemGroupInjection(itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item)));
-            return item;
-        } else {
-            return null;
-        }
-    }
-
     public static @Nullable <T extends Item> T createItem(Identifier id, Supplier<T> supplier) {
         return createItem(true, id, supplier);
     }
@@ -137,26 +97,6 @@ public class RegistryUtil {
             EntityType<T> type = builder.build(Pattern.compile("[\\W]").matcher(id.toString()).replaceAll("_"));
             Registry.register(Registries.ENTITY_TYPE, id, type);
             return type;
-        }
-        return null;
-    }
-
-    public static <T extends Block> T createBlock(Class<T> blockClass, Identifier id, Object... params) {
-        return createBlock(true, blockClass, id, params);
-    }
-
-    @Contract("false, _, _, _ -> null")
-    public static @Nullable <T extends Block> T createBlock(boolean shouldRegister, Class<T> blockClass, Identifier id, Object... params) {
-        if (shouldRegister) {
-            T block;
-            try {
-                block = ReflectionUtil.findConstructor(blockClass, params).newInstance(params);
-            } catch (IllegalAccessException | InvocationTargetException | InstantiationException e) {
-                throw new RuntimeException(String.format("[" + id.getNamespace() + "] couldn't create block. identifier: %s", id), e);
-            }
-
-            Registry.register(Registries.BLOCK, id, block);
-            return block;
         }
         return null;
     }

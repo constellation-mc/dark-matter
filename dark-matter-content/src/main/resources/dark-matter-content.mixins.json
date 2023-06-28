@@ -5,6 +5,7 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "animated_groups.ItemGroupMixin",
+    "item_group_builder.ItemAccessor",
     "item_group_builder.ItemGroupMixin"
   ],
   "client": [
