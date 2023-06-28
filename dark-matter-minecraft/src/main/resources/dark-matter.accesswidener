@@ -14,6 +14,7 @@ transitive-accessible method net/minecraft/entity/vehicle/AbstractMinecartEntity
 transitive-accessible method net/minecraft/client/world/ClientWorld getEntityLookup ()Lnet/minecraft/world/entity/EntityLookup;
 transitive-accessible method net/minecraft/world/World getEntityLookup ()Lnet/minecraft/world/entity/EntityLookup;
 
+transitive-mutable field net/minecraft/item/Item group Lnet/minecraft/item/ItemGroup;
 transitive-accessible field net/minecraft/client/particle/Particle collidesWithWorld Z
 transitive-accessible field net/minecraft/client/particle/ParticleManager factories Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
 transitive-accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab I
