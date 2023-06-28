@@ -11,7 +11,6 @@ import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -146,7 +145,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         this.currentTab.setToggled(true);
 
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            widget.setPage(MathHelper.fastFloor(wc / 6f));
+            widget.setPage((int) Math.floor(wc / 6f));
             widget.setPosition(x, y + 27 * index++);
             if (index == 6) index = 0;
             wc++;
