@@ -94,10 +94,6 @@ allprojects {
         }
     }
 
-    loom {
-        accessWidenerPath = file("${getRootProject().projectDir.absolutePath}/dark-matter-minecraft/src/main/resources/dark-matter.accesswidener")
-    }
-
     publishing {
         publications {
             mavenJava(MavenPublication) {
