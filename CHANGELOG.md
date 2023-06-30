@@ -1,5 +1,7 @@
 ## What's new:
 
-### CrackerUtil is now Dark Matter!
+1.20 only patch
 
-There are a lot of internal changes and renames, so everything needs to be updated.
+### Content
+
+* Fixed item, groups not being registered.

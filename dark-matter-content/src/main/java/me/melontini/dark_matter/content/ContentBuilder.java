@@ -287,6 +287,7 @@ public class ContentBuilder {
 
             ItemGroup group = builder.build();
             if (this.animatedIcon != null) group.setIconAnimation(this.animatedIcon);
+            Registry.register(Registries.ITEM_GROUP, this.identifier, group);
             return group;
         }
     }
