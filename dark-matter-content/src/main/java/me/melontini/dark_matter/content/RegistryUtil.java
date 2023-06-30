@@ -8,6 +8,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.registry.Registries;
@@ -140,7 +141,7 @@ public class RegistryUtil {
     @Contract("false, _, _ -> null")
     public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(boolean shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
         if (shouldRegister) {
-            Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
+            Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get(), FeatureFlags.VANILLA_FEATURES));
         }
         return null;
     }
