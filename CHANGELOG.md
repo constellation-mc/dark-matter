@@ -4,4 +4,4 @@
 
 ### Content
 
-* Fixed item, groups not being registered.
+* Fixed item groups not being registered.
