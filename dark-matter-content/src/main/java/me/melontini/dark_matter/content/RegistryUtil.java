@@ -8,6 +8,8 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
@@ -75,6 +77,7 @@ public class RegistryUtil {
         return createItem(true, id, supplier);
     }
 
+    @Contract("false, _, _ -> null")
     public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
         if (shouldRegister) {
             T item = supplier.get();
@@ -104,6 +107,7 @@ public class RegistryUtil {
         return createBlock(true, id, supplier);
     }
 
+    @Contract("false, _, _ -> null")
     public static @Nullable <T extends Block> T createBlock(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
         if (shouldRegister) {
             T block = supplier.get();
@@ -124,6 +128,18 @@ public class RegistryUtil {
             BlockEntityType<T> type = builder.build(null);
             Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
             return type;
+        }
+        return null;
+    }
+
+    public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
+        return createScreenHandler(true, id, factory);
+    }
+
+    @Contract("false, _, _ -> null")
+    public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(boolean shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
+        if (shouldRegister) {
+            Registry.register(Registry.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
         }
         return null;
     }

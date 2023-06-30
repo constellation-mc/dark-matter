@@ -1,11 +1,13 @@
 accessWidener  v2	named
 
+transitive-accessible class net/minecraft/screen/ScreenHandlerType$Factory
 transitive-accessible class net/minecraft/village/raid/Raid$Member
 transitive-accessible class net/minecraft/recipe/Ingredient$TagEntry
 transitive-accessible class net/minecraft/recipe/Ingredient$StackEntry
 transitive-accessible class net/minecraft/recipe/Ingredient$Entry
 transitive-accessible class net/minecraft/block/entity/BlockEntityType$BlockEntityFactory
 
+transitive-accessible method net/minecraft/screen/ScreenHandlerType <init> (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
 transitive-accessible method net/minecraft/client/gui/screen/Screen renderTooltipFromComponents (Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V
 transitive-accessible method net/minecraft/entity/projectile/ProjectileEntity <init> (Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V
 transitive-accessible method net/minecraft/entity/FallingBlockEntity <init> (Lnet/minecraft/world/World;DDDLnet/minecraft/block/BlockState;)V
