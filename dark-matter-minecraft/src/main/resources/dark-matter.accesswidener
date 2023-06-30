@@ -9,7 +9,7 @@ transitive-accessible class net/minecraft/recipe/Ingredient$StackEntry
 transitive-accessible class net/minecraft/recipe/Ingredient$Entry
 transitive-accessible class net/minecraft/block/entity/BlockEntityType$BlockEntityFactory
 
-transitive-accessible method net/minecraft/screen/ScreenHandlerType <init> (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
+transitive-accessible method net/minecraft/screen/ScreenHandlerType <init> (Lnet/minecraft/screen/ScreenHandlerType$Factory;Lnet/minecraft/resource/featuretoggle/FeatureSet;)V
 transitive-accessible method net/minecraft/server/SaveLoading withRegistriesLoaded (Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/CombinedDynamicRegistries;Lnet/minecraft/registry/ServerDynamicRegistryType;Ljava/util/List;)Lnet/minecraft/registry/CombinedDynamicRegistries;
 transitive-accessible method net/minecraft/server/integrated/IntegratedServerLoader createSession (Ljava/lang/String;)Lnet/minecraft/world/level/storage/LevelStorage$Session;
 transitive-accessible method net/minecraft/client/gui/DrawContext drawTooltip (Lnet/minecraft/client/font/TextRenderer;Ljava/util/List;IILnet/minecraft/client/gui/tooltip/TooltipPositioner;)V
