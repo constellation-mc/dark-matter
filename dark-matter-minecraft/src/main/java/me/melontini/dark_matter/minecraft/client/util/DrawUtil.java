@@ -165,7 +165,7 @@ public class DrawUtil {
         bufferBuilder.vertex(matrix, x1, y1, z).texture(u1, v1).next();
         bufferBuilder.vertex(matrix, x1, y0, z).texture(u1, v0).next();
         bufferBuilder.vertex(matrix, x0, y0, z).texture(u0, v0).next();
-        BufferRenderer.drawWithShader(bufferBuilder.end());
+        BufferRenderer.draw(bufferBuilder);
     }
 
     public static void renderGuiItemModelCustomMatrixNoTransform(MatrixStack matrixStack, ItemStack stack, BakedModel model) {
@@ -235,7 +235,9 @@ public class DrawUtil {
             this.textRenderer = client.textRenderer;
             this.width = width;
             this.height = height;
-            this.clearAndInit();
+            this.clearChildren();
+            this.setFocused(null);
+            this.init();
         }
     }
 }

@@ -11,7 +11,7 @@ import net.minecraft.util.registry.DynamicRegistryManager;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
-import net.minecraft.world.dimension.DimensionTypes;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.UUID;
 
@@ -25,7 +25,7 @@ public class FakeWorld extends ClientWorld {
         super(new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null),
                 new Properties(Difficulty.EASY, false, false),
                 World.OVERWORLD,
-                DynamicRegistryManager.BUILTIN.get().get(Registry.DIMENSION_TYPE_KEY).entryOf(DimensionTypes.OVERWORLD),
+                DynamicRegistryManager.BUILTIN.get().get(Registry.DIMENSION_TYPE_KEY).entryOf(DimensionType.OVERWORLD_REGISTRY_KEY),
                 0, 0, null,
                 MinecraftClient.getInstance().worldRenderer, true, 0);
     }

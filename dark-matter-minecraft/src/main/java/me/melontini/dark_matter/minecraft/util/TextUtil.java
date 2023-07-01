@@ -1,21 +1,22 @@
 package me.melontini.dark_matter.minecraft.util;
 
+import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+import net.minecraft.text.TranslatableText;
 
 public class TextUtil {
     private TextUtil() {
         throw new UnsupportedOperationException();
     }
     public static MutableText translatable(String key) {
-        return Text.translatable(key);
+        return new TranslatableText(key);
     }
 
     public static MutableText translatable(String key, Object... args) {
-        return Text.translatable(key, args);
+        return new TranslatableText(key, args);
     }
 
     public static MutableText literal(String text) {
-        return Text.literal(text);
+        return new LiteralText(text);
     }
 }
