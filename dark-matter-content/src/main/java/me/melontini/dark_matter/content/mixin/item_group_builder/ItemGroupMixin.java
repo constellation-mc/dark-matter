@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin {
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup$EntryCollector;accept(Lnet/minecraft/resource/featuretoggle/FeatureSet;Lnet/minecraft/item/ItemGroup$Entries;Z)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT, method = "updateEntries")
-    private void cracker_util$injectEntries(FeatureSet enabledFeatures, boolean operatorEnabled, CallbackInfo ci, ItemGroup.EntriesImpl entriesImpl) {
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup$EntryCollector;accept(Lnet/minecraft/item/ItemGroup$DisplayContext;Lnet/minecraft/item/ItemGroup$Entries;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT, method = "updateEntries")
+    private void cracker_util$injectEntries(ItemGroup.DisplayContext displayContext, CallbackInfo ci, ItemGroup.EntriesImpl entriesImpl) {
         if (ItemGroupHelper.INJECTED_GROUPS.containsKey((ItemGroup) (Object) this)) {
             for (ItemGroupHelper.InjectEntries injectEntries : ItemGroupHelper.INJECTED_GROUPS.get((ItemGroup) (Object) this)) {
-                injectEntries.inject(enabledFeatures, operatorEnabled, entriesImpl);
+                injectEntries.inject(displayContext.enabledFeatures(), displayContext.hasPermissions(), entriesImpl);
             }
         }
     }

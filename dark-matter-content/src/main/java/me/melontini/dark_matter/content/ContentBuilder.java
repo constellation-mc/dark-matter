@@ -273,7 +273,7 @@ public class ContentBuilder {
                     throw new RuntimeException("couldn't build: " + identifier, e1);
                 }
             }
-            builder.entries((enabledFeatures, entries, operatorEnabled) -> {
+            builder.entries((displayContext, entries) -> {
                 var list = ((ItemGroup.EntriesImpl) entries).parentTabStacks = new ArrayList<>();
                 var set = ((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>();
 

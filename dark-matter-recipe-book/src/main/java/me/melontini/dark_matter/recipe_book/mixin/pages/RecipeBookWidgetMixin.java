@@ -146,7 +146,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
 
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
             widget.setPage((int) Math.floor(wc / 6f));
-            widget.setPos(x, y + 27 * index++);
+            widget.setPosition(x, y + 27 * index++);
             if (index == 6) index = 0;
             wc++;
         }
