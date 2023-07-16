@@ -9,7 +9,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "icon.png",
+  "icon": "assets/dark-matter-enums/icon.png",
   "environment": "*",
   "entrypoints": {
   },

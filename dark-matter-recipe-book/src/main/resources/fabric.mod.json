@@ -9,7 +9,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "icon.png",
+  "icon": "assets/dark-matter-recipe-book/icon.png",
   "environment": "*",
   "entrypoints": {
   },

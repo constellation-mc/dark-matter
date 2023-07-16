@@ -172,7 +172,7 @@ public class InstrumentationAccess {
             if (!Files.exists(jarPath)) {
                 createAgentJar(jarPath, jar);
             } else {
-                try (InputStream stream = InstrumentationAccess.class.getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
+                try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
                     if (stream != null) {
                         byte[] bytes = stream.readAllBytes();
                         if (!Arrays.equals(Files.readAllBytes(jarPath), bytes)) {
@@ -181,7 +181,7 @@ public class InstrumentationAccess {
                             createAgentJar(jarPath, jar);
                         }
                     } else {
-                        throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"!");
+                        DarkMatterLog.error("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"! Couldn't check jar version! Trying to attach anyway...");
                     }
                 }
             }
