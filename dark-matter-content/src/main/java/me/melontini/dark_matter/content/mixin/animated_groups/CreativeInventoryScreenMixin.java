@@ -1,8 +1,8 @@
 package me.melontini.dark_matter.content.mixin.animated_groups;
 
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.text.Text;
@@ -20,9 +20,9 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT, method = "renderTabIcon", cancellable = true)
-    private void cracker_util$drawGroupIcon(MatrixStack matrices, ItemGroup group, CallbackInfo ci, boolean bl, boolean bl2, int i, int j, int k, int l, int m) {
+    private void cracker_util$drawGroupIcon(DrawContext context, ItemGroup group, CallbackInfo ci, boolean bl, boolean bl2, int i, int j, int k, int l, int m) {
         if (group.shouldAnimateIcon()) {
-            group.getIconAnimation().animateIcon(matrices, l, m, bl, bl2);
+            group.getIconAnimation().animateIcon(context, l, m, bl, bl2);
             ci.cancel();
         }
     }

@@ -4,8 +4,8 @@ import me.melontini.dark_matter.glitter.client.particles.AbstractScreenParticle;
 import me.melontini.dark_matter.glitter.client.particles.VanillaParticle;
 import me.melontini.dark_matter.util.MakeSure;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleEffect;
 import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
@@ -200,11 +200,11 @@ public class ScreenParticleHelper {
     }
 
     @ApiStatus.Internal
-    public static void renderParticles(MinecraftClient client, MatrixStack matrixStack) {
+    public static void renderParticles(MinecraftClient client, DrawContext context) {
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.render(matrixStack, i, j, client.getTickDelta());
+            particle.render(context, i, j, client.getTickDelta());
         }
     }
 

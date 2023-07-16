@@ -2,6 +2,7 @@ package me.melontini.dark_matter.glitter.client.particles;
 
 import me.melontini.dark_matter.util.MathStuff;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -29,7 +30,13 @@ public abstract class AbstractScreenParticle implements Drawable {
         this.client = MinecraftClient.getInstance();
     }
     @Override
-    public abstract void render(MatrixStack matrices, int mouseX, int mouseY, float delta);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        this.render(context.getMatrices(), mouseX, mouseY, delta);
+    }
+
+    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+
+    }
 
     public final void tick() {
         this.prevX = x;
