@@ -9,7 +9,7 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "icon.png",
+  "icon": "assets/dark-matter-minecraft/icon.png",
   "accessWidener" : "dark-matter.accesswidener",
   "environment": "*",
   "entrypoints": {

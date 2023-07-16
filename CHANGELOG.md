@@ -1,15 +1,10 @@
 ## What's new:
 
-### Content
+### Danger
 
-* Fixed item groups not being registered. (1.20)
-* Added createScreenHandler to RegistryUtil.
-* Added missing `@Contarct`s to RegistryUtil.
-
-### Minecraft
-
-* Added the `world` field to accesswidener. (1.20)
+* Fixed InstrumentationAccess failing to locate the agent jar.
 
 ### Misc
 
-Base, Analytics and Danger will no longer have access wideners applied.
+* Moved icons into `assets/dark-matter*`.
+* Dummy no longer depends on MC version.

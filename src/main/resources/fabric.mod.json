@@ -9,11 +9,11 @@
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "icon.png",
+  "icon": "assets/dark-matter/icon.png",
   "environment": "*",
   "depends": {
     "fabricloader": "*",
-    "minecraft": ">=1.18"
+    "minecraft": "*"
   },
   "custom": {
     "modmenu": {
