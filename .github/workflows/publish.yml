@@ -27,7 +27,7 @@ jobs:
           echo "VERSION_INFORMATION=$(${{github.workspace}}/gradlew -q printVersionName)" >> $GITHUB_ENV
           echo "VERSION_PLAIN=$(${{github.workspace}}/gradlew -q printVersion)" >> $GITHUB_ENV
       - name: Publish Minecraft Mods
-        uses: Kir-Antipov/mc-publish@v3.2
+        uses: Kir-Antipov/mc-publish@v3.3
         with:
           version-type: beta
           changelog-file: CHANGELOG.md
