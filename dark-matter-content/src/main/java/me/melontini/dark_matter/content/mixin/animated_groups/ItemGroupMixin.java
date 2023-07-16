@@ -9,25 +9,23 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin implements ItemGroupExtensions {
-
-    public AnimatedItemGroup dark_matter$animation;
+    public AnimatedItemGroup cracker_util$animation;
 
     @Environment(EnvType.CLIENT)
     @Override
     public boolean shouldAnimateIcon() {
-        return dark_matter$animation != null;
+        return cracker_util$animation != null;
     }
 
     @Override
     public ItemGroup setIconAnimation(AnimatedItemGroup animation) {
-        this.dark_matter$animation = animation;
+        this.cracker_util$animation = animation;
         return (ItemGroup) (Object) this;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     public AnimatedItemGroup getIconAnimation() {
-        return this.dark_matter$animation;
+        return this.cracker_util$animation;
     }
 }
-

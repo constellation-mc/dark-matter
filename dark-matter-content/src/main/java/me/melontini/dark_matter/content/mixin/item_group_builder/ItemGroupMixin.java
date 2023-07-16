@@ -1,24 +1,23 @@
 package me.melontini.dark_matter.content.mixin.item_group_builder;
 
-import me.melontini.dark_matter.content.interfaces.internal.ItemGroupArrayExtender;
+import me.melontini.dark_matter.content.ItemGroupHelper;
 import net.minecraft.item.ItemGroup;
-import org.spongepowered.asm.mixin.Final;
+import net.minecraft.resource.featuretoggle.FeatureSet;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(ItemGroup.class)
-public abstract class ItemGroupMixin implements ItemGroupArrayExtender {
-    @Shadow
-    @Final
-    @Mutable
-    public static ItemGroup[] GROUPS;
+public class ItemGroupMixin {
 
-    @Override
-    public void dark_matter$crack_array() {
-        ItemGroup[] tempGroups = GROUPS;
-        GROUPS = new ItemGroup[GROUPS.length + 1];
-
-        System.arraycopy(tempGroups, 0, GROUPS, 0, tempGroups.length);
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup$EntryCollector;accept(Lnet/minecraft/resource/featuretoggle/FeatureSet;Lnet/minecraft/item/ItemGroup$Entries;Z)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILSOFT, method = "updateEntries")
+    private void cracker_util$injectEntries(FeatureSet enabledFeatures, boolean operatorEnabled, CallbackInfo ci, ItemGroup.EntriesImpl entriesImpl) {
+        if (ItemGroupHelper.INJECTED_GROUPS.containsKey((ItemGroup) (Object) this)) {
+            for (ItemGroupHelper.InjectEntries injectEntries : ItemGroupHelper.INJECTED_GROUPS.get((ItemGroup) (Object) this)) {
+                injectEntries.inject(enabledFeatures, operatorEnabled, entriesImpl);
+            }
+        }
     }
 }

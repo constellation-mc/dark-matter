@@ -7,7 +7,9 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
@@ -17,7 +19,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,7 +88,16 @@ public class DrawUtil {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y);
+        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y, HoveredTooltipPositioner.INSTANCE);
+        RenderSystem.getModelViewStack().pop();
+        RenderSystem.applyModelViewMatrix();
+    }
+
+    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
+        RenderSystem.getModelViewStack().push();
+        RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
+        RenderSystem.applyModelViewMatrix();
+        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y, positioner);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -95,7 +106,7 @@ public class DrawUtil {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -118,7 +129,7 @@ public class DrawUtil {
         RenderSystem.disableTexture();
         RenderSystem.enableBlend();
         RenderSystem.defaultBlendFunc();
-        RenderSystem.setShader(GameRenderer::getPositionColorShader);
+        RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
@@ -158,14 +169,14 @@ public class DrawUtil {
     }
 
     public static void drawTexturedQuad(Matrix4f matrix, float x0, float x1, float y0, float y1, float z, float u0, float u1, float v0, float v1) {
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
+        RenderSystem.setShader(GameRenderer::getPositionTexProgram);
         BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
         bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
         bufferBuilder.vertex(matrix, x0, y1, z).texture(u0, v1).next();
         bufferBuilder.vertex(matrix, x1, y1, z).texture(u1, v1).next();
         bufferBuilder.vertex(matrix, x1, y0, z).texture(u1, v0).next();
         bufferBuilder.vertex(matrix, x0, y0, z).texture(u0, v0).next();
-        BufferRenderer.drawWithShader(bufferBuilder.end());
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
     }
 
     public static void renderGuiItemModelCustomMatrixNoTransform(MatrixStack matrixStack, ItemStack stack, BakedModel model) {

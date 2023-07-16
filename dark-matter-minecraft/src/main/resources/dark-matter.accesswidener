@@ -1,6 +1,8 @@
 accessWidener  v2	named
 
 transitive-accessible class net/minecraft/screen/ScreenHandlerType$Factory
+transitive-accessible class net/minecraft/item/ItemGroup$Entries
+transitive-accessible class net/minecraft/item/ItemGroup$EntriesImpl
 transitive-accessible class net/minecraft/village/raid/Raid$Member
 transitive-accessible class net/minecraft/recipe/Ingredient$TagEntry
 transitive-accessible class net/minecraft/recipe/Ingredient$StackEntry
@@ -8,7 +10,9 @@ transitive-accessible class net/minecraft/recipe/Ingredient$Entry
 transitive-accessible class net/minecraft/block/entity/BlockEntityType$BlockEntityFactory
 
 transitive-accessible method net/minecraft/screen/ScreenHandlerType <init> (Lnet/minecraft/screen/ScreenHandlerType$Factory;)V
-transitive-accessible method net/minecraft/client/gui/screen/Screen renderTooltipFromComponents (Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;II)V
+transitive-accessible method net/minecraft/server/SaveLoading withRegistriesLoaded (Lnet/minecraft/resource/ResourceManager;Lnet/minecraft/registry/CombinedDynamicRegistries;Lnet/minecraft/registry/ServerDynamicRegistryType;Ljava/util/List;)Lnet/minecraft/registry/CombinedDynamicRegistries;
+transitive-accessible method net/minecraft/server/integrated/IntegratedServerLoader createSession (Ljava/lang/String;)Lnet/minecraft/world/level/storage/LevelStorage$Session;
+transitive-accessible method net/minecraft/client/gui/screen/Screen renderTooltipFromComponents (Lnet/minecraft/client/util/math/MatrixStack;Ljava/util/List;IILnet/minecraft/client/gui/tooltip/TooltipPositioner;)V
 transitive-accessible method net/minecraft/entity/projectile/ProjectileEntity <init> (Lnet/minecraft/entity/EntityType;Lnet/minecraft/world/World;)V
 transitive-accessible method net/minecraft/entity/FallingBlockEntity <init> (Lnet/minecraft/world/World;DDDLnet/minecraft/block/BlockState;)V
 transitive-accessible method net/minecraft/text/TextColor <init> (ILjava/lang/String;)V
@@ -16,20 +20,22 @@ transitive-accessible method net/minecraft/entity/vehicle/AbstractMinecartEntity
 transitive-accessible method net/minecraft/client/world/ClientWorld getEntityLookup ()Lnet/minecraft/world/entity/EntityLookup;
 transitive-accessible method net/minecraft/world/World getEntityLookup ()Lnet/minecraft/world/entity/EntityLookup;
 
-transitive-mutable field net/minecraft/item/Item group Lnet/minecraft/item/ItemGroup;
+transitive-accessible field net/minecraft/client/network/ClientPlayNetworkHandler combinedDynamicRegistries Lnet/minecraft/registry/CombinedDynamicRegistries;
 transitive-accessible field net/minecraft/client/particle/Particle collidesWithWorld Z
 transitive-accessible field net/minecraft/client/particle/ParticleManager factories Lit/unimi/dsi/fastutil/ints/Int2ObjectMap;
-transitive-accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab I
-transitive-accessible field net/minecraft/util/registry/SimpleRegistry frozen Z
+transitive-accessible field net/minecraft/client/gui/screen/ingame/CreativeInventoryScreen selectedTab Lnet/minecraft/item/ItemGroup;
+transitive-accessible field net/minecraft/registry/SimpleRegistry frozen Z
 transitive-accessible field net/minecraft/block/entity/BlockEntityType blocks Ljava/util/Set;
 transitive-accessible field net/minecraft/client/gui/screen/recipebook/RecipeBookGhostSlots slots Ljava/util/List;
 transitive-accessible field net/minecraft/client/gui/screen/recipebook/RecipeBookGhostSlots time F
 transitive-accessible field net/minecraft/entity/ai/goal/TemptGoal cooldown I
 transitive-accessible field net/minecraft/entity/ai/goal/TemptGoal predicate Lnet/minecraft/entity/ai/TargetPredicate;
-transitive-accessible field net/minecraft/recipe/Ingredient$TagEntry tag Lnet/minecraft/tag/TagKey;
+transitive-accessible field net/minecraft/recipe/Ingredient$TagEntry tag Lnet/minecraft/registry/tag/TagKey;
 transitive-accessible field net/minecraft/recipe/Ingredient$StackEntry stack Lnet/minecraft/item/ItemStack;
 transitive-accessible field net/minecraft/recipe/Ingredient entries [Lnet/minecraft/recipe/Ingredient$Entry;
 transitive-accessible field net/minecraft/entity/ItemEntity STACK Lnet/minecraft/entity/data/TrackedData;
+transitive-mutable field net/minecraft/item/ItemGroup$EntriesImpl parentTabStacks Ljava/util/Collection;
+transitive-mutable field net/minecraft/item/ItemGroup$EntriesImpl searchTabStacks Ljava/util/Set;
 transitive-accessible field net/minecraft/recipe/book/RecipeBookOptions CATEGORY_OPTION_NAMES Ljava/util/Map;
 transitive-accessible field net/minecraft/world/PersistentStateManager loadedStates Ljava/util/Map;
 transitive-accessible field net/minecraft/client/gui/tooltip/OrderedTextTooltipComponent text Lnet/minecraft/text/OrderedText;

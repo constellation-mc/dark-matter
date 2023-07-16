@@ -10,10 +10,11 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.SimpleRegistry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.registry.SimpleRegistry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -33,7 +34,7 @@ public class RegistryUtil {
     }
     private static boolean DONE;
     protected static final Map<Block, BlockEntityType<?>> BLOCK_ENTITY_LOOKUP = Utilities.consume(new HashMap<>(), map -> {
-        Registry.BLOCK_ENTITY_TYPE.forEach(beType -> {
+        Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
             for (Block block : beType.blocks) {
                 map.putIfAbsent(block, beType);
             }
@@ -47,8 +48,8 @@ public class RegistryUtil {
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> getBlockEntityFromBlock(@NotNull Block block) {
         if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return (BlockEntityType<T>) BLOCK_ENTITY_LOOKUP.get(block);
         else {
-            if (((SimpleRegistry<?>) Registry.BLOCK_ENTITY_TYPE).frozen && !DONE) {
-                Registry.BLOCK_ENTITY_TYPE.forEach(beType -> {
+            if (((SimpleRegistry<?>) Registries.BLOCK_ENTITY_TYPE).frozen && !DONE) {
+                Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
                     for (Block block1 : beType.blocks) {
                         BLOCK_ENTITY_LOOKUP.putIfAbsent(block1, beType);
                     }
@@ -82,7 +83,7 @@ public class RegistryUtil {
         if (shouldRegister) {
             T item = supplier.get();
 
-            Registry.register(Registry.ITEM, id, item);
+            Registry.register(Registries.ITEM, id, item);
             return item;
         } else {
             return null;
@@ -97,7 +98,7 @@ public class RegistryUtil {
     public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, EntityType.Builder<T> builder) {
         if (shouldRegister) {
             EntityType<T> type = builder.build(Pattern.compile("[\\W]").matcher(id.toString()).replaceAll("_"));
-            Registry.register(Registry.ENTITY_TYPE, id, type);
+            Registry.register(Registries.ENTITY_TYPE, id, type);
             return type;
         }
         return null;
@@ -112,7 +113,7 @@ public class RegistryUtil {
         if (shouldRegister) {
             T block = supplier.get();
 
-            Registry.register(Registry.BLOCK, id, block);
+            Registry.register(Registries.BLOCK, id, block);
             return block;
         }
         return null;
@@ -126,7 +127,7 @@ public class RegistryUtil {
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
         if (shouldRegister) {
             BlockEntityType<T> type = builder.build(null);
-            Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, id, type);
             return type;
         }
         return null;
@@ -139,7 +140,7 @@ public class RegistryUtil {
     @Contract("false, _, _ -> null")
     public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(boolean shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
         if (shouldRegister) {
-            Registry.register(Registry.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
+            Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
         }
         return null;
     }

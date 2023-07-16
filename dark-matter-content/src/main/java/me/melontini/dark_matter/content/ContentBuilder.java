@@ -3,8 +3,6 @@ package me.melontini.dark_matter.content;
 import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.DarkMatterLog;
 import me.melontini.dark_matter.content.interfaces.AnimatedItemGroup;
-import me.melontini.dark_matter.content.interfaces.internal.ItemGroupArrayExtender;
-import me.melontini.dark_matter.content.mixin.item_group_builder.ItemAccessor;
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.Utilities;
 import net.fabricmc.api.EnvType;
@@ -15,15 +13,13 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
-import net.minecraft.util.registry.Registry;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.lang.reflect.InvocationTargetException;
+import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -73,9 +69,8 @@ public class ContentBuilder {
             if (this.register.getAsBoolean()) {
                 T item = this.itemSupplier.get();
 
-                if (this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
-
-                Registry.register(Registry.ITEM, this.identifier, item);
+                Registry.register(Registries.ITEM, this.identifier, item);
+                if (this.itemGroup != null) ItemGroupHelper.addItemGroupInjection(this.itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item));
                 return item;
             }
             return null;
@@ -130,7 +125,7 @@ public class ContentBuilder {
                 if (itemFactory != null) itemFactory.produce(block, this.identifier).build();
                 if (blockEntityFactory != null) blockEntityFactory.produce(block, this.identifier).build();
 
-                Registry.register(Registry.BLOCK, this.identifier, block);
+                Registry.register(Registries.BLOCK, this.identifier, block);
                 return block;
             }
             return null;
@@ -193,7 +188,7 @@ public class ContentBuilder {
         public BlockEntityType<T> build(Type<?> type) {
             if (this.register.getAsBoolean()) {
                 BlockEntityType<T> t = BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type);
-                Registry.register(Registry.BLOCK_ENTITY_TYPE, identifier, t);
+                Registry.register(Registries.BLOCK_ENTITY_TYPE, identifier, t);
                 for (Block block : blocks) {
                     RegistryUtil.BLOCK_ENTITY_LOOKUP.putIfAbsent(block, t);
                 }
@@ -210,9 +205,10 @@ public class ContentBuilder {
         private String texture;
         private Consumer<Collection<ItemStack>> tabStacks;
         private Text displayName;
+        private Consumer<Collection<ItemStack>> searchTabStacks;
 
         private ItemGroupBuilder(Identifier id) {
-            if (!FabricLoader.getInstance().isModLoaded("fabric")) DarkMatterLog.warn("Building {} ItemGroup without Fabric API", id);
+            if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric API", id);
             this.identifier = id;
         }
 
@@ -251,9 +247,10 @@ public class ContentBuilder {
             return this;
         }
 
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, /*ignored in <=1.19.2*/ Consumer<Collection<ItemStack>> searchStacks) {
+        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, /*99% of the time, this will be a set*/ Consumer<Collection<ItemStack>> searchTabStacks) {
             MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
             this.tabStacks = parentTabStacks;
+            this.searchTabStacks = searchTabStacks;
             return this;
         }
 
@@ -264,38 +261,33 @@ public class ContentBuilder {
         }
 
         public ItemGroup build() {
-            ((ItemGroupArrayExtender) ItemGroup.BREWING).dark_matter$crack_array();
-            ItemGroup itemGroup = new ItemGroup(ItemGroup.GROUPS.length - 1, identifier.toString().replace(":", ".")) {
-                @Override
-                public ItemStack getIcon() {
-                    return ItemGroupBuilder.this.icon.get();
+            ItemGroup.Builder builder;
+            try {
+                Class<?> clazz = Class.forName("net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup");
+                builder = (ItemGroup.Builder) clazz.getMethod("builder", Identifier.class).invoke(null, identifier);
+            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
+                     IllegalAccessException e) {
+                try {
+                    builder = new ItemGroup.Builder(null, -1);
+                } catch (Exception e1) {
+                    throw new RuntimeException("couldn't build: " + identifier, e1);
                 }
+            }
+            builder.entries((enabledFeatures, entries, operatorEnabled) -> {
+                var list = ((ItemGroup.EntriesImpl) entries).parentTabStacks = new ArrayList<>();
+                var set = ((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>();
 
-                @Override
-                public ItemStack createIcon() {
-                    return ItemStack.EMPTY;
-                }
+                if (this.tabStacks != null) this.tabStacks.accept(list);
+                if (this.searchTabStacks != null) this.searchTabStacks.accept(set);
+            });
+            builder.icon(() -> ItemGroupBuilder.this.icon.get());
 
-                @Override
-                public void appendStacks(DefaultedList<ItemStack> stacks) {
-                    if (ItemGroupBuilder.this.tabStacks != null) {
-                        ItemGroupBuilder.this.tabStacks.accept(stacks);
-                        return;
-                    }
-                    super.appendStacks(stacks);
-                }
+            if (this.displayName != null) builder.displayName(this.displayName);
+            if (this.texture != null) builder.texture(this.texture);
 
-                @Override
-                public Text getDisplayName() {
-                    if (ItemGroupBuilder.this.displayName != null) return ItemGroupBuilder.this.displayName;
-                    return super.getDisplayName();
-                }
-            };
-
-            if (this.animatedIcon != null) itemGroup.setIconAnimation(this.animatedIcon);
-            if (this.texture != null) itemGroup.setTexture(this.texture);
-
-            return itemGroup;
+            ItemGroup group = builder.build();
+            if (this.animatedIcon != null) group.setIconAnimation(this.animatedIcon);
+            return group;
         }
     }
 }
