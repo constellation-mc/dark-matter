@@ -3,6 +3,7 @@ package me.melontini.dark_matter.content;
 import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.DarkMatterLog;
 import me.melontini.dark_matter.content.interfaces.AnimatedItemGroup;
+import me.melontini.dark_matter.minecraft.util.TextUtil;
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.Utilities;
 import net.fabricmc.api.EnvType;
@@ -282,7 +283,7 @@ public class ContentBuilder {
             });
             builder.icon(() -> ItemGroupBuilder.this.icon.get());
 
-            if (this.displayName != null) builder.displayName(this.displayName);
+            builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> TextUtil.translatable("itemGroup." + this.identifier.toString().replace(":", "."))));
             if (this.texture != null) builder.texture(this.texture);
 
             ItemGroup group = builder.build();
