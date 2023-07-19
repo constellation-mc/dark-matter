@@ -45,49 +45,49 @@ public class DrawUtil {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawItemTooltip(MinecraftClient.getInstance().textRenderer, stack, (int) x, (int) y);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void renderTooltip(DrawContext context, Text text, float x, float y) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawTooltip(MinecraftClient.getInstance().textRenderer, text, (int) x, (int) y);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void renderTooltip(DrawContext context, List<Text> lines, float x, float y) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, (int) x, (int) y);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public void renderTooltip(DrawContext context, List<Text> lines, Optional<TooltipData> data, float x, float y) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawTooltip(MinecraftClient.getInstance().textRenderer, lines, data, (int) x, (int) y);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void renderOrderedTooltip(DrawContext context, List<? extends OrderedText> lines, float x, float y) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawOrderedTooltip(MinecraftClient.getInstance().textRenderer, lines, (int) x, (int) y);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawTooltip(MinecraftClient.getInstance().textRenderer, components, (int) x, (int) y, HoveredTooltipPositioner.INSTANCE);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
         context.getMatrices().push();
         context.getMatrices().translate(x - (int) x, y - (int) y, 0);
         context.drawTooltip(MinecraftClient.getInstance().textRenderer, components, (int) x, (int) y, positioner);
-        context.getMatrices().push();
+        context.getMatrices().pop();
     }
 
     public static void fillGradient(MatrixStack matrices, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
