@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.analytics.crashes.mixin;
 
+import me.melontini.dark_matter.analytics.Analytics;
 import me.melontini.dark_matter.analytics.crashes.Crashlytics;
 import me.melontini.dark_matter.util.classes.Tuple;
 import net.fabricmc.api.EnvType;
@@ -22,15 +23,17 @@ public abstract class CrashReportMixin {
 
     @Inject(at = @At("RETURN"), method = "writeToFile")
     private void dark_matter$handleCrash(File file, CallbackInfoReturnable<Boolean> cir) {
-        EnvType envType = FabricLoader.getInstance().getEnvironmentType();
-        String latestLog = null;
-        try {
-            latestLog = Files.readString(FabricLoader.getInstance().getGameDir().resolve("logs/latest.log"));
-        } catch (IOException ignored) {}
+        if (Analytics.handleCrashes()) {
+            EnvType envType = FabricLoader.getInstance().getEnvironmentType();
+            String latestLog = null;
+            try {
+                latestLog = Files.readString(FabricLoader.getInstance().getGameDir().resolve("logs/latest.log"));
+            } catch (IOException ignored) {}
 
-        for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : Crashlytics.getHandlers()) {
-            if (tuple.left().shouldHandle((CrashReport) (Object) this, this.cause, latestLog, envType)) {
-                tuple.right().handle((CrashReport) (Object) this, this.cause, latestLog, envType);
+            for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : Crashlytics.getHandlers()) {
+                if (tuple.left().shouldHandle((CrashReport) (Object) this, this.cause, latestLog, envType)) {
+                    tuple.right().handle((CrashReport) (Object) this, this.cause, latestLog, envType);
+                }
             }
         }
     }
