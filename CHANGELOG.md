@@ -8,4 +8,4 @@
 
 ### Minecraft
 
-* Fixed matrices not getting popped after rendering tooltips.
+* Fixed matrices not getting popped after rendering tooltips. (1.20+)
