@@ -12,6 +12,7 @@ rootProject.name = "dark-matter"
 
 include("${rootProject.name}-base")
 include("${rootProject.name}-analytics")
+include("${rootProject.name}-analytics-crashes")
 include("${rootProject.name}-analytics-mixpanel")
 include("${rootProject.name}-content")
 include("${rootProject.name}-danger")
