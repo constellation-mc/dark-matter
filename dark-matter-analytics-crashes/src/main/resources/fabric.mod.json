@@ -1,0 +1,31 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-analytics-crashes",
+  "version": "${version}",
+  "name": "Dark Matter Analytics Crashes",
+  "description": "Handling crashes (real)",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/dark-matter-analytics-crashes/icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-analytics-crashes.mixin.json"
+  ],
+  "depends": {
+    "fabricloader": "*",
+    "minecraft": "*",
+    "dark-matter-base": "*",
+    "dark-matter-analytics": "*"
+  },
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

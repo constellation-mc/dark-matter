@@ -1,14 +1,11 @@
 ## What's new:
 
-### Content
+### Analytics
 
-* Fixed item groups not having a name by default. (1.19.3+)
+* New analytics module! `analytics-crashes`
+* * Adds event-like crash handling. Also, features a class to quickly upload logs to mclo.gs
+* Analytics config moved to JSON + new option for Crashlytics.
 
-### Danger
+### Minecraft
 
-* Fixed InstrumentationAccess failing to locate the agent jar.
-
-### Misc
-
-* Moved icons into `assets/dark-matter*`.
-* Dummy no longer depends on MC version.
+* Fixed matrices not getting popped after rendering tooltips. (1.20+)
