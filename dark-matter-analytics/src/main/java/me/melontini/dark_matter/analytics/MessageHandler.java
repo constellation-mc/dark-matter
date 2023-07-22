@@ -12,15 +12,15 @@ public abstract class MessageHandler<T> {
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> new Thread(r, "Dark Matter analytics thread"));
 
     public final void send(T consumer, boolean wait, boolean errors) {
-        if (Analytics.isEnabled()) sendInternal(consumer, wait, errors);
+        if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, wait, errors);
     }
 
     public final void send(T consumer, boolean wait) {
-        if (Analytics.isEnabled()) sendInternal(consumer, wait, false);
+        if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, wait, false);
     }
 
     public final void send(T consumer) {
-        if (Analytics.isEnabled()) sendInternal(consumer, false, false);
+        if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, false, false);
     }
 
     protected abstract void sendInternal(T consumer, boolean wait, boolean errors);

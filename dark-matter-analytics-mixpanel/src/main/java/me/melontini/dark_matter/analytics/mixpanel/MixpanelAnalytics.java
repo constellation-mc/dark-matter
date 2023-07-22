@@ -58,7 +58,7 @@ public class MixpanelAnalytics {
         }
 
         protected void sendInternal(MessageProvider consumer, boolean wait, boolean errors) {
-            if (!Analytics.isEnabled()) return;
+            if (!Analytics.isEnabled() && !Analytics.handleCrashes()) return;
             Future<?> future = EXECUTOR.submit(() -> {
                 try {
                     JSONObject message = consumer.consume(messageBuilder);
