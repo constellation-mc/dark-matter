@@ -45,6 +45,7 @@ public class Analytics {
             try {
                 config = GSON.fromJson(Files.newBufferedReader(configPath), Config.class);
                 if (config.enabled && nullID.equals(config.userUUID)) config.userUUID = UUID.randomUUID();
+                if (!config.enabled) config.userUUID = nullID;
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -52,12 +53,12 @@ public class Analytics {
         } else {
             try {
                 Files.createDirectories(configPath.getParent());
+                if (config.enabled) config.userUUID = UUID.randomUUID();
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if (!config.enabled) config.userUUID = nullID;
         return config;
     }
 
@@ -80,6 +81,6 @@ public class Analytics {
     public static class Config {
         public boolean enabled = true;
         public boolean crashesEnabled = true;
-        public UUID userUUID = UUID.randomUUID();
+        public UUID userUUID = nullID;
     }
 }
