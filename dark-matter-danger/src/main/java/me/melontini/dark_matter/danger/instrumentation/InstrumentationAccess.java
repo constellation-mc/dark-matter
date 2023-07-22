@@ -40,7 +40,6 @@ public class InstrumentationAccess {
     private InstrumentationAccess() {
         throw new UnsupportedOperationException();
     }
-    private static final String INSTRUMENTATION_KEY = "dark-matter-danger:instrumentation";
     public static final String EXPORT_DIR = ".dark-matter/class";
     public static final String GAME_DIR = FabricLoader.getInstance().getGameDir().toString();
     public static final String AGENT_DIR = ".dark-matter/agent";
@@ -141,26 +140,11 @@ public class InstrumentationAccess {
             DarkMatterLog.error(String.format("Couldn't clean %s", EXPORT_DIR), e);
         }
 
-        boolean bootstrap = false;
-        for (ModContainer modContainer : FabricLoader.getInstance().getAllMods()) {
-            ModMetadata metadata = modContainer.getMetadata();
-            if (metadata.containsCustomValue(INSTRUMENTATION_KEY)) {
-                if (metadata.getCustomValue(INSTRUMENTATION_KEY).getAsBoolean()) {
-                    bootstrap = true;
-                    break;
-                }
-            }
-        }
-        bootstrap(bootstrap);
+        bootstrap();
     }
 
-    public static void bootstrap(boolean bootstrap) {
+    public static void bootstrap() {
         if (canInstrument()) return;
-
-        if (!bootstrap) {
-            DarkMatterLog.info("No mod opted into instrumentation");
-            return;
-        }
 
         try {
             final String name = ManagementFactory.getRuntimeMXBean().getName();
@@ -196,7 +180,7 @@ public class InstrumentationAccess {
             instrumentation = (Instrumentation) field.get(null);
             if (instrumentation != null) canInstrument = true;
         } catch (final Throwable throwable) {
-            DarkMatterLog.error("An error occurred during an attempt to attach an instrumentation agent, which might be due to spaces in the path of the game's installation.", throwable);
+            DarkMatterLog.error("An error occurred during an attempt to attach an instrumentation agent.", throwable);
         }
     }
 
@@ -211,10 +195,6 @@ public class InstrumentationAccess {
                 throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"!");
             }
         }
-    }
-
-    public static void init() {
-        //preLaunch
     }
 
     @FunctionalInterface
