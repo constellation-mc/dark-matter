@@ -1,18 +1,32 @@
 ## What's new:
 
-!!! Mixpanel module has undergone a rewrite. !!!
+Breaking changes for the Mixpanel module, notable ones for others.
 
 ### Analytics
 
 * Fixed new users getting null IDs.
 * ID will only be assigned if analytics are enabled.
 * Now, handlers will handle messages if either analytics or crashlytics are on.
-* Mixpanel module has undergone a rewrite
+* Added null checks for various method arguments.
+* Mixpanel module has undergone a rewrite:
   * `org.json` and `mixpanel` dependencies were dropped.
   * `mixpanel` was condensed into a single MixpanelAPI class, which immediately sends your request.
-  * `MessageProvider` no longer requires you to return anything.
+  * MessageProvider no longer requires you to return anything.
+
+### Content
+
+* Non-prefixed methods in ItemGroupExtensions are now deprecated.
 
 ### Danger
 
 * Danger will no longer auto-start with the game.
-  * You no longer need `= "dark-matter-danger:instrumentation"` in your `fabric.mod.json
+  * You no longer need `"dark-matter-danger:instrumentation"` in your `fabric.mod.json`.
+
+### Enums
+
+* EnumWrapper now uses `values()[0]` just in case anything gets renamed.
+
+### Recipe Book
+
+* Non-prefixed methods in PaginatedRecipeGroupButtonWidget and PaginatedRecipeBookWidget are now deprecated.
+* Removed ApiStatus annotation from classes.
