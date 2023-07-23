@@ -6,10 +6,12 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemGroup;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin implements ItemGroupExtensions {
 
+    @Unique
     public AnimatedItemGroup dark_matter$animation;
 
     @Environment(EnvType.CLIENT)
