@@ -6,26 +6,28 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemGroup;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin implements ItemGroupExtensions {
-    public AnimatedItemGroup cracker_util$animation;
+@Unique
+    public AnimatedItemGroup dark_matter$animation;
 
     @Environment(EnvType.CLIENT)
     @Override
-    public boolean shouldAnimateIcon() {
-        return cracker_util$animation != null;
+    public boolean dm$shouldAnimateIcon() {
+        return dark_matter$animation != null;
     }
 
     @Override
-    public ItemGroup setIconAnimation(AnimatedItemGroup animation) {
-        this.cracker_util$animation = animation;
+    public ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
+        this.dark_matter$animation = animation;
         return (ItemGroup) (Object) this;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public AnimatedItemGroup getIconAnimation() {
-        return this.cracker_util$animation;
+    public AnimatedItemGroup dm$getIconAnimation() {
+        return this.dark_matter$animation;
     }
 }

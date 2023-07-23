@@ -1,14 +1,14 @@
 package me.melontini.dark_matter.analytics.mixpanel;
 
-import com.mixpanel.mixpanelapi.MessageBuilder;
-import com.mixpanel.mixpanelapi.MixpanelAPI;
+import com.google.gson.JsonObject;
 import me.melontini.dark_matter.DarkMatterLog;
 import me.melontini.dark_matter.analytics.Analytics;
 import me.melontini.dark_matter.analytics.MessageHandler;
 import me.melontini.dark_matter.analytics.Prop;
+import me.melontini.dark_matter.analytics.mixpanel.api.MixpanelAPI;
+import me.melontini.dark_matter.util.MakeSure;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +19,6 @@ import java.util.concurrent.Future;
  */
 public class MixpanelAnalytics {
     private static final Map<String, Handler> MESSAGE_HANDLERS = new ConcurrentHashMap<>();
-    private static final MixpanelAPI MIXPANEL = new MixpanelAPI();
-    private static final MixpanelAPI MIXPANEL_EU = new MixpanelAPI("https://api-eu.mixpanel.com/track", "https://api-eu.mixpanel.com/engage", "https://api-eu.mixpanel.com/groups");
 
     /**
      * Initializes a Handler instance for the provided token and stores it in the MESSAGE_HANDLERS map.
@@ -30,7 +28,8 @@ public class MixpanelAnalytics {
      * @return A MixpanelHandler instance for the provided token.
      */
     public static Handler init(String token, boolean eu) {
-        return MESSAGE_HANDLERS.computeIfAbsent(token, k -> new Handler(eu, new MessageBuilder(token)));
+        MakeSure.notEmpty(token, "Invalid token provided! (null/empty)");
+        return MESSAGE_HANDLERS.computeIfAbsent(token, k -> new Handler(new MixpanelAPI(eu, token)));
     }
 
     /**
@@ -41,30 +40,25 @@ public class MixpanelAnalytics {
      * @return The modified JSONObject.
      */
     @Contract("_, _ -> param1")
-    public static JSONObject attachProps(JSONObject object, Prop @NotNull ... props) {
+    public static JsonObject attachProps(JsonObject object, Prop @NotNull ... props) {
         for (Prop prop : props) {
-            object.put(getPropName(prop), prop.get());
+            object.addProperty(getPropName(prop), prop.get());
         }
         return object;
     }
 
     public static class Handler extends MessageHandler<MessageProvider> {
-        private final MessageBuilder messageBuilder;
         private final MixpanelAPI mixpanel;
 
-        public Handler(boolean eu, MessageBuilder messageBuilder) {
-            this.messageBuilder = messageBuilder;
-            this.mixpanel = eu ? MIXPANEL_EU : MIXPANEL;
+        public Handler(MixpanelAPI api) {
+            this.mixpanel = api;
         }
 
         protected void sendInternal(MessageProvider consumer, boolean wait, boolean errors) {
-            if (!Analytics.isEnabled()) return;
+            if (!Analytics.isEnabled() && !Analytics.handleCrashes()) return;
             Future<?> future = EXECUTOR.submit(() -> {
                 try {
-                    JSONObject message = consumer.consume(messageBuilder);
-                    if (message != null) {
-                        mixpanel.sendMessage(message);
-                    }
+                    consumer.consume(this.mixpanel);
                 } catch (Exception e) {
                     if (errors) DarkMatterLog.error("Could not send analytics message", e);
                 }
@@ -85,7 +79,7 @@ public class MixpanelAnalytics {
     }
 
     public interface MessageProvider {
-        JSONObject consume(MessageBuilder messageBuilder);
+        void consume(MixpanelAPI mixpanel);
     }
 
     public static String getPropName(Prop prop) {

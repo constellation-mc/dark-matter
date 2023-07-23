@@ -90,9 +90,9 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
 
     @Unique
     @Override
-    public void updatePages() {
+    public void dm$updatePages() {
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            if (widget.getPage() == this.page) {
+            if (widget.dm$getPage() == this.page) {
                 RecipeBookGroup recipeBookGroup = widget.getCategory();
                 if (recipeBookGroup.name().contains("_SEARCH")) {
                     widget.visible = true;
@@ -110,10 +110,10 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     private void dark_matter$mouseClicked(double mouseX, double mouseY, int button, CallbackInfoReturnable<Boolean> cir) {
         if (this.client.player != null) if (this.isOpen() && !this.client.player.isSpectator()) {
             if (this.nextPageButton.mouseClicked(mouseX, mouseY, button)) {
-                if (this.page < (this.pages - 1)) setPage(++this.page);
+                if (this.page < (this.pages - 1)) dm$setPage(++this.page);
                 cir.setReturnValue(true);
             } else if (this.prevPageButton.mouseClicked(mouseX, mouseY, button)) {
-                if (this.page > 0) setPage(--this.page);
+                if (this.page > 0) dm$setPage(--this.page);
                 cir.setReturnValue(true);
             }
         }
@@ -121,7 +121,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
 
     @Unique
     @Override
-    public void updatePageSwitchButtons() {
+    public void dm$updatePageSwitchButtons() {
         if (this.nextPageButton != null) this.nextPageButton.visible = this.pages > 1 && this.page < (this.pages - 1);
         if (this.prevPageButton != null) this.prevPageButton.visible = this.pages > 1 && this.page != 0;
     }
@@ -145,38 +145,38 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         this.currentTab.setToggled(true);
 
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            widget.setPage((int) Math.floor(wc / 6f));
+            widget.dm$setPage((int) Math.floor(wc / 6f));
             widget.setPosition(x, y + 27 * index++);
             if (index == 6) index = 0;
             wc++;
         }
 
         this.pages = MathStuff.fastCeil(wc / 6f);
-        updatePages();
-        updatePageSwitchButtons();
+        dm$updatePages();
+        dm$updatePageSwitchButtons();
         ci.cancel();
     }
 
     @Unique
     @Override
-    public int getPage() {
+    public int dm$getPage() {
         return this.page;
     }
 
     @Unique
     @Override
-    public void setPage(int page) {
+    public void dm$setPage(int page) {
         if (page < 0) page = 0;
         if (page > pages - 1) page = pages - 1;
 
         this.page = page;
-        updatePages();
-        updatePageSwitchButtons();
+        dm$updatePages();
+        dm$updatePageSwitchButtons();
     }
 
     @Unique
     @Override
-    public int getPageCount() {
+    public int dm$getPageCount() {
         return this.pages;
     }
 }
