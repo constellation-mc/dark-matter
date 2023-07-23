@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.util.MakeSure;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,6 +21,7 @@ public class Uploader {
     private static final String MCLO_GS_API = "https://api.mclo.gs/1/log";
 
     public static String uploadToMclo_gs(String log) {
+        MakeSure.notEmpty(log, "Empty or null log provided!");
         try {
             HttpResponse<String> response = CLIENT.send(HttpRequest.newBuilder()
                     .uri(URI.create(MCLO_GS_API))
