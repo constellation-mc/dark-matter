@@ -8,7 +8,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(MinecraftClient.class)
-public class MinecraftClientMixin {//TODO move this out of base
+public class MinecraftClientMixin {
     @Inject(method = "method_29338", at = @At("TAIL"))
     private void dark_matter$init(CallbackInfo ci) {
         FakeWorld.init();
