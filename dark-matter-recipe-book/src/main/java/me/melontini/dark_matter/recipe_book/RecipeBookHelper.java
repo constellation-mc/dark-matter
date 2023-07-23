@@ -10,13 +10,11 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.book.RecipeBookOptions;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@ApiStatus.Experimental
 public class RecipeBookHelper {
     private RecipeBookHelper() {
         throw new UnsupportedOperationException();
