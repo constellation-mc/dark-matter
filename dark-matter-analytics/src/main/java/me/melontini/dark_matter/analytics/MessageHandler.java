@@ -1,5 +1,7 @@
 package me.melontini.dark_matter.analytics;
 
+import me.melontini.dark_matter.util.MakeSure;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,14 +14,17 @@ public abstract class MessageHandler<T> {
     public static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor(r -> new Thread(r, "Dark Matter analytics thread"));
 
     public final void send(T consumer, boolean wait, boolean errors) {
+        MakeSure.notNull(consumer, "null consumer provided");
         if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, wait, errors);
     }
 
     public final void send(T consumer, boolean wait) {
+        MakeSure.notNull(consumer, "null consumer provided");
         if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, wait, false);
     }
 
     public final void send(T consumer) {
+        MakeSure.notNull(consumer, "null consumer provided");
         if (Analytics.isEnabled() || Analytics.handleCrashes()) sendInternal(consumer, false, false);
     }
 

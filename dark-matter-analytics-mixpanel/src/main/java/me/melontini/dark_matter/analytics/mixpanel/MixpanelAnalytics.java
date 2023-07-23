@@ -6,6 +6,7 @@ import me.melontini.dark_matter.analytics.Analytics;
 import me.melontini.dark_matter.analytics.MessageHandler;
 import me.melontini.dark_matter.analytics.Prop;
 import me.melontini.dark_matter.analytics.mixpanel.api.MixpanelAPI;
+import me.melontini.dark_matter.util.MakeSure;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,7 @@ public class MixpanelAnalytics {
      * @return A MixpanelHandler instance for the provided token.
      */
     public static Handler init(String token, boolean eu) {
+        MakeSure.notEmpty(token, "Invalid token provided! (null/empty)");
         return MESSAGE_HANDLERS.computeIfAbsent(token, k -> new Handler(new MixpanelAPI(eu, token)));
     }
 
