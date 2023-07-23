@@ -292,7 +292,7 @@ public class ContentBuilder {
                 }
             };
 
-            if (this.animatedIcon != null) itemGroup.setIconAnimation(this.animatedIcon);
+            if (this.animatedIcon != null) itemGroup.dm$setIconAnimation(this.animatedIcon);
             if (this.texture != null) itemGroup.setTexture(this.texture);
 
             return itemGroup;

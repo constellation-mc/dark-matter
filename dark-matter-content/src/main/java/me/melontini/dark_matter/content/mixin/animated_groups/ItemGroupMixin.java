@@ -14,19 +14,19 @@ public class ItemGroupMixin implements ItemGroupExtensions {
 
     @Environment(EnvType.CLIENT)
     @Override
-    public boolean shouldAnimateIcon() {
+    public boolean dm$shouldAnimateIcon() {
         return dark_matter$animation != null;
     }
 
     @Override
-    public ItemGroup setIconAnimation(AnimatedItemGroup animation) {
+    public ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
         this.dark_matter$animation = animation;
         return (ItemGroup) (Object) this;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
-    public AnimatedItemGroup getIconAnimation() {
+    public AnimatedItemGroup dm$getIconAnimation() {
         return this.dark_matter$animation;
     }
 }
