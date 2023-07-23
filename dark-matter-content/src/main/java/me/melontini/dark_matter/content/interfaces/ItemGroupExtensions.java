@@ -5,15 +5,25 @@ import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemGroup;
 
 public interface ItemGroupExtensions {
-    @Environment(EnvType.CLIENT)
-    @Deprecated
-    default boolean shouldAnimateIcon() {
-        return dm$shouldAnimateIcon();
-    }
 
     @Environment(EnvType.CLIENT)
     default boolean dm$shouldAnimateIcon() {
         return false;
+    }
+
+    default ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
+        throw new IllegalStateException("Interface not implemented");
+    }
+
+    @Environment(EnvType.CLIENT)
+    default AnimatedItemGroup dm$getIconAnimation() {
+        throw new IllegalStateException("Interface not implemented");
+    }
+
+    @Environment(EnvType.CLIENT)
+    @Deprecated
+    default boolean shouldAnimateIcon() {
+        return dm$shouldAnimateIcon();
     }
 
     @Deprecated
@@ -21,18 +31,9 @@ public interface ItemGroupExtensions {
         return dm$setIconAnimation(animation);
     }
 
-    default ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
-        throw new IllegalStateException("Interface not implemented");
-    }
-
     @Deprecated
     @Environment(EnvType.CLIENT)
     default AnimatedItemGroup getIconAnimation() {
         return dm$getIconAnimation();
-    }
-
-    @Environment(EnvType.CLIENT)
-    default AnimatedItemGroup dm$getIconAnimation() {
-        throw new IllegalStateException("Interface not implemented");
     }
 }
