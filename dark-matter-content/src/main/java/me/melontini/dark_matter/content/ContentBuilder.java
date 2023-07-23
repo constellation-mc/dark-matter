@@ -287,7 +287,7 @@ public class ContentBuilder {
             if (this.texture != null) builder.texture(this.texture);
 
             ItemGroup group = builder.build();
-            if (this.animatedIcon != null) group.setIconAnimation(this.animatedIcon);
+            if (this.animatedIcon != null) group.dm$setIconAnimation(this.animatedIcon);
             return group;
         }
     }

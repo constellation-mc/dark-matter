@@ -1,7 +1,6 @@
 package me.melontini.dark_matter.recipe_book;
 
 import com.mojang.datafixers.util.Pair;
-import me.melontini.dark_matter.enums.util.EnumUtils;
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.Utilities;
 import net.fabricmc.api.EnvType;
@@ -11,13 +10,11 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.book.RecipeBookOptions;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-@ApiStatus.Experimental
 public class RecipeBookHelper {
     private RecipeBookHelper() {
         throw new UnsupportedOperationException();
@@ -108,12 +105,8 @@ public class RecipeBookHelper {
     public static RecipeBookCategory createCategory(String internalName) {
         MakeSure.notEmpty(internalName, "Tried to register a RecipeBookCategory with an empty string.");
 
-        RecipeBookCategory category;
-        try {
-            category = EnumUtils.callEnumInvoker(RecipeBookCategory.class, internalName);
-        } catch (Throwable e) {
-            throw new RuntimeException("Couldn't extend RecipeBookCategory", e);
-        }
+        RecipeBookCategory category = (RecipeBookCategory) RecipeBookCategory.values()[0].dark_matter$extend(internalName);
+
         RecipeBookOptions.CATEGORY_OPTION_NAMES.put(category, new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
         return category;
     }

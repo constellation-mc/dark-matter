@@ -109,8 +109,6 @@ allprojects {
 dependencies {
     localRuntime(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     localRuntime("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}")
-    localRuntime("com.mixpanel:mixpanel-java:${project.mixpanel_version}")
-    localRuntime("org.json:json:${project.org_json_version}")
 
     for (Project pj : subprojects) {
         api(include(project(path: ":${pj.name}", configuration: 'namedElements')))

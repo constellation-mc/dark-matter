@@ -1,11 +1,32 @@
 ## What's new:
 
+Breaking changes for the Mixpanel module, notable ones for others.
+
 ### Analytics
 
-* New analytics module! `analytics-crashes`
-* * Adds event-like crash handling. Also, features a class to quickly upload logs to mclo.gs
-* Analytics config moved to JSON + new option for Crashlytics.
+* Fixed new users getting null IDs.
+* ID will only be assigned if analytics are enabled.
+* Now, handlers will handle messages if either analytics or crashlytics are on.
+* Added null checks for various method arguments.
+* Mixpanel module has undergone a rewrite:
+  * `org.json` and `mixpanel` dependencies were dropped.
+  * `mixpanel` was condensed into a single MixpanelAPI class, which immediately sends your request.
+  * MessageProvider no longer requires you to return anything.
 
-### Minecraft
+### Content
 
-* Fixed matrices not getting popped after rendering tooltips. (1.20+)
+* Non-prefixed methods in ItemGroupExtensions are now deprecated.
+
+### Danger
+
+* Danger will no longer auto-start with the game.
+  * You no longer need `"dark-matter-danger:instrumentation"` in your `fabric.mod.json`.
+
+### Enums
+
+* EnumWrapper now uses `values()[0]` just in case anything gets renamed.
+
+### Recipe Book
+
+* Non-prefixed methods in PaginatedRecipeGroupButtonWidget and PaginatedRecipeBookWidget are now deprecated.
+* Removed ApiStatus annotation from classes.
