@@ -11,12 +11,12 @@ public abstract class RecipeGroupButtonMixin implements PaginatedRecipeGroupButt
     private int page = -1;
 
     @Override
-    public int getPage() {
+    public int dm$getPage() {
         return page;
     }
 
     @Override
-    public void setPage(int page) {
+    public void dm$setPage(int page) {
         this.page = page;
     }
 }

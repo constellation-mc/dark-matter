@@ -13,28 +13,13 @@ import java.util.UUID;
 
 
 public class Analytics {
-    private static final UUID nullID = new UUID(0,0);
-    private static final Config CONFIG;
+    private static final UUID nullID = new UUID(0, 0);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-
-    private static final Path CU_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("cracker-util/analytics.properties");
     private static final Path OLD_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("dark-matter/analytics.properties");
+    private static final Config CONFIG;
 
     static {
-        moveConfigIfExists();
         CONFIG = loadConfig();
-    }
-
-    private static void moveConfigIfExists() {
-        if (Files.exists(CU_CONFIG_PATH)) {
-            try {
-                if (!Files.exists(OLD_CONFIG_PATH.getParent())) Files.createDirectories(OLD_CONFIG_PATH.getParent());
-                DarkMatterLog.info("Found old config at config/cracker_analytics.properties, moving to config/dark-matter/analytics.properties");
-                Files.move(CU_CONFIG_PATH, OLD_CONFIG_PATH);
-            } catch (IOException e) {
-                DarkMatterLog.error("Couldn't move old config!", e);
-            }
-        }
     }
 
     private static void upgradeToJson(Config config) {
@@ -59,6 +44,8 @@ public class Analytics {
         if (Files.exists(configPath)) {
             try {
                 config = GSON.fromJson(Files.newBufferedReader(configPath), Config.class);
+                if (config.enabled && nullID.equals(config.userUUID)) config.userUUID = UUID.randomUUID();
+                if (!config.enabled) config.userUUID = nullID;
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -66,13 +53,12 @@ public class Analytics {
         } else {
             try {
                 Files.createDirectories(configPath.getParent());
-                Files.createFile(configPath);
+                if (config.enabled) config.userUUID = UUID.randomUUID();
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
         }
-        if (!config.enabled) config.userUUID = nullID;
         return config;
     }
 

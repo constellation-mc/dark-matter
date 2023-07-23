@@ -12,9 +12,6 @@
   "icon": "assets/dark-matter-danger/icon.png",
   "environment": "*",
   "entrypoints": {
-    "preLaunch": [
-      "me.melontini.dark_matter.danger.instrumentation.InstrumentationAccess::init"
-    ]
   },
   "depends": {
     "fabricloader": "*",
