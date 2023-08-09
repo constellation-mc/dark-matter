@@ -3,6 +3,7 @@ package me.melontini.dark_matter.content;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -20,7 +21,7 @@ public class ItemGroupHelper {
 
     public static void addItemGroupInjection(ItemGroup group, InjectEntries injectEntries) {
         if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
-            ItemGroupEvents.modifyEntriesEvent(group).register(entries -> injectEntries.inject(entries.getEnabledFeatures(), entries.shouldShowOpRestrictedItems(), entries));
+            ItemGroupEvents.modifyEntriesEvent(Registries.ITEM_GROUP.getKey(group).orElseThrow()).register(entries -> injectEntries.inject(entries.getEnabledFeatures(), entries.shouldShowOpRestrictedItems(), entries));
             return;
         }
         var list = INJECTED_GROUPS.computeIfAbsent(group, group1 -> new ArrayList<>());
