@@ -110,6 +110,16 @@ dependencies {
     localRuntime(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     localRuntime("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}")
 
+    def apiModules = [
+            "fabric-api-base",
+            "fabric-resource-loader-v0",
+            "fabric-object-builder-api-v1"
+    ]
+
+    for (final def module in apiModules) {
+        modLocalRuntime(fabricApi.module(module, project.fabric_api_version))
+    }
+
     for (Project pj : subprojects) {
         api(include(project(path: ":${pj.name}", configuration: 'namedElements')))
     }
