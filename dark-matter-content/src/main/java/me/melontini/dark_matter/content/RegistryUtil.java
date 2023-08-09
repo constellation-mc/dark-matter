@@ -10,11 +10,11 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
-import net.minecraft.screen.ScreenHandler;
-import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Contract;
@@ -114,7 +114,7 @@ public class RegistryUtil {
     public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
         if (shouldRegister) {
             EntityType<T> type = builder.build();
-            Registry.register(Registry.ENTITY_TYPE, id, type);
+            Registry.register(Registries.ENTITY_TYPE, id, type);
             return type;
         }
         return null;
@@ -157,7 +157,7 @@ public class RegistryUtil {
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
         if (shouldRegister) {
             BlockEntityType<T> type = builder.build(null);
-            Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, id, type);
             return type;
         }
         return null;
