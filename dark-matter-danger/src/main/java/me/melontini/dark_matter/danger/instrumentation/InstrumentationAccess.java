@@ -145,41 +145,48 @@ public class InstrumentationAccess {
         if (canInstrument()) return;
 
         try {
-            final String name = ManagementFactory.getRuntimeMXBean().getName();
-            final Path jarPath = Paths.get(GAME_DIR, AGENT_DIR, "dark_matter_instrumentation_agent.jar");
-            final File jar = jarPath.toFile();
-
-            DarkMatterLog.info("Attaching instrumentation agent to VM.");
-
-            if (!Files.exists(jarPath)) {
-                createAgentJar(jarPath, jar);
-            } else {
-                try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
-                    if (stream != null) {
-                        byte[] bytes = stream.readAllBytes();
-                        if (!Arrays.equals(Files.readAllBytes(jarPath), bytes)) {
-                            DarkMatterLog.info("Newer jar found, overwriting the old one...");
-                            Files.delete(jarPath);
-                            createAgentJar(jarPath, jar);
-                        }
-                    } else {
-                        DarkMatterLog.error("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"! Couldn't check jar version! Trying to attach anyway...");
-                    }
-                }
+            try {
+                instrumentation = tryAttachDarkAgent();
+            } catch (Exception e) {
+                DarkMatterLog.info("Failed to attach DM agent, trying the ByteBuddy one.");
+                instrumentation = ByteBuddyAgent.install();
             }
-            ByteBuddyAgent.attach(jar, name.substring(0, name.indexOf('@')));
 
-            DarkMatterLog.info("Successfully attached instrumentation agent.");
-
-            final Field field = Class.forName("me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent", false, FabricLoader.class.getClassLoader()).getField("instrumentation");
-
-            field.setAccessible(true);
-
-            instrumentation = (Instrumentation) field.get(null);
             if (instrumentation != null) canInstrument = true;
         } catch (final Throwable throwable) {
             DarkMatterLog.error("An error occurred during an attempt to attach an instrumentation agent.", throwable);
         }
+    }
+
+    private static Instrumentation tryAttachDarkAgent() throws Exception {
+        final String name = ManagementFactory.getRuntimeMXBean().getName();
+        final Path jarPath = Paths.get(GAME_DIR, AGENT_DIR, "dark_matter_instrumentation_agent.jar");
+        final File jar = jarPath.toFile();
+
+        DarkMatterLog.info("Attaching instrumentation agent to VM.");
+
+        if (!Files.exists(jarPath)) {
+            createAgentJar(jarPath, jar);
+        } else {
+            try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
+                if (stream != null) {
+                    byte[] bytes = stream.readAllBytes();
+                    if (!Arrays.equals(Files.readAllBytes(jarPath), bytes)) {
+                        DarkMatterLog.info("Newer jar found, overwriting the old one...");
+                        Files.delete(jarPath);
+                        createAgentJar(jarPath, jar);
+                    }
+                } else {
+                    throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"! Couldn't check jar version! Trying to attach anyway...");
+                }
+            }
+        }
+        ByteBuddyAgent.attach(jar, name.substring(0, name.indexOf('@')));
+        DarkMatterLog.info("Successfully attached instrumentation agent.");
+
+        final Field field = Class.forName("me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent", false, FabricLoader.class.getClassLoader()).getField("instrumentation");
+        field.setAccessible(true);
+        return (Instrumentation) field.get(null);
     }
 
     private static void createAgentJar(Path jarPath, File jar) throws IOException {
