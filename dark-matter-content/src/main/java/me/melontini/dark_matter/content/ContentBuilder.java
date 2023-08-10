@@ -42,7 +42,7 @@ public class ContentBuilder {
         private BooleanSupplier register = () -> true;
         private ItemGroup itemGroup;
 
-        public ItemBuilder(Identifier identifier, Supplier<T> itemSupplier) {
+        private ItemBuilder(Identifier identifier, Supplier<T> itemSupplier) {
             this.identifier = identifier;
             this.itemSupplier = itemSupplier;
         }
@@ -89,7 +89,7 @@ public class ContentBuilder {
         private ItemFactory<?> itemFactory;
         private BlockEntityFactory<?> blockEntityFactory;
 
-        public BlockBuilder(Identifier identifier, Supplier<T> blockSupplier) {
+        private BlockBuilder(Identifier identifier, Supplier<T> blockSupplier) {
             this.identifier = identifier;
             this.blockSupplier = blockSupplier;
         }
