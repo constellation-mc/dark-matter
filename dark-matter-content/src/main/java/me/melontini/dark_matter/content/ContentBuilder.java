@@ -7,6 +7,8 @@ import me.melontini.dark_matter.minecraft.util.TextUtil;
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.Utilities;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -19,7 +21,6 @@ import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -248,7 +249,7 @@ public class ContentBuilder {
             return this;
         }
 
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, /*99% of the time, this will be a set*/ Consumer<Collection<ItemStack>> searchTabStacks) {
+        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, Consumer<Collection<ItemStack>> searchTabStacks) {
             MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
             this.tabStacks = parentTabStacks;
             this.searchTabStacks = searchTabStacks;
@@ -263,23 +264,19 @@ public class ContentBuilder {
 
         public ItemGroup build() {
             ItemGroup.Builder builder;
-            try {
-                Class<?> clazz = Class.forName("net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup");
-                builder = (ItemGroup.Builder) clazz.getMethod("builder", Identifier.class).invoke(null, identifier);
-            } catch (ClassNotFoundException | NoSuchMethodException | InvocationTargetException |
-                     IllegalAccessException e) {
-                try {
-                    builder = new ItemGroup.Builder(null, -1);
-                } catch (Exception e1) {
-                    throw new RuntimeException("couldn't build: " + identifier, e1);
-                }
+            if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
+                builder = FabricItemGroup.builder(this.identifier);
+            } else {
+                builder = new ItemGroup.Builder(null, -1);
             }
             builder.entries((enabledFeatures, entries, operatorEnabled) -> {
-                var list = ((ItemGroup.EntriesImpl) entries).parentTabStacks = new ArrayList<>();
-                var set = ((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>();
-
-                if (this.tabStacks != null) this.tabStacks.accept(list);
-                if (this.searchTabStacks != null) this.searchTabStacks.accept(set);
+                if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1") && entries instanceof FabricItemGroupEntries fabricEntries) {
+                    if (this.tabStacks != null) this.tabStacks.accept(fabricEntries.getDisplayStacks());
+                    if (this.searchTabStacks != null) this.searchTabStacks.accept(fabricEntries.getSearchTabStacks());
+                } else if (entries instanceof ItemGroup.EntriesImpl) {
+                    if (this.tabStacks != null) this.tabStacks.accept(((ItemGroup.EntriesImpl) entries).parentTabStacks = new LinkedList<>());
+                    if (this.searchTabStacks != null) this.searchTabStacks.accept(((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>());
+                }
             });
             builder.icon(() -> ItemGroupBuilder.this.icon.get());
 
