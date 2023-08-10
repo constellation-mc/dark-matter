@@ -8,6 +8,7 @@ package me.melontini.dark_matter.danger.instrumentation;
 
 import me.melontini.dark_matter.DarkMatterLog;
 import me.melontini.dark_matter.reflect.ReflectionUtil;
+import me.melontini.dark_matter.util.MakeSure;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.ClassReader;
@@ -38,6 +39,7 @@ public class InstrumentationAccess {
     private InstrumentationAccess() {
         throw new UnsupportedOperationException();
     }
+
     public static final String EXPORT_DIR = ".dark-matter/class";
     public static final String GAME_DIR = FabricLoader.getInstance().getGameDir().toString();
     public static final String AGENT_DIR = ".dark-matter/agent";
@@ -152,7 +154,8 @@ public class InstrumentationAccess {
                 instrumentation = ByteBuddyAgent.install();
             }
 
-            if (instrumentation != null) canInstrument = true;
+            canInstrument = true;
+            DarkMatterLog.info("Successfully attached instrumentation agent.");
         } catch (final Throwable throwable) {
             DarkMatterLog.error("An error occurred during an attempt to attach an instrumentation agent.", throwable);
         }
@@ -182,11 +185,10 @@ public class InstrumentationAccess {
             }
         }
         ByteBuddyAgent.attach(jar, name.substring(0, name.indexOf('@')));
-        DarkMatterLog.info("Successfully attached instrumentation agent.");
 
-        final Field field = Class.forName("me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent", false, FabricLoader.class.getClassLoader()).getField("instrumentation");
+        final Field field = Class.forName("me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent", false, ClassLoader.getSystemClassLoader()).getField("instrumentation");
         field.setAccessible(true);
-        return (Instrumentation) field.get(null);
+        return MakeSure.notNull((Instrumentation) field.get(null));
     }
 
     private static void createAgentJar(Path jarPath, File jar) throws IOException {
