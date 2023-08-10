@@ -265,7 +265,7 @@ public class ContentBuilder {
         public ItemGroup build() {
             ItemGroup.Builder builder;
             if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
-                builder = FabricItemGroup.builder(this.identifier);
+                builder = FabricItemGroup.builder();
             } else {
                 builder = new ItemGroup.Builder(null, -1);
             }
