@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.data;
+package me.melontini.dark_matter.minecraft.data;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -9,8 +9,8 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class NBTUtil {
-    private NBTUtil() {
+public class NbtUtil {
+    private NbtUtil() {
         throw new UnsupportedOperationException();
     }
 
