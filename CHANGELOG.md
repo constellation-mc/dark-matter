@@ -1,32 +1,29 @@
 ## What's new:
 
-Breaking changes for the Mixpanel module, notable ones for others.
-
 ### Analytics
 
-* Fixed new users getting null IDs.
-* ID will only be assigned if analytics are enabled.
-* Now, handlers will handle messages if either analytics or crashlytics are on.
-* Added null checks for various method arguments.
-* Mixpanel module has undergone a rewrite:
-  * `org.json` and `mixpanel` dependencies were dropped.
-  * `mixpanel` was condensed into a single MixpanelAPI class, which immediately sends your request.
-  * MessageProvider no longer requires you to return anything.
 
 ### Content
 
-* Non-prefixed methods in ItemGroupExtensions are now deprecated.
+* `FabricEntityTypeBuilder` and `FabricBlockEntityTypeBuilder` can now be used in `RegistryUtil`. You need to bring your own Fabric API.
+* `ItemGroupHelper` will prefer the Fabric API event if FAPI is loaded. (1.19.3+)
+* `ItemGroupHelper.InjectEntries` now provides `ItemGroup.Entries` instead of `ItemGroup.EntriesImpl`.
+* 
 
 ### Danger
 
-* Danger will no longer auto-start with the game.
-  * You no longer need `"dark-matter-danger:instrumentation"` in your `fabric.mod.json`.
+* In an act of desperation, `InstrumentationAccess` will try to attach the ByteBuddy agent if the DM one fails.
 
-### Enums
+### Minecraft
 
-* EnumWrapper now uses `values()[0]` just in case anything gets renamed.
+* `NbtUtil` and `NbtBuilder` are now part of `minecraft`.
+* `NbtUtil#writeInventoryToNbt` and `NbtUtil#readInventoryFromNbt` now accept custom keys.
 
-### Recipe Book
+### Mirage
 
-* Non-prefixed methods in PaginatedRecipeGroupButtonWidget and PaginatedRecipeBookWidget are now deprecated.
-* Removed ApiStatus annotation from classes.
+* The init mixin is no longer required.
+* * The game will hang for a bit if this fails to apply.
+
+### Glitter
+
+* Particles no longer wait for resource init before ticking.

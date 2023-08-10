@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.data;
+package me.melontini.dark_matter.minecraft.data;
 
 import me.melontini.dark_matter.util.MakeSure;
 import net.minecraft.nbt.NbtCompound;

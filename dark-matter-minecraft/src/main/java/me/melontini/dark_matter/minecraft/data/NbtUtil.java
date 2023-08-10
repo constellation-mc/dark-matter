@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.data;
+package me.melontini.dark_matter.minecraft.data;
 
 import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
@@ -9,9 +9,13 @@ import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
-public class NBTUtil {
-    private NBTUtil() {
+public class NbtUtil {
+    private NbtUtil() {
         throw new UnsupportedOperationException();
+    }
+
+    public static @NotNull NbtCompound writeInventoryToNbt(NbtCompound nbt, @NotNull Inventory inventory) {
+        return writeInventoryToNbt("Items", nbt, inventory);
     }
 
     /**
@@ -21,7 +25,7 @@ public class NBTUtil {
      * @param inventory the inventory to write to the NbtCompound
      * @return the NbtCompound with the inventory data written to it
      */
-    public static @NotNull NbtCompound writeInventoryToNbt(NbtCompound nbt, @NotNull Inventory inventory) {
+    public static @NotNull NbtCompound writeInventoryToNbt(String key, NbtCompound nbt, @NotNull Inventory inventory) {
         nbt = (nbt == null) ? new NbtCompound() : nbt;
         NbtList nbtList = new NbtList();
         for (int i = 0; i < inventory.size(); ++i) {
@@ -30,8 +34,12 @@ public class NBTUtil {
                 nbtList.add(itemStack.writeNbt(NbtBuilder.create().putByte("Slot", (byte) i).build()));
             }
         }
-        nbt.put("Items", nbtList);
+        nbt.put(key, nbtList);
         return nbt;
+    }
+
+    public static void readInventoryFromNbt(NbtCompound nbt, Inventory inventory) {
+        readInventoryFromNbt("Items", nbt, inventory);
     }
 
     /**
@@ -40,10 +48,10 @@ public class NBTUtil {
      * @param nbt       the NbtCompound to read the inventory from
      * @param inventory the inventory to read the data into
      */
-    public static void readInventoryFromNbt(NbtCompound nbt, Inventory inventory) {
+    public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory) {
         if (nbt != null)
-            if (nbt.getList("Items", NbtElement.COMPOUND_TYPE) != null) {
-                NbtList nbtList = nbt.getList("Items", NbtElement.COMPOUND_TYPE);
+            if (nbt.getList(key, NbtElement.COMPOUND_TYPE) != null) {
+                NbtList nbtList = nbt.getList(key, NbtElement.COMPOUND_TYPE);
                 for (int i = 0; i < nbtList.size(); ++i) {
                     NbtCompound nbtCompound = nbtList.getCompound(i);
                     int j = nbtCompound.getByte("Slot") & 255;

@@ -1,6 +1,8 @@
 package me.melontini.dark_matter.content;
 
 import me.melontini.dark_matter.util.Utilities;
+import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockWithEntity;
 import net.minecraft.block.entity.BlockEntity;
@@ -103,6 +105,20 @@ public class RegistryUtil {
         return null;
     }
 
+    public static <T extends Entity> EntityType<T> createEntityType(Identifier id, FabricEntityTypeBuilder<T> builder) {
+        return createEntityType(true, id, builder);
+    }
+
+    @Contract("false, _, _ -> null")
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
+        if (shouldRegister) {
+            EntityType<T> type = builder.build();
+            Registry.register(Registry.ENTITY_TYPE, id, type);
+            return type;
+        }
+        return null;
+    }
+
     public static @Nullable <T extends Block> T createBlock(Identifier id, Supplier<T> supplier) {
         return createBlock(true, id, supplier);
     }
@@ -124,6 +140,20 @@ public class RegistryUtil {
 
     @Contract("false, _, _ -> null")
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
+        if (shouldRegister) {
+            BlockEntityType<T> type = builder.build(null);
+            Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
+            return type;
+        }
+        return null;
+    }
+
+    public static <T extends BlockEntity> BlockEntityType<T> createBlockEntity(Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
+        return createBlockEntity(true, id, builder);
+    }
+
+    @Contract("false, _, _ -> null")
+    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
         if (shouldRegister) {
             BlockEntityType<T> type = builder.build(null);
             Registry.register(Registry.BLOCK_ENTITY_TYPE, id, type);
