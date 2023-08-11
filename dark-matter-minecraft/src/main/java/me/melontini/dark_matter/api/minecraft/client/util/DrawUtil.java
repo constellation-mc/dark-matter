@@ -5,6 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
+import net.minecraft.client.gui.tooltip.TooltipPositioner;
 import net.minecraft.client.item.TooltipData;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.model.BakedModel;
@@ -12,7 +13,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
-import net.minecraft.util.math.Matrix4f;
+import org.joml.Matrix4f;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +52,10 @@ public class DrawUtil {
 
     public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y) {
         DrawInternals.renderTooltipFromComponents(matrices, components, x, y);
+    }
+
+    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
+        DrawInternals.renderTooltipFromComponents(matrices, components, x, y, positioner);
     }
 
     public static void fillGradient(MatrixStack matrices, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
