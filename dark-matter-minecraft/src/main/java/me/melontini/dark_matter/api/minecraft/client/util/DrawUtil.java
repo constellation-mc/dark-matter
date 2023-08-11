@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.minecraft.client.util;
 import me.melontini.dark_matter.impl.minecraft.client.util.DrawInternals;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
@@ -30,32 +31,32 @@ import java.util.Optional;
 public class DrawUtil {
     public static final Screen FAKE_SCREEN = DrawInternals.FAKE_SCREEN;
 
-    public static void renderTooltip(MatrixStack matrices, ItemStack stack, float x, float y) {
-        DrawInternals.renderTooltip(matrices, stack, x, y);
+    public static void renderTooltip(DrawContext context, ItemStack stack, float x, float y) {
+        DrawInternals.renderTooltip(context, stack, x, y);
     }
 
-    public static void renderTooltip(MatrixStack matrices, Text text, float x, float y) {
-        DrawInternals.renderTooltip(matrices, text, x, y);
+    public static void renderTooltip(DrawContext context, Text text, float x, float y) {
+        DrawInternals.renderTooltip(context, text, x, y);
     }
 
-    public static void renderTooltip(MatrixStack matrices, List<Text> lines, float x, float y) {
-        DrawInternals.renderTooltip(matrices, lines, x, y);
+    public static void renderTooltip(DrawContext context, List<Text> lines, float x, float y) {
+        DrawInternals.renderTooltip(context, lines, x, y);
     }
 
-    public static void renderTooltip(MatrixStack matrices, List<Text> lines, Optional<TooltipData> data, float x, float y) {
-        DrawInternals.renderTooltip(matrices, lines, data, x, y);
+    public static void renderTooltip(DrawContext context, List<Text> lines, Optional<TooltipData> data, float x, float y) {
+        DrawInternals.renderTooltip(context, lines, data, x, y);
     }
 
-    public static void renderOrderedTooltip(MatrixStack matrices, List<? extends OrderedText> lines, float x, float y) {
-        DrawInternals.renderOrderedTooltip(matrices, lines, x, y);
+    public static void renderOrderedTooltip(DrawContext context, List<? extends OrderedText> lines, float x, float y) {
+        DrawInternals.renderOrderedTooltip(context, lines, x, y);
     }
 
-    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y) {
-        DrawInternals.renderTooltipFromComponents(matrices, components, x, y);
+    public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y) {
+        DrawInternals.renderTooltipFromComponents(context, components, x, y);
     }
 
-    public static void renderTooltipFromComponents(MatrixStack matrices, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
-        DrawInternals.renderTooltipFromComponents(matrices, components, x, y, positioner);
+    public static void renderTooltipFromComponents(DrawContext context, List<TooltipComponent> components, float x, float y, TooltipPositioner positioner) {
+        DrawInternals.renderTooltipFromComponents(context, components, x, y, positioner);
     }
 
     public static void fillGradient(MatrixStack matrices, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
