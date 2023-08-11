@@ -1,7 +1,8 @@
 ## What's new:
 
-### Analytics
+### Major breaking changes!!!
 
+Split API/Impl in all modules. A lot of package changes.
 
 ### Content
 
