@@ -1,8 +1,9 @@
-package me.melontini.dark_matter.analytics.crashes.mixin;
+package me.melontini.dark_matter.impl.analytics.crashes.mixin;
 
-import me.melontini.dark_matter.analytics.crashes.Crashlytics;
 import me.melontini.dark_matter.api.analytics.Analytics;
+import me.melontini.dark_matter.api.analytics.crashes.Crashlytics;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import me.melontini.dark_matter.impl.analytics.crashes.CrashlyticsInternals;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.crash.CrashReport;
@@ -30,7 +31,7 @@ public abstract class CrashReportMixin {
                 latestLog = Files.readString(FabricLoader.getInstance().getGameDir().resolve("logs/latest.log"));
             } catch (IOException ignored) {}
 
-            for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : Crashlytics.getHandlers()) {
+            for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : CrashlyticsInternals.getHandlers()) {
                 if (tuple.left().shouldHandle((CrashReport) (Object) this, this.cause, latestLog, envType)) {
                     tuple.right().handle((CrashReport) (Object) this, this.cause, latestLog, envType);
                 }

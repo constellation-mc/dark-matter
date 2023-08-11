@@ -1,11 +1,12 @@
-package me.melontini.dark_matter.analytics.crashes;
+package me.melontini.dark_matter.impl.analytics.crashes;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
 import java.net.URI;
@@ -15,7 +16,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-public class Uploader {
+@ApiStatus.Internal
+public class UploaderInternals {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String MCLO_GS_API = "https://api.mclo.gs/1/log";
