@@ -27,7 +27,7 @@
       "badges": [ "library" ]
     },
     "loom:injected_interfaces": {
-      "net/minecraft/class_1761": ["me/melontini/dark_matter/content/interfaces/ItemGroupExtensions"]
+      "net/minecraft/class_1761": ["me/melontini/dark_matter/api/content/interfaces/ItemGroupExtensions"]
     }
   }
 }

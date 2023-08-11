@@ -1,7 +1,7 @@
 {
   "required": true,
   "minVersion": "0.8",
-  "package": "me.melontini.dark_matter.content.mixin",
+  "package": "me.melontini.dark_matter.impl.content.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "animated_groups.ItemGroupMixin",
