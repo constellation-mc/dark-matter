@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.analytics;
+package me.melontini.dark_matter.api.analytics;
 
 import net.fabricmc.loader.api.FabricLoader;
 

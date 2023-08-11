@@ -1,12 +1,12 @@
 package me.melontini.dark_matter.analytics.mixpanel;
 
 import com.google.gson.JsonObject;
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import me.melontini.dark_matter.analytics.Analytics;
-import me.melontini.dark_matter.analytics.MessageHandler;
-import me.melontini.dark_matter.analytics.Prop;
 import me.melontini.dark_matter.analytics.mixpanel.api.MixpanelAPI;
+import me.melontini.dark_matter.api.analytics.Analytics;
+import me.melontini.dark_matter.api.analytics.MessageHandler;
+import me.melontini.dark_matter.api.analytics.Prop;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 

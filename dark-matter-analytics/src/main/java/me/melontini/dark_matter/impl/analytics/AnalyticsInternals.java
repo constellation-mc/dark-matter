@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.analytics;
+package me.melontini.dark_matter.impl.analytics;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -12,7 +12,7 @@ import java.util.Properties;
 import java.util.UUID;
 
 
-public class Analytics {
+public class AnalyticsInternals {
     private static final UUID nullID = new UUID(0, 0);
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final Path OLD_CONFIG_PATH = FabricLoader.getInstance().getConfigDir().resolve("dark-matter/analytics.properties");
@@ -78,7 +78,7 @@ public class Analytics {
         return CONFIG.crashesEnabled;
     }
 
-    public static class Config {
+    private static class Config {
         public boolean enabled = true;
         public boolean crashesEnabled = true;
         public UUID userUUID = nullID;
