@@ -6,12 +6,13 @@
 
 package me.melontini.dark_matter.impl.danger.instrumentation;
 
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 /**
  * @author //<a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
  */
+@ApiStatus.Internal
 @SuppressWarnings("unused")
 public class InstrumentationInternals {
     private InstrumentationInternals() {
