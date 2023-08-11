@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.interfaces.internal;
+package me.melontini.dark_matter.impl.content.interfaces;
 
 import org.jetbrains.annotations.ApiStatus;
 

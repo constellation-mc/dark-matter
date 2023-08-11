@@ -1,6 +1,6 @@
-package me.melontini.dark_matter.content.mixin.item_group_builder;
+package me.melontini.dark_matter.impl.content.mixin.item_group_builder;
 
-import me.melontini.dark_matter.content.interfaces.internal.ItemGroupArrayExtender;
+import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
 import net.minecraft.item.ItemGroup;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;

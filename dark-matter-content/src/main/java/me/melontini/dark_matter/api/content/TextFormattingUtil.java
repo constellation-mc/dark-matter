@@ -1,15 +1,12 @@
-package me.melontini.dark_matter.content;
+package me.melontini.dark_matter.api.content;
 
+import me.melontini.dark_matter.impl.content.TextFormattingInternals;
 import net.minecraft.text.TextColor;
 import net.minecraft.util.Formatting;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-
 public class TextFormattingUtil {
-    private TextFormattingUtil() {
-        throw new UnsupportedOperationException();
-    }
+
     /**
      * Registers a new color for an existing {@link Formatting} element.
      *
@@ -23,14 +20,7 @@ public class TextFormattingUtil {
      * @return the newly created {@link TextColor} instance
      */
     public static @NotNull TextColor addTextColor(@NotNull Formatting formatting) {
-        var tc = new TextColor(formatting.getColorValue(), formatting.getName());
-        TextColor.FORMATTING_TO_COLOR.put(formatting, tc);
-        TextColor.BY_NAME.put(tc.name, tc);
-        return tc;
+        return TextFormattingInternals.addTextColor(formatting);
     }
 
-    static {
-        TextColor.FORMATTING_TO_COLOR = new HashMap<>(TextColor.FORMATTING_TO_COLOR);
-        TextColor.BY_NAME = new HashMap<>(TextColor.BY_NAME);
-    }
 }

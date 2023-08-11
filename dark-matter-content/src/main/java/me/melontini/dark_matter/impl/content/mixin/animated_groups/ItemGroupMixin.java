@@ -1,7 +1,7 @@
-package me.melontini.dark_matter.content.mixin.animated_groups;
+package me.melontini.dark_matter.impl.content.mixin.animated_groups;
 
-import me.melontini.dark_matter.content.interfaces.AnimatedItemGroup;
-import me.melontini.dark_matter.content.interfaces.ItemGroupExtensions;
+import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
+import me.melontini.dark_matter.api.content.interfaces.ItemGroupExtensions;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemGroup;

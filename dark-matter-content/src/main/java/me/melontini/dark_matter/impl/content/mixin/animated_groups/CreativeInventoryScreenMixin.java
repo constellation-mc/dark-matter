@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.mixin.animated_groups;
+package me.melontini.dark_matter.impl.content.mixin.animated_groups;
 
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;

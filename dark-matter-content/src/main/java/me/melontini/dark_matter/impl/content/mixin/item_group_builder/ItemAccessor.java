@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.content.mixin.item_group_builder;
+package me.melontini.dark_matter.impl.content.mixin.item_group_builder;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
