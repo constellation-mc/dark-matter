@@ -2,7 +2,7 @@ package me.melontini.dark_matter.analytics;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;

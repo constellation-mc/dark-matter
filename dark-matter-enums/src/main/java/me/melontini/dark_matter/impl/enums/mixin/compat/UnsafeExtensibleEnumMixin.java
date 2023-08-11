@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.enums.mixin.compat;
 
-import me.melontini.dark_matter.util.mixin.MixinShouldApply;
-import me.melontini.dark_matter.util.mixin.Mod;
+import me.melontini.dark_matter.api.base.util.mixin.MixinShouldApply;
+import me.melontini.dark_matter.api.base.util.mixin.Mod;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.Constant;

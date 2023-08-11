@@ -1,8 +1,8 @@
 package me.melontini.dark_matter.impl.recipe_book;
 
 import com.mojang.datafixers.util.Pair;
-import me.melontini.dark_matter.util.MakeSure;
-import me.melontini.dark_matter.util.Utilities;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;

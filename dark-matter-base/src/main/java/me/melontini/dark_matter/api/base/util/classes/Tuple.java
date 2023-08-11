@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.util.classes;
+package me.melontini.dark_matter.api.base.util.classes;
 
 public record Tuple<L, R>(L left, R right) {
     @Override

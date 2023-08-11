@@ -1,10 +1,10 @@
-package me.melontini.dark_matter;
+package me.melontini.dark_matter.impl.base;
 
-import me.melontini.dark_matter.util.PrependingLogger;
+import me.melontini.dark_matter.api.base.util.PrependingLogger;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 
-import static me.melontini.dark_matter.util.Utilities.STACK_WALKER;
+import static me.melontini.dark_matter.api.base.util.Utilities.STACK_WALKER;
 
 @ApiStatus.Internal
 public class DarkMatterLog {

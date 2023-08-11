@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.util;
+package me.melontini.dark_matter.api.base.util;
 
 import java.util.ArrayList;
 import java.util.Collection;

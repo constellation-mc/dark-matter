@@ -1,8 +1,9 @@
-package me.melontini.dark_matter.reflect;
+package me.melontini.dark_matter.impl.base.reflect;
 
-import me.melontini.dark_matter.DarkMatterLog;
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ClassUtils;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
@@ -15,30 +16,13 @@ import java.util.List;
 /**
  * @author <a href="https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass">source</a>
  */
-public class ReflectionUtil {
-    private ReflectionUtil() {
+@ApiStatus.Internal
+public class ReflectionInternals {
+    private ReflectionInternals() {
         throw new UnsupportedOperationException();
     }
     private static int offset = -1;
 
-    /**
-     * Attempts to find a constructor for the given class that matches the given array of arguments.
-     *
-     * @param clazz the class for which to find a constructor
-     * @param args  the array of arguments that the constructor must be able to accept
-     * @return a constructor for the given class that matches the given array of arguments, or null if no such constructor is found
-     */
-    public static @Nullable <T> Constructor<T> findConstructor(Class<T> clazz, Object... args) {
-        return findConstructor(clazz, Arrays.stream(args).toList());
-    }
-
-    /**
-     * Attempts to find a constructor for the given class that matches the given list of arguments.
-     *
-     * @param clazz the class for which to find a constructor
-     * @param args  the list of arguments that the constructor must be able to accept
-     * @return a constructor for the given class that matches the given list of arguments, or null if no such constructor is found
-     */
     public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, List<Object> args) {
         Constructor<T> c = null;
 
@@ -110,62 +94,35 @@ public class ReflectionUtil {
         return m;
     }
 
-    /**
-     * Attempts to set a constructor as accessible.
-     *
-     * <p>
-     * This method uses the vanilla `Constructor.setAccessible(true)` method, but falls back to using `Unsafe.putBoolean(i, true)` in case reflection fails.
-     * </p>
-     *
-     * @param constructor the constructor to set as accessible
-     */
     public static <T> Constructor<T> setAccessible(Constructor<T> constructor) {
         MakeSure.notNull(constructor, "Tried to setAccessible a null constructor");
         try {
             constructor.setAccessible(true);
         } catch (Exception e) {
             int i = getOverrideOffset();
-            UnsafeAccess.getUnsafe().putBoolean(constructor, i, true);
+            UnsafeInternals.getUnsafe().putBoolean(constructor, i, true);
         }
         return constructor;
     }
 
-    /**
-     * Attempts to set a method as accessible.
-     *
-     * <p>
-     * This method uses the vanilla `Method.setAccessible(true)` method, but falls back to using `Unsafe.putBoolean(i, true)` in case reflection fails.
-     * </p>
-     *
-     * @param method the method to set as accessible
-     */
     public static Method setAccessible(Method method) {
         MakeSure.notNull(method, "Tried to setAccessible a null method");
         try {
             method.setAccessible(true);
         } catch (Exception e) {
             int i = getOverrideOffset();
-            UnsafeAccess.getUnsafe().putBoolean(method, i, true);
+            UnsafeInternals.getUnsafe().putBoolean(method, i, true);
         }
         return method;
     }
 
-    /**
-     * Attempts to set a field as accessible.
-     *
-     * <p>
-     * This method uses the vanilla `Field.setAccessible(true)` method, but falls back to using `Unsafe.putBoolean(i, true)` in case reflection fails.
-     * </p>
-     *
-     * @param field the field to set as accessible
-     */
     public static Field setAccessible(Field field) {
         MakeSure.notNull(field, "Tried to setAccessible a null field");
         try {
             field.setAccessible(true);
         } catch (Exception e) {
             int i = getOverrideOffset();
-            UnsafeAccess.getUnsafe().putBoolean(field, i, true);
+            UnsafeInternals.getUnsafe().putBoolean(field, i, true);
         }
         return field;
     }
@@ -174,11 +131,11 @@ public class ReflectionUtil {
         MakeSure.notNull(f, "Tried to remove final from a null field");
 
         if (Modifier.isFinal(f.getModifiers())) {
-            Unsafe unsafe = UnsafeAccess.getUnsafe();
+            Unsafe unsafe = UnsafeInternals.getUnsafe();
             long offset;
 
             try {
-                offset = UnsafeAccess.getObjectFieldOffset(Field.class, "modifiers");
+                offset = UnsafeInternals.getObjectFieldOffset(Field.class, "modifiers");
             } catch (Exception e) {
                 for (offset = 0; ; offset++) {
                     if (unsafe.getInt(f, offset) == f.getModifiers()) {
@@ -203,7 +160,7 @@ public class ReflectionUtil {
     public static void addOpensOrExports(Module module, String pn, Module other, boolean open, boolean syncVM) {
         if (addOpensOrExports == null) {
             try {
-                addOpensOrExports = ReflectionUtil.setAccessible(ReflectionUtil.class.getModule().getClass().getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class));
+                addOpensOrExports = ReflectionInternals.setAccessible(ReflectionInternals.class.getModule().getClass().getDeclaredMethod("implAddExportsOrOpens", String.class, Module.class, boolean.class, boolean.class));
             } catch (NoSuchMethodException e) {
                 DarkMatterLog.error("Couldn't add new {}. Expect errors", open ? "opens" : "exports");
                 return;
@@ -237,18 +194,11 @@ public class ReflectionUtil {
 
     private static Constructor<?> handlesMockConstructor;
 
-    /**
-     * Creates a mock {@link MethodHandles.Lookup} for the given class.
-     *
-     * @param clazz the class for which to create a mock {@link MethodHandles.Lookup}
-     * @return a mock {@link MethodHandles.Lookup} for the given class
-     * @throws RuntimeException if an error occurs while creating the mock lookup class
-     */
     public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) {
         try {
             if (handlesMockConstructor == null) {
                 Constructor<?> c = MethodHandles.Lookup.class.getDeclaredConstructor(Class.class);
-                handlesMockConstructor = ReflectionUtil.setAccessible(c);
+                handlesMockConstructor = ReflectionInternals.setAccessible(c);
             }
             return ((MethodHandles.Lookup) handlesMockConstructor.newInstance(clazz));
         } catch (NoSuchMethodException | InstantiationException | IllegalAccessException |
@@ -259,18 +209,11 @@ public class ReflectionUtil {
 
     private static Method forName0;
 
-    /**
-     * Attempts to access a restricted class with the given name.
-     *
-     * @param name the name of the class to access
-     * @return the Class object for the class with the given name
-     * @throws RuntimeException if the class cannot be accessed or if an error occurs while accessing it
-     */
     public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) {
         if (forName0 == null) {
             try {
                 Method m = Class.class.getDeclaredMethod("forName0", String.class, boolean.class, ClassLoader.class, Class.class);
-                forName0 = ReflectionUtil.setAccessible(m);
+                forName0 = ReflectionInternals.setAccessible(m);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
@@ -280,14 +223,6 @@ public class ReflectionUtil {
         } catch (IllegalAccessException | InvocationTargetException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static Class<?> accessRestrictedClass(String name) {
-        return accessRestrictedClass(name, null);
-    }
-
-    public static Field getField(Class<?> clazz, String name) {
-        return getField(clazz, name, false);
     }
 
     public static Field getField(Class<?> clazz, String name, boolean accessible) {
@@ -303,15 +238,15 @@ public class ReflectionUtil {
         try {
             return setAccessible(field).get(o);
         } catch (IllegalAccessException e) {
-            return UnsafeAccess.getObject(field, o);
+            return UnsafeInternals.getObject(field, o);
         }
     }
 
     public static void setField(Field field, Object o, Object value) {
         try {
-            ReflectionUtil.tryRemoveFinal(setAccessible(field)).set(o, value);
+            ReflectionInternals.tryRemoveFinal(setAccessible(field)).set(o, value);
         } catch (IllegalAccessException e) {
-            UnsafeAccess.putObject(field, o, value);
+            UnsafeInternals.putObject(field, o, value);
         }
     }
 }

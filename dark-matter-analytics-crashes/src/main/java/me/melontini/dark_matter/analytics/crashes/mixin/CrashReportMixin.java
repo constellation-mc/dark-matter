@@ -2,7 +2,7 @@ package me.melontini.dark_matter.analytics.crashes.mixin;
 
 import me.melontini.dark_matter.analytics.Analytics;
 import me.melontini.dark_matter.analytics.crashes.Crashlytics;
-import me.melontini.dark_matter.util.classes.Tuple;
+import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.util.crash.CrashReport;

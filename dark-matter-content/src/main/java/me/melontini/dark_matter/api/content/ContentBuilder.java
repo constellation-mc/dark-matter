@@ -1,13 +1,13 @@
 package me.melontini.dark_matter.api.content;
 
 import com.mojang.datafixers.types.Type;
-import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
 import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccessor;
-import me.melontini.dark_matter.util.MakeSure;
-import me.melontini.dark_matter.util.Utilities;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;

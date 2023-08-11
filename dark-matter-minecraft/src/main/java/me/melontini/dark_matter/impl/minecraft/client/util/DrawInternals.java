@@ -2,7 +2,7 @@ package me.melontini.dark_matter.impl.minecraft.client.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.melontini.dark_matter.util.ColorUtil;
+import me.melontini.dark_matter.api.base.util.ColorUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

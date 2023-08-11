@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.glitter.particles;
 
-import me.melontini.dark_matter.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathStuff;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

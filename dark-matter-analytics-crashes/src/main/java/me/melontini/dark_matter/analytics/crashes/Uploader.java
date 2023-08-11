@@ -4,8 +4,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import me.melontini.dark_matter.DarkMatterLog;
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 
 import java.io.IOException;
 import java.net.URI;

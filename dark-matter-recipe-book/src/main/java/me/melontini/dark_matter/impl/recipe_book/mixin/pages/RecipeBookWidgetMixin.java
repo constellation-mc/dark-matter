@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.recipe_book.mixin.pages;
 
 import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
-import me.melontini.dark_matter.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathStuff;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;

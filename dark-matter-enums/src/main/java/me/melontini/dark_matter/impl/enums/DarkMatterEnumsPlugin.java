@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.enums;
 
-import me.melontini.dark_matter.util.mixin.ExtendedPlugin;
+import me.melontini.dark_matter.api.base.util.mixin.ExtendedPlugin;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;

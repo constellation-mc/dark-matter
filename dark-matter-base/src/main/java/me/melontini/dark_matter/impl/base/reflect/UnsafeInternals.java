@@ -1,16 +1,18 @@
-package me.melontini.dark_matter.reflect;
+package me.melontini.dark_matter.impl.base.reflect;
 
-import me.melontini.dark_matter.util.MakeSure;
-import me.melontini.dark_matter.util.Utilities;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.*;
 
-import static me.melontini.dark_matter.reflect.ReflectionUtil.setAccessible;
+import static me.melontini.dark_matter.api.base.reflect.ReflectionUtil.setAccessible;
 
-public class UnsafeAccess {
-    private UnsafeAccess() {
+@ApiStatus.Internal
+public class UnsafeInternals {
+    private UnsafeInternals() {
         throw new UnsupportedOperationException();
     }
 
@@ -33,11 +35,6 @@ public class UnsafeAccess {
     private static Object internalUnsafe;
     private static Method objectFieldOffset;
 
-    /**
-     * You can use this method to write private final fields.
-     *
-     * @param o this is the Object which contains the field. you should provide a class if your field is static
-     */
     public static void putObject(Field field, Object o, Object value) {
         long l = Modifier.isStatic(field.getModifiers()) ? UNSAFE.staticFieldOffset(field) : UNSAFE.objectFieldOffset(field);
         boolean isVolatile = Modifier.isVolatile(field.getModifiers()) || Modifier.isFinal(field.getModifiers());
@@ -48,11 +45,6 @@ public class UnsafeAccess {
         }
     }
 
-    /**
-     * You can use this method to read private fields.
-     *
-     * @param o this is the Object which contains the field. you should provide a class if your field is static
-     */
     public static Object getObject(Field field, Object o) {
         long l = Modifier.isStatic(field.getModifiers()) ? UNSAFE.staticFieldOffset(field) : UNSAFE.objectFieldOffset(field);
         boolean isVolatile = Modifier.isVolatile(field.getModifiers()) || Modifier.isFinal(field.getModifiers());
@@ -63,19 +55,10 @@ public class UnsafeAccess {
         }
     }
 
-    /**
-     * free {@link Unsafe} for everyone!
-     */
     public static Unsafe getUnsafe() {
         return UNSAFE;
     }
 
-    /**
-     * Attempts to access the {@link jdk.internal.misc.Unsafe} object.
-     *
-     * @return the internal Unsafe, or null if it cannot be accessed
-     * @throws RuntimeException if an error occurs while trying to access the internal Unsafe object
-     */
     @SuppressWarnings("JavadocReference")
     public static @Nullable Object internalUnsafe() {
         if (internalUnsafe == null) {
@@ -89,14 +72,6 @@ public class UnsafeAccess {
         return internalUnsafe;
     }
 
-    /**
-     * Gets the offset of the given field in the given class.
-     *
-     * @param clazz the class containing the field
-     * @param name  the name of the field
-     * @return the offset of the given field in the given class
-     * @throws RuntimeException if an error occurs while trying to determine the field offset
-     */
     public static long getObjectFieldOffset(Class<?> clazz, String name) {
         try {
             if (objectFieldOffset == null) {

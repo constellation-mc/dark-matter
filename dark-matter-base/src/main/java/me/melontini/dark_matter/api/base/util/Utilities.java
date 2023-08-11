@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.util;
+package me.melontini.dark_matter.api.base.util;
 
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;

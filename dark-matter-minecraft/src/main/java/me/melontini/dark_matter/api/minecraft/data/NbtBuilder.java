@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.minecraft.data;
 
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Contract;

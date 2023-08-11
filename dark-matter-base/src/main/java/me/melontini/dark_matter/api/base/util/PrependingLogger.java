@@ -1,10 +1,10 @@
-package me.melontini.dark_matter.util;
+package me.melontini.dark_matter.api.base.util;
 
 import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 
-import static me.melontini.dark_matter.util.Utilities.getCallerName;
+import static me.melontini.dark_matter.api.base.util.Utilities.getCallerName;
 
 @SuppressWarnings("unused")
 public class PrependingLogger {

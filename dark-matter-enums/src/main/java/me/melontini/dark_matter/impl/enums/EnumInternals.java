@@ -1,9 +1,9 @@
 package me.melontini.dark_matter.impl.enums;
 
-import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
-import me.melontini.dark_matter.reflect.ReflectionUtil;
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
 

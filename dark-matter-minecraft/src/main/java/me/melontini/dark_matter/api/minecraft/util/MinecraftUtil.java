@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.minecraft.util;
 
-import me.melontini.dark_matter.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathStuff;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
 

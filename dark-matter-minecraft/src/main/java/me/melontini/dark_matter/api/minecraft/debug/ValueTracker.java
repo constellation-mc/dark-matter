@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.minecraft.debug;
 
-import me.melontini.dark_matter.reflect.ReflectionUtil;
+import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

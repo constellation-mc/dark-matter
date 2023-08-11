@@ -6,10 +6,10 @@
 
 package me.melontini.dark_matter.impl.danger.instrumentation;
 
-import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
-import me.melontini.dark_matter.reflect.ReflectionUtil;
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 import net.bytebuddy.agent.ByteBuddyAgent;
 import net.fabricmc.loader.api.FabricLoader;
 import org.objectweb.asm.ClassReader;

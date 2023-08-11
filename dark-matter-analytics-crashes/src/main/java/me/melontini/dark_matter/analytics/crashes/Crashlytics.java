@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.analytics.crashes;
 
-import me.melontini.dark_matter.util.MakeSure;
-import me.melontini.dark_matter.util.classes.Tuple;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.Nullable;

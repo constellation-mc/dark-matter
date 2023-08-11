@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.analytics;
 
-import me.melontini.dark_matter.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

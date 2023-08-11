@@ -1,8 +1,8 @@
 package me.melontini.dark_matter.api.minecraft.world;
 
-import me.melontini.dark_matter.util.MakeSure;
-import me.melontini.dark_matter.util.MathStuff;
-import me.melontini.dark_matter.util.Utilities;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 

@@ -1,8 +1,9 @@
-package me.melontini.dark_matter.util.mixin;
+package me.melontini.dark_matter.api.base.util.mixin;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.*;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
