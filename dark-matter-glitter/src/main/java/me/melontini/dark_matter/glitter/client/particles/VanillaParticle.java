@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.glitter.client.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import me.melontini.dark_matter.mirage.FakeWorld;
+import me.melontini.dark_matter.api.mirage.Mirage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -71,7 +71,7 @@ public class VanillaParticle extends AbstractScreenParticle {
         matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
         RenderSystem.applyModelViewMatrix();
 
-        FakeWorld.ALWAYS_BRIGHT_LTM.enable();
+        Mirage.ALWAYS_BRIGHT_LTM.enable();
         Tessellator tessellator = Tessellator.getInstance();
         BufferBuilder bufferBuilder = tessellator.getBuffer();
 
@@ -91,7 +91,7 @@ public class VanillaParticle extends AbstractScreenParticle {
 
         particle.getType().draw(tessellator);
 
-        FakeWorld.ALWAYS_BRIGHT_LTM.disable();
+        Mirage.ALWAYS_BRIGHT_LTM.disable();
         matrixStack.pop();
         RenderSystem.applyModelViewMatrix();
         matrices.pop();
@@ -108,6 +108,6 @@ public class VanillaParticle extends AbstractScreenParticle {
 
     public static <T extends ParticleEffect> Particle createScreenParticle(T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
         ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(parameters.getType()));
-        return particleFactory == null ? null : particleFactory.createParticle(parameters, FakeWorld.FAKE_WORLD, x/24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
+        return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x/24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
     }
 }

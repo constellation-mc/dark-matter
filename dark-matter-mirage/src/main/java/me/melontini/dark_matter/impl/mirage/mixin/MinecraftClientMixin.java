@@ -1,6 +1,6 @@
-package me.melontini.dark_matter.mirage.mixin;
+package me.melontini.dark_matter.impl.mirage.mixin;
 
-import me.melontini.dark_matter.mirage.FakeWorld;
+import me.melontini.dark_matter.impl.mirage.FakeWorld;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
