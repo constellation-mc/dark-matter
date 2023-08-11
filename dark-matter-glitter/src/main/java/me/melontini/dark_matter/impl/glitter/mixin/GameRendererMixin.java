@@ -19,8 +19,8 @@ public class GameRendererMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/util/profiler/Profiler;push(Ljava/lang/String;)V", ordinal = 1, shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT)
     private void dark_matter$renderScreenParticles(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Local DrawContext context) {
-        this.client.getProfiler().push("cracker_particles");
-        ScreenParticleHelper.renderParticles(this.client, context);
+        this.client.getProfiler().push("dark_matter_particles");
+        ScreenParticleInternals.renderParticles(this.client, context);
         this.client.getProfiler().pop();
     }
 }
