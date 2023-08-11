@@ -28,8 +28,8 @@
       "badges": [ "library" ]
     },
     "loom:injected_interfaces": {
-      "net/minecraft/class_507": ["me/melontini/dark_matter/recipe_book/interfaces/PaginatedRecipeBookWidget"],
-      "net/minecraft/class_512": ["me/melontini/dark_matter/recipe_book/interfaces/PaginatedRecipeGroupButtonWidget"]
+      "net/minecraft/class_507": ["me/melontini/dark_matter/api/recipe_book/interfaces/PaginatedRecipeBookWidget"],
+      "net/minecraft/class_512": ["me/melontini/dark_matter/api/recipe_book/interfaces/PaginatedRecipeGroupButtonWidget"]
     }
   }
 }

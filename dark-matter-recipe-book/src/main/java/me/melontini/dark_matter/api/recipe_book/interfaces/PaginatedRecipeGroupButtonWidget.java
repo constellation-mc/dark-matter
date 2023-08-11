@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.recipe_book.interfaces;
+package me.melontini.dark_matter.api.recipe_book.interfaces;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;

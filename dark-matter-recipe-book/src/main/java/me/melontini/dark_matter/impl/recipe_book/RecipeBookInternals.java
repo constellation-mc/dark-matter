@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.recipe_book;
+package me.melontini.dark_matter.impl.recipe_book;
 
 import com.mojang.datafixers.util.Pair;
 import me.melontini.dark_matter.util.MakeSure;
@@ -10,13 +10,15 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.book.RecipeBookOptions;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class RecipeBookHelper {
-    private RecipeBookHelper() {
+@ApiStatus.Internal
+public class RecipeBookInternals {
+    private RecipeBookInternals() {
         throw new UnsupportedOperationException();
     }
     @Environment(EnvType.CLIENT)

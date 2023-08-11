@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.recipe_book.mixin.make_mutable;
+package me.melontini.dark_matter.impl.recipe_book.mixin.make_mutable;
 
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.recipe.book.RecipeBookCategory;
