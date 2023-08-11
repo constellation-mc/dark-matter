@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.glitter.client.particles;
 
-import me.melontini.dark_matter.minecraft.client.util.DrawUtil;
+import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import me.melontini.dark_matter.util.MathStuff;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;

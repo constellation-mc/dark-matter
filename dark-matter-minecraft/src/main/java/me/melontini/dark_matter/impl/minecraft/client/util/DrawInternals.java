@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.client.util;
+package me.melontini.dark_matter.impl.minecraft.client.util;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
@@ -18,22 +18,18 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.Matrix4f;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Optional;
 
-/**
- * This class provides a set of utility methods for drawing on screen.
- *
- * <p>It mirrors some of the methods from the Screen and DrawableHelper classes
- * to allow using them without creating an instance of a screen. Most int values
- * in those methods have been replaced by floats to allow for more flexibility.</p>
- */
-
 @Environment(EnvType.CLIENT)
-public class DrawUtil {
+@ApiStatus.Internal
+public class DrawInternals {
+
     public static final FakeScreen FAKE_SCREEN = new FakeScreen();
-    private DrawUtil() {
+
+    private DrawInternals() {
         throw new UnsupportedOperationException();
     }
 
@@ -64,7 +60,7 @@ public class DrawUtil {
         RenderSystem.applyModelViewMatrix();
     }
 
-    public void renderTooltip(MatrixStack matrices, List<Text> lines, Optional<TooltipData> data, float x, float y) {
+    public static void renderTooltip(MatrixStack matrices, List<Text> lines, Optional<TooltipData> data, float x, float y) {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();

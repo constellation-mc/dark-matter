@@ -3,7 +3,7 @@ package me.melontini.dark_matter.glitter.client.particles;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
-import static me.melontini.dark_matter.minecraft.client.util.DrawUtil.fillGradient;
+import static me.melontini.dark_matter.api.minecraft.client.util.DrawUtil.fillGradient;
 
 public class Particle extends AbstractScreenParticle {
     public final int color;

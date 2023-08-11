@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.world;
+package me.melontini.dark_matter.api.minecraft.world;
 
 import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.player.PlayerEntity;
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("unused")
 public class PlayerUtil {
     private PlayerUtil() {
         throw new UnsupportedOperationException();

@@ -1,7 +1,7 @@
-package me.melontini.dark_matter.minecraft.mixin.debug;
+package me.melontini.dark_matter.impl.minecraft.mixin.debug;
 
 import com.google.common.base.Strings;
-import me.melontini.dark_matter.minecraft.debug.ValueTracker;
+import me.melontini.dark_matter.api.minecraft.debug.ValueTracker;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;

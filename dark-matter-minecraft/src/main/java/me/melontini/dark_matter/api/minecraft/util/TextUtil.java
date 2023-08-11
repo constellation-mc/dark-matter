@@ -1,8 +1,9 @@
-package me.melontini.dark_matter.minecraft.util;
+package me.melontini.dark_matter.api.minecraft.util;
 
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 
+@SuppressWarnings("unused")
 public class TextUtil {
     private TextUtil() {
         throw new UnsupportedOperationException();

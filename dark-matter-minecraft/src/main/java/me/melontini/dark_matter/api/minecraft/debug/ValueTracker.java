@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.debug;
+package me.melontini.dark_matter.api.minecraft.debug;
 
 import me.melontini.dark_matter.reflect.ReflectionUtil;
 
@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 @Deprecated(since = "0.4.0")
+@SuppressWarnings("unused")
 public class ValueTracker {
     private ValueTracker() {
         throw new UnsupportedOperationException();

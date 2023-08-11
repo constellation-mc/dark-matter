@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.data;
+package me.melontini.dark_matter.api.minecraft.data;
 
 import me.melontini.dark_matter.util.MakeSure;
 import net.minecraft.nbt.NbtCompound;
@@ -35,6 +35,7 @@ import java.util.UUID;
  * }
  * </pre>
  */
+@SuppressWarnings("unused")
 public class NbtBuilder {
     private final NbtCompound nbt;
 

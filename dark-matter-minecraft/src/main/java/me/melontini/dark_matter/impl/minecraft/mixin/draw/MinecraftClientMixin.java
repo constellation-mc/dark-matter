@@ -1,6 +1,6 @@
-package me.melontini.dark_matter.minecraft.mixin.draw;
+package me.melontini.dark_matter.impl.minecraft.mixin.draw;
 
-import me.melontini.dark_matter.minecraft.client.util.DrawUtil;
+import me.melontini.dark_matter.impl.minecraft.client.util.DrawInternals;
 import net.minecraft.client.MinecraftClient;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -11,6 +11,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 public class MinecraftClientMixin {
     @Inject(method = "onResolutionChanged", at = @At("TAIL"))
     private void dark_matter$beforeInit(CallbackInfo ci) {
-        if (MinecraftClient.getInstance() != null && MinecraftClient.getInstance().getWindow() != null) DrawUtil.FAKE_SCREEN.reset(MinecraftClient.getInstance(), MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight());
+        if (MinecraftClient.getInstance() != null && MinecraftClient.getInstance().getWindow() != null) DrawInternals.FAKE_SCREEN.reset(MinecraftClient.getInstance(), MinecraftClient.getInstance().getWindow().getScaledWidth(), MinecraftClient.getInstance().getWindow().getScaledHeight());
     }
 }

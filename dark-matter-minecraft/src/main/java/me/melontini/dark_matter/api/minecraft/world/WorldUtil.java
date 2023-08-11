@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.world;
+package me.melontini.dark_matter.api.minecraft.world;
 
 import me.melontini.dark_matter.util.MakeSure;
 import me.melontini.dark_matter.util.MathStuff;
@@ -9,6 +9,7 @@ import net.minecraft.world.World;
 import java.util.Optional;
 import java.util.function.BiPredicate;
 
+@SuppressWarnings("unused")
 public class WorldUtil {
     private WorldUtil() {
         throw new UnsupportedOperationException();

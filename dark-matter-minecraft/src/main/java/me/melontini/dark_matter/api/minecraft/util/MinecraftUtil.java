@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.minecraft.util;
+package me.melontini.dark_matter.api.minecraft.util;
 
 import me.melontini.dark_matter.util.MathStuff;
 import net.minecraft.item.ItemStack;
@@ -6,6 +6,7 @@ import net.minecraft.util.collection.DefaultedList;
 
 import java.util.Collection;
 
+@SuppressWarnings("unused")
 public class MinecraftUtil {
     private MinecraftUtil() {
         throw new UnsupportedOperationException();
