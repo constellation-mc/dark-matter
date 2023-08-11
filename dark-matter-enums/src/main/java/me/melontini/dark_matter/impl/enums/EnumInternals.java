@@ -1,10 +1,11 @@
-package me.melontini.dark_matter.enums.util;
+package me.melontini.dark_matter.impl.enums;
 
 import me.melontini.dark_matter.DarkMatterLog;
-import me.melontini.dark_matter.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.reflect.ReflectionUtil;
 import me.melontini.dark_matter.util.MakeSure;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
@@ -12,29 +13,11 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 
-public class EnumUtils {
-    private EnumUtils() {
-        throw new UnsupportedOperationException();
-    }
+@ApiStatus.Internal
+public class EnumInternals {
+
     private static final Map<Class<?>, Field> ENUM_TO_FIELD = new HashMap<>();//Store the field in case someone tries to call this method a bunch of times
 
-    /**
-     * Attempts to extend an enum by reflecting on its internal fields and adding a new enum constant.
-     *
-     * <p>
-     * This method allows adding new elements to an enum at runtime. It should only be used if absolutely necessary, as extending enums can cause unpredictable behavior and can break code that relies on a fixed set of enum values.
-     * In particular, switch statements and maps or lists that use enums as keys or values may fail when new elements are added.
-     * </p>
-     * <p>
-     * This can also break in future java versions.
-     *
-     * @param enumClass    the class of the enum to extend
-     * @param internalName The internal name of the new enum element. This name is used by the {@link java.lang.Enum#valueOf(Class, String)} method to map from a string representation of the enum to its corresponding enum constant.
-     *                     Note that some enums may provide their own names (e.g {@link net.minecraft.util.Formatting}), which are different from the internal names.
-     * @param params       the parameters to pass to the constructor of the new enum element
-     * @return the newly created enum element
-     * @throws RuntimeException if an error occurs during the extension process.
-     */
     /*probably a good idea to make this synchronized*/
     public static synchronized <T extends Enum<?>> T extendByReflecting(boolean reflectOnly, Class<T> enumClass, String internalName, Object... params) {
         if (!reflectOnly && ExtendableEnum.class.isAssignableFrom(enumClass)) {
@@ -90,15 +73,6 @@ public class EnumUtils {
         }
     }
 
-    public static synchronized <T extends Enum<?>> T extendByReflecting(Class<T> enumClass, String internalName, Object... params) {
-        return extendByReflecting(false, enumClass, internalName, params);
-    }
-
-    /**
-     * Attempts to clear the internal cache of enum constants for the given enum class.
-     *
-     * @param cls the class of the enum for which to clear the cache
-     */
     public static synchronized void clearEnumCache(Class<? extends Enum<?>> cls) {
         try {
             ReflectionUtil.setField(Class.class.getDeclaredField("enumConstants"), cls, null);
@@ -122,4 +96,5 @@ public class EnumUtils {
         return (T) ReflectionUtil.setAccessible(ReflectionUtil.findMethod(cls, "dark_matter$extendEnum", list))
                 .invoke(cls, list.toArray());
     }
+
 }

@@ -1,6 +1,7 @@
-package me.melontini.dark_matter.enums.util;
+package me.melontini.dark_matter.impl.enums;
 
 import me.melontini.dark_matter.util.mixin.ExtendedPlugin;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
@@ -11,6 +12,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.lang.reflect.Modifier;
 import java.util.Objects;
 
+@ApiStatus.Internal
 public class DarkMatterEnumsPlugin extends ExtendedPlugin {
     @Override
     public void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {

@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.enums.mixin.compat;
+package me.melontini.dark_matter.impl.enums.mixin.compat;
 
 import me.melontini.dark_matter.util.mixin.MixinShouldApply;
 import me.melontini.dark_matter.util.mixin.Mod;

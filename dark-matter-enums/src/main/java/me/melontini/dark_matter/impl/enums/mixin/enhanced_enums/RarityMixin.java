@@ -1,14 +1,11 @@
-package me.melontini.dark_matter.enums.mixin.enhanced_enums;
+package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
-import me.melontini.dark_matter.enums.interfaces.ExtendableEnum;
-import me.melontini.dark_matter.enums.util.EnumUtils;
+import me.melontini.dark_matter.api.enums.EnumUtils;
+import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import org.apache.commons.lang3.ArrayUtils;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(value = Rarity.class, priority = 1001)
@@ -23,6 +20,7 @@ public class RarityMixin implements ExtendableEnum<Rarity> {
         throw new IllegalStateException("<init> invoker not implemented");
     }
 
+    @Unique
     private static Rarity dark_matter$extendEnum(String internalName, Formatting formatting) {
         Rarity last = field_8905[field_8905.length - 1];
         Rarity enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, formatting);

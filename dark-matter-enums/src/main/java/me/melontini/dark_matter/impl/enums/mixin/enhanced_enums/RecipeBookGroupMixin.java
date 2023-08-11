@@ -1,14 +1,11 @@
-package me.melontini.dark_matter.enums.mixin.enhanced_enums;
+package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
-import me.melontini.dark_matter.enums.interfaces.ExtendableEnum;
-import me.melontini.dark_matter.enums.util.EnumUtils;
+import me.melontini.dark_matter.api.enums.EnumUtils;
+import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.ItemStack;
 import org.apache.commons.lang3.ArrayUtils;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Mutable;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(value = RecipeBookGroup.class, priority = 1001)
@@ -24,6 +21,7 @@ public class RecipeBookGroupMixin implements ExtendableEnum<RecipeBookGroup> {
         throw new IllegalStateException("<init> invoker not implemented");
     }
 
+    @Unique
     private static RecipeBookGroup dark_matter$extendEnum(String internalName, ItemStack... stacks) {
         RecipeBookGroup last = field_1805[field_1805.length - 1];
         RecipeBookGroup enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, stacks);

@@ -1,6 +1,6 @@
-package me.melontini.dark_matter.enums.interfaces;
+package me.melontini.dark_matter.api.enums.interfaces;
 
-import me.melontini.dark_matter.enums.util.EnumUtils;
+import me.melontini.dark_matter.api.enums.EnumUtils;
 
 public interface ExtendableEnum<T extends Enum<?>> {
     /**
