@@ -13,10 +13,4 @@ public class MinecraftClientMixin {
     private void dark_matter$init(CallbackInfo ci) {
         FakeWorld.init();
     }
-
-    @SuppressWarnings({"MixinAnnotationTarget", "UnresolvedMixinReference"})
-    @Inject(method = "lambda$new$4(Lcom/mojang/realmsclient/client/RealmsClient;Lnet/minecraft/server/packs/resources/ReloadInstance;Lnet/minecraft/client/main/GameConfig;)V", at = @At("TAIL"), require = 0)
-    private void dark_matter$tryInitOnForge(CallbackInfo ci) {//I have no idea what I'm doing. This might be different every time. Why would forge do this...
-        FakeWorld.init();
-    }
 }
