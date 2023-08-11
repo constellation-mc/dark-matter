@@ -4,9 +4,10 @@
  You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package me.melontini.dark_matter.danger.instrumentation;
+package me.melontini.dark_matter.impl.danger.instrumentation;
 
 import me.melontini.dark_matter.DarkMatterLog;
+import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.reflect.ReflectionUtil;
 import me.melontini.dark_matter.util.MakeSure;
 import net.bytebuddy.agent.ByteBuddyAgent;
@@ -19,13 +20,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.Instrumentation;
 import java.lang.management.ManagementFactory;
 import java.lang.reflect.Field;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
-import java.security.ProtectionDomain;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -35,8 +34,8 @@ import java.util.stream.Collectors;
  * @author //<a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
  */
 @SuppressWarnings("unused")
-public class InstrumentationAccess {
-    private InstrumentationAccess() {
+public class InstrumentationInternals {
+    private InstrumentationInternals() {
         throw new UnsupportedOperationException();
     }
 
@@ -46,11 +45,7 @@ public class InstrumentationAccess {
     private static Instrumentation instrumentation;
     private static boolean canInstrument = false;
 
-    public static void retransform(AsmTransformer transformer, String... cls) {
-        retransform(transformer, false, cls);
-    }
-
-    public static void retransform(AsmTransformer transformer, boolean export, String... cls) {
+    public static void retransform(InstrumentationAccess.AsmTransformer transformer, boolean export, String... cls) {
         try {
             Class<?>[] classes = Arrays.stream(cls).map(s -> {
                 try {
@@ -69,14 +64,10 @@ public class InstrumentationAccess {
         }
     }
 
-    public static void retransform(AsmTransformer transformer, Class<?>... cls) {
-        retransform(transformer, false, cls);
-    }
-
-    public static void retransform(AsmTransformer transformer, boolean export, Class<?>... cls) {
+    public static void retransform(InstrumentationAccess.AsmTransformer transformer, boolean export, Class<?>... cls) {
         try {
             HashSet<Class<?>> classes = Arrays.stream(cls).collect(Collectors.toCollection(HashSet::new));
-            AbstractFileTransformer fileTransformer = (loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
+            InstrumentationAccess.AbstractFileTransformer fileTransformer = (loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
                 if (classes.contains(classBeingRedefined)) {
                     ClassReader reader = new ClassReader(classfileBuffer);
                     ClassNode node = new ClassNode();
@@ -171,7 +162,7 @@ public class InstrumentationAccess {
         if (!Files.exists(jarPath)) {
             createAgentJar(jarPath, jar);
         } else {
-            try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
+            try (InputStream stream = InstrumentationInternals.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
                 if (stream != null) {
                     byte[] bytes = stream.readAllBytes();
                     if (!Arrays.equals(Files.readAllBytes(jarPath), bytes)) {
@@ -186,14 +177,14 @@ public class InstrumentationAccess {
         }
         ByteBuddyAgent.attach(jar, name.substring(0, name.indexOf('@')));
 
-        final Field field = Class.forName("me.melontini.dark_matter.danger.instrumentation.InstrumentationAgent", false, ClassLoader.getSystemClassLoader()).getField("instrumentation");
+        final Field field = Class.forName("me.melontini.dark_matter.impl.danger.instrumentation.InstrumentationAgent", false, ClassLoader.getSystemClassLoader()).getField("instrumentation");
         field.setAccessible(true);
         return MakeSure.notNull((Instrumentation) field.get(null));
     }
 
     private static void createAgentJar(Path jarPath, File jar) throws IOException {
         Files.createDirectories(jarPath.getParent());
-        try (InputStream stream = InstrumentationAccess.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
+        try (InputStream stream = InstrumentationInternals.class.getClassLoader().getResourceAsStream("jar/dark_matter_instrumentation_agent.jar")) {
             if (stream != null) {
                 try (FileOutputStream outputStream = new FileOutputStream(jar)) {
                     outputStream.write(stream.readAllBytes());
@@ -202,16 +193,5 @@ public class InstrumentationAccess {
                 throw new NullPointerException("Couldn't find included \"jar/dark_matter_instrumentation_agent.jar\"!");
             }
         }
-    }
-
-    @FunctionalInterface
-    public interface AbstractFileTransformer extends ClassFileTransformer {
-        @Override
-        byte[] transform(final ClassLoader loader, final String className, final Class<?> classBeingRedefined, final ProtectionDomain protectionDomain, final byte[] classfileBuffer);
-    }
-
-    @FunctionalInterface
-    public interface AsmTransformer {
-        ClassNode transform(ClassNode node);
     }
 }

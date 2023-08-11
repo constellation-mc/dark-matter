@@ -4,7 +4,7 @@
  You can obtain one at https://mozilla.org/MPL/2.0/.
  */
 
-package me.melontini.dark_matter.danger.instrumentation;
+package me.melontini.dark_matter.impl.danger.instrumentation;
 
 import java.lang.instrument.Instrumentation;
 
