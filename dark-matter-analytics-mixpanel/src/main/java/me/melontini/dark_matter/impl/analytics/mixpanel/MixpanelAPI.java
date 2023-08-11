@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.analytics.mixpanel.api;
+package me.melontini.dark_matter.impl.analytics.mixpanel;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
@@ -15,11 +15,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-/**
- * Basic API to interact with Mixpanel.
- * <p>
- * Only features basic functionality.
- */
 //TODO (Union, Append, Remove) List properties
 //TODO Group profiles (everything)
 public class MixpanelAPI {
