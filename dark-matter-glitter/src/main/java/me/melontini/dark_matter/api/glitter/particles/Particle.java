@@ -1,10 +1,13 @@
-package me.melontini.dark_matter.glitter.client.particles;
+package me.melontini.dark_matter.api.glitter.particles;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
 import static me.melontini.dark_matter.api.minecraft.client.util.DrawUtil.fillGradient;
 
+@Environment(EnvType.CLIENT)
 public class Particle extends AbstractScreenParticle {
     public final int color;
 

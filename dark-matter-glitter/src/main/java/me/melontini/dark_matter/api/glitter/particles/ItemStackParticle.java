@@ -1,13 +1,16 @@
-package me.melontini.dark_matter.glitter.client.particles;
+package me.melontini.dark_matter.api.glitter.particles;
 
 import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import me.melontini.dark_matter.util.MathStuff;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 
+@Environment(EnvType.CLIENT)
 public class ItemStackParticle extends AbstractScreenParticle {
 
     public final ItemStack stack;

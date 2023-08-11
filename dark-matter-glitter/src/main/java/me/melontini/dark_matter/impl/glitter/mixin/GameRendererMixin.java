@@ -1,8 +1,8 @@
-package me.melontini.dark_matter.glitter.mixin;
+package me.melontini.dark_matter.impl.glitter.mixin;
 
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import me.melontini.dark_matter.glitter.client.util.ScreenParticleHelper;
+import me.melontini.dark_matter.impl.glitter.ScreenParticleInternals;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.Window;
@@ -28,6 +28,6 @@ public class GameRendererMixin {
     @Inject(at = @At("TAIL"), method = "render")
     private void dark_matter$renderScreenParticles(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Share("matrixStack2") LocalRef<MatrixStack> matrixStackLocalRef) {
         MatrixStack stack = matrixStackLocalRef.get();
-        ScreenParticleHelper.renderParticles(this.client, stack != null ? stack : new MatrixStack());
+        ScreenParticleInternals.renderParticles(this.client, stack != null ? stack : new MatrixStack());
     }
 }

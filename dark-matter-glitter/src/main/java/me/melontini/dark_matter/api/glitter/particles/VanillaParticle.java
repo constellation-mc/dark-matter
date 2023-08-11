@@ -1,7 +1,9 @@
-package me.melontini.dark_matter.glitter.client.particles;
+package me.melontini.dark_matter.api.glitter.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.melontini.dark_matter.api.mirage.Mirage;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -21,6 +23,7 @@ import net.minecraft.util.registry.Registry;
  * <p>
  * Inspired by the removed {@code gesundheit} module of <a href="https://git.sleeping.town/unascribed-mods/Lib39">Lib39</a>
  */
+@Environment(EnvType.CLIENT)
 public class VanillaParticle extends AbstractScreenParticle {
     private static final Camera CAMERA = new Camera();
     private final Particle particle;

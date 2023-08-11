@@ -1,8 +1,10 @@
-package me.melontini.dark_matter.glitter.client.util;
+package me.melontini.dark_matter.impl.glitter;
 
-import me.melontini.dark_matter.glitter.client.particles.AbstractScreenParticle;
-import me.melontini.dark_matter.glitter.client.particles.VanillaParticle;
+import me.melontini.dark_matter.api.glitter.particles.AbstractScreenParticle;
+import me.melontini.dark_matter.api.glitter.particles.VanillaParticle;
 import me.melontini.dark_matter.util.MakeSure;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
@@ -14,11 +16,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.Supplier;
 
+@ApiStatus.Internal
 @SuppressWarnings("unused")
-public class ScreenParticleHelper {
-    private ScreenParticleHelper() {
+@Environment(EnvType.CLIENT)
+public class ScreenParticleInternals {
+
+    private ScreenParticleInternals() {
         throw new UnsupportedOperationException();
     }
+
     private static final List<AbstractScreenParticle> SCREEN_PARTICLES = Lists.newArrayList();
     private static final List<AbstractScreenParticle> SCREEN_PARTICLES_REMOVAL = Lists.newArrayList();
     public static final Random RANDOM = new Random();
@@ -199,7 +205,6 @@ public class ScreenParticleHelper {
         }
     }
 
-    @ApiStatus.Internal
     public static void renderParticles(MinecraftClient client, MatrixStack matrixStack) {
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
@@ -208,7 +213,6 @@ public class ScreenParticleHelper {
         }
     }
 
-    @ApiStatus.Internal
     public static void tickParticles() {
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
             particle.tick();

@@ -1,6 +1,8 @@
-package me.melontini.dark_matter.glitter.client.particles;
+package me.melontini.dark_matter.api.glitter.particles;
 
 import me.melontini.dark_matter.util.MathStuff;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
@@ -8,6 +10,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 import java.util.Random;
 
+@Environment(EnvType.CLIENT)
 public abstract class AbstractScreenParticle implements Drawable {
     protected static final Random RANDOM = new Random();
     public double wind = 0.05;
