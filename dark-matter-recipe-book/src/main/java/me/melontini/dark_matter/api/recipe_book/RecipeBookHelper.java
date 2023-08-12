@@ -4,6 +4,7 @@ import me.melontini.dark_matter.impl.recipe_book.RecipeBookInternals;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
@@ -55,5 +56,10 @@ public class RecipeBookHelper {
 
     public static RecipeBookCategory createCategory(Identifier id) {
         return RecipeBookInternals.createCategory(id.toString().replace('/', '_').replace(':', '_'));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static RecipeBookGroup createGroup(Identifier id, ItemStack... stacks) {
+        return RecipeBookInternals.createGroup(id.toString().replace('/', '_').replace(':', '_'), stacks);
     }
 }
