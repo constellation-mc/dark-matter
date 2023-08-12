@@ -85,7 +85,7 @@ public class VanillaParticle extends AbstractScreenParticle {
         try {
             particle.buildGeometry(bufferBuilder, CAMERA, client.getTickDelta());
         } catch (Throwable var17) {
-            CrashReport crashReport = CrashReport.create(var17, "[Dark Matter Screen Particles] Rendering Particle On Screen");
+            CrashReport crashReport = CrashReport.create(var17, "[Dark Matter Glitter] Rendering Particle On Screen");
             CrashReportSection crashReportSection = crashReport.addElement("Particle being rendered on screen");
             crashReportSection.add("Particle", particle::toString);
             crashReportSection.add("Particle Type", particle.getType()::toString);

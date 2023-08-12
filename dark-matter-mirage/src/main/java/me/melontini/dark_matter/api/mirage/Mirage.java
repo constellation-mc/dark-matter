@@ -7,6 +7,10 @@ import net.minecraft.client.world.ClientWorld;
 
 public class Mirage {
 
+    private Mirage() {
+        throw new UnsupportedOperationException();
+    }
+
     public static final ClientWorld FAKE_WORLD = FakeWorld.INSTANCE;
     public static final LightmapTextureManager ALWAYS_BRIGHT_LTM = AlwaysBrightLightmapTextureManager.INSTANCE;
 

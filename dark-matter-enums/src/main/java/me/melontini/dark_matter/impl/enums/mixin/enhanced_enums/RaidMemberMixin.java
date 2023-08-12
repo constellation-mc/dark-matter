@@ -28,6 +28,10 @@ public abstract class RaidMemberMixin implements ExtendableEnum<Raid.Member> {
 
     @Unique
     private static Raid.Member dark_matter$extendEnum(String internalName, EntityType<? extends RaiderEntity> type, int[] countInWave) {
+        for (Raid.Member member : field_16632) {
+            if (member.name().equalsIgnoreCase(internalName)) return member;
+        }
+
         Raid.Member last = field_16632[field_16632.length - 1];
         Raid.Member enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, type, countInWave);
         field_16632 = ArrayUtils.add(field_16632, enumConst);
