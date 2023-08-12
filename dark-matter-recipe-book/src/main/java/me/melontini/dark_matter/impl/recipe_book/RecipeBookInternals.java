@@ -3,9 +3,11 @@ package me.melontini.dark_matter.impl.recipe_book;
 import com.mojang.datafixers.util.Pair;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
+import me.melontini.dark_matter.api.enums.EnumWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;
+import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
@@ -119,12 +121,19 @@ public class RecipeBookInternals {
     }
 
     public static RecipeBookCategory createCategory(String internalName) {
-        MakeSure.notEmpty(internalName, "Tried to register a RecipeBookCategory with an empty string.");
+        MakeSure.notEmpty(internalName, "Tried to create a RecipeBookCategory with an empty string.");
 
         RecipeBookCategory category = (RecipeBookCategory) RecipeBookCategory.values()[0].dark_matter$extend(internalName);
 
         RecipeBookOptions.CATEGORY_OPTION_NAMES.putIfAbsent(category, new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
         return category;
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static RecipeBookGroup createGroup(String internalName, ItemStack... stacks) {
+        MakeSure.notEmpty(internalName, "Tried to create a RecipeBookGroup with an empty string.");
+
+        return EnumWrapper.RecipeBookGroup.extend(internalName, stacks);
     }
 
     @Environment(EnvType.CLIENT)

@@ -39,4 +39,5 @@ Split API/Impl in all modules. A lot of package changes.
 ### Recipe Book
 
 * `RecipeBookHelper#createCategory` now only accepts identifiers. 
+* Added `createGroup` to `RecipeBookHelper`.
 * Non-prefixed methods in interfaces will be removed soon.
