@@ -23,6 +23,10 @@ import java.util.function.Supplier;
  */
 public class RegistryUtil {
 
+    private RegistryUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> asBlockEntity(@NotNull Block block) {
         return getBlockEntityFromBlock(block);
     }

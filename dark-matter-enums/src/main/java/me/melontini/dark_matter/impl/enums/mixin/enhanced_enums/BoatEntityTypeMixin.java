@@ -22,6 +22,10 @@ public class BoatEntityTypeMixin implements ExtendableEnum<BoatEntity.Type> {
 
     @Unique
     private static BoatEntity.Type dark_matter$extendEnum(String internalName, Block base, String name) {
+        for (BoatEntity.Type type : field_7724) {
+            if (type.name().equalsIgnoreCase(internalName)) return type;
+        }
+
         BoatEntity.Type last = field_7724[field_7724.length - 1];
         BoatEntity.Type enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, base, name);
         field_7724 = ArrayUtils.add(field_7724, enumConst);

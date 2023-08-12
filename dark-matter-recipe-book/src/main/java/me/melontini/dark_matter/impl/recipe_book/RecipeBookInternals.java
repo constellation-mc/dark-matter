@@ -25,13 +25,23 @@ public class RecipeBookInternals {
     private static final Map<RecipeType<?>, List<Function<Recipe<?>, RecipeBookGroup>>> TYPE_HANDLERS = new HashMap<>();
     @Environment(EnvType.CLIENT)
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> CATEGORY_TO_LIST = new HashMap<>();
-    public static final Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>> VANILLA_CATEGORIES = Utilities.consume(new HashMap<>(), map -> {
+    @Environment(EnvType.CLIENT)
+    private static final Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>> VANILLA_CATEGORIES = Utilities.consume(new HashMap<>(), map -> {
         map.put(RecipeBookCategory.CRAFTING, () -> RecipeBookGroup.CRAFTING);
         map.put(RecipeBookCategory.FURNACE, () -> RecipeBookGroup.FURNACE);
         map.put(RecipeBookCategory.BLAST_FURNACE, () -> RecipeBookGroup.BLAST_FURNACE);
         map.put(RecipeBookCategory.SMOKER, () -> RecipeBookGroup.SMOKER);
     });
 
+    @Environment(EnvType.CLIENT)
+    private static boolean isVanillaCategory(RecipeBookCategory category) {
+        return VANILLA_CATEGORIES.containsKey(category);
+    }
+
+    @Environment(EnvType.CLIENT)
+    private static List<RecipeBookGroup> getGroupsForCategory(RecipeBookCategory category) {
+        return VANILLA_CATEGORIES.get(category).get();
+    }
 
     @Environment(EnvType.CLIENT)
     public static void addRecipePredicate(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
@@ -45,8 +55,9 @@ public class RecipeBookInternals {
     @Environment(EnvType.CLIENT)
     public static void addToGetGroups(RecipeBookCategory category, RecipeBookGroup group) {
         MakeSure.notNull(group, "Null group provided.");
-        if (VANILLA_CATEGORIES.containsKey(category)) {
-            VANILLA_CATEGORIES.get(category).get().add(group);
+        if (isVanillaCategory(category)) {
+            getGroupsForCategory(category).add(group);
+            return;
         }
 
         CATEGORY_TO_LIST.computeIfAbsent(category, category1 -> new ArrayList<>(1)).add(group);
@@ -56,8 +67,9 @@ public class RecipeBookInternals {
     public static void addToGetGroups(RecipeBookCategory category, int index, RecipeBookGroup group) {
         MakeSure.notNull(group, "Null group provided.");
         MakeSure.isFalse(index < 0, "Index can't be below 0!");
-        if (VANILLA_CATEGORIES.containsKey(category)) {
-            VANILLA_CATEGORIES.get(category).get().add(index, group);
+        if (isVanillaCategory(category)) {
+            getGroupsForCategory(category).add(index, group);
+            return;
         }
 
         if (CATEGORY_TO_LIST.containsKey(category)) {
@@ -69,8 +81,9 @@ public class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void addToGetGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
-        if (VANILLA_CATEGORIES.containsKey(category)) {
-            VANILLA_CATEGORIES.get(category).get().addAll(groups);
+        if (isVanillaCategory(category)) {
+            getGroupsForCategory(category).addAll(groups);
+            return;
         }
 
         CATEGORY_TO_LIST.computeIfAbsent(category, category1 -> new ArrayList<>(groups.size())).addAll(groups);
@@ -79,8 +92,9 @@ public class RecipeBookInternals {
     @Environment(EnvType.CLIENT)
     public static void addToGetGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
         MakeSure.isFalse(index < 0, "Index can't be below 0!");
-        if (VANILLA_CATEGORIES.containsKey(category)) {
-            VANILLA_CATEGORIES.get(category).get().addAll(index, groups);
+        if (isVanillaCategory(category)) {
+            getGroupsForCategory(category).addAll(index, groups);
+            return;
         }
 
         if (CATEGORY_TO_LIST.containsKey(category)) {
@@ -109,7 +123,7 @@ public class RecipeBookInternals {
 
         RecipeBookCategory category = (RecipeBookCategory) RecipeBookCategory.values()[0].dark_matter$extend(internalName);
 
-        RecipeBookOptions.CATEGORY_OPTION_NAMES.put(category, new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
+        RecipeBookOptions.CATEGORY_OPTION_NAMES.putIfAbsent(category, new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
         return category;
     }
 

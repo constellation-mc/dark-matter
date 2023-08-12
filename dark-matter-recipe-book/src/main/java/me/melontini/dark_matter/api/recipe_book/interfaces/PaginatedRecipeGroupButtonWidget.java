@@ -13,12 +13,12 @@ public interface PaginatedRecipeGroupButtonWidget {
         throw new IllegalStateException("Interface not implemented");
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default int getPage() {
         throw new IllegalStateException("Interface not implemented");
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default void setPage(int page) {
         throw new IllegalStateException("Interface not implemented");
     }

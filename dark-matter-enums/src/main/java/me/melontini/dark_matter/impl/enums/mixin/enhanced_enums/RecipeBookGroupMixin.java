@@ -23,6 +23,10 @@ public class RecipeBookGroupMixin implements ExtendableEnum<RecipeBookGroup> {
 
     @Unique
     private static RecipeBookGroup dark_matter$extendEnum(String internalName, ItemStack... stacks) {
+        for (RecipeBookGroup group : field_1805) {
+            if (group.name().equalsIgnoreCase(internalName)) return group;
+        }
+
         RecipeBookGroup last = field_1805[field_1805.length - 1];
         RecipeBookGroup enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, stacks);
         field_1805 = ArrayUtils.add(field_1805, enumConst);
