@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.recipe_book.mixin.pages;
 
-import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
 import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
@@ -9,9 +9,7 @@ import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.client.recipebook.ClientRecipeBook;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.screen.AbstractRecipeScreenHandler;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -31,8 +29,6 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @Shadow
     protected MinecraftClient client;
     @Shadow
-    protected AbstractRecipeScreenHandler<?> craftingScreenHandler;
-    @Shadow
     private int parentWidth;
     @Shadow
     private int parentHeight;
@@ -51,8 +47,6 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     private ToggleButtonWidget nextPageButton;
     @Unique
     private ToggleButtonWidget prevPageButton;
-    @Shadow
-    private @Nullable RecipeGroupButtonWidget currentTab;
 
     @Shadow
     public abstract boolean isOpen();
@@ -92,17 +86,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @Override
     public void dm$updatePages() {
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            if (widget.dm$getPage() == this.page) {
-                RecipeBookGroup recipeBookGroup = widget.getCategory();
-                if (recipeBookGroup.name().contains("_SEARCH")) {
-                    widget.visible = true;
-                } else if (widget.hasKnownRecipes(recipeBook)) {
-                    widget.visible = true;
-                    widget.checkForNewRecipes(this.client);
-                }
-            } else {
-                widget.visible = false;
-            }
+            widget.visible = widget.dm$getPage() == this.page;
         }
     }
 
@@ -134,21 +118,22 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         int y = (this.parentHeight - 166) / 2 + 3;
         int index = 0;
 
-        this.tabButtons.clear();
-        this.tabButtons.addAll(RecipeBookGroup.getGroups(this.craftingScreenHandler.getCategory())
-                .stream().map(RecipeGroupButtonWidget::new)
-                .filter(widget -> widget.getCategory().name().contains("_SEARCH") || widget.hasKnownRecipes(this.recipeBook))
-                .toList());
-        this.currentTab = this.currentTab == null ? this.tabButtons.get(0) : this.tabButtons.stream()
-                .filter(button -> button.getCategory().equals(this.currentTab.getCategory()))
-                .findFirst().orElse(null);
-        this.currentTab.setToggled(true);
-
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            widget.dm$setPage((int) Math.floor(wc / 6f));
-            widget.setPosition(x, y + 27 * index++);
-            if (index == 6) index = 0;
-            wc++;
+            if (RecipeBookGroup.SEARCH_MAP.containsKey(widget.getCategory())) {
+                widget.visible = true;
+
+                widget.dm$setPage((int) Math.floor(wc / 6f));
+                widget.setPosition(x, y + 27 * index++);
+                if (index == 6) index = 0;
+                wc++;
+            } else if (widget.hasKnownRecipes(this.recipeBook)) {
+                widget.checkForNewRecipes(this.client);
+
+                widget.dm$setPage((int) Math.floor(wc / 6f));
+                widget.setPosition(x, y + 27 * index++);
+                if (index == 6) index = 0;
+                wc++;
+            }
         }
 
         this.pages = MathStuff.fastCeil(wc / 6f);
