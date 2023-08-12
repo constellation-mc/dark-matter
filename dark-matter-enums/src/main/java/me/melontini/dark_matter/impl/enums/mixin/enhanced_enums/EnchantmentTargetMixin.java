@@ -37,6 +37,10 @@ public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget>
 
     @Unique
     private static EnchantmentTarget dark_matter$extendEnum(String internalName, Predicate<Item> predicate) {
+        for (EnchantmentTarget target : field_9077) {
+            if (target.name().equalsIgnoreCase(internalName)) return target;
+        }
+
         EnchantmentTarget last = field_9077[field_9077.length - 1];
         EnchantmentTarget enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1);
         ((EnchantmentTargetHack) (Object) enumConst).dark_matter$setPredicate(predicate);

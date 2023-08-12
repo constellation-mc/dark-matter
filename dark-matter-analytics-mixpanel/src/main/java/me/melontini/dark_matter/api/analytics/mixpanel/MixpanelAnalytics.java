@@ -11,6 +11,10 @@ import org.jetbrains.annotations.NotNull;
  */
 public class MixpanelAnalytics {
 
+    private MixpanelAnalytics() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Initializes a Handler instance for the provided token and stores it in the MESSAGE_HANDLERS map.
      *

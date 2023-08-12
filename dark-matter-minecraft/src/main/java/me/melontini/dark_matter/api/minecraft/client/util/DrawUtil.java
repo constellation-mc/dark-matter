@@ -30,6 +30,10 @@ import java.util.Optional;
 public class DrawUtil {
     public static final Screen FAKE_SCREEN = DrawInternals.FAKE_SCREEN;
 
+    private DrawUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void renderTooltip(MatrixStack matrices, ItemStack stack, float x, float y) {
         DrawInternals.renderTooltip(matrices, stack, x, y);
     }

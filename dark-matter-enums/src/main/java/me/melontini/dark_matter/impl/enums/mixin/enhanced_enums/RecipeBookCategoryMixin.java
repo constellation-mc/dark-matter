@@ -21,6 +21,10 @@ public class RecipeBookCategoryMixin implements ExtendableEnum<RecipeBookCategor
 
     @Unique
     private static RecipeBookCategory dark_matter$extendEnum(String internalName) {
+        for (RecipeBookCategory category : field_25767) {
+            if (category.name().equalsIgnoreCase(internalName)) return category;
+        }
+
         RecipeBookCategory last = field_25767[field_25767.length - 1];
         RecipeBookCategory enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1);
         field_25767 = ArrayUtils.add(field_25767, enumConst);

@@ -21,6 +21,10 @@ public class AbstractMinecraftEntityTypeMixin implements ExtendableEnum<Abstract
 
     @Unique
     private static AbstractMinecartEntity.Type dark_matter$extendEnum(String internalName) {
+        for (AbstractMinecartEntity.Type type : field_7673) {
+            if (type.name().equalsIgnoreCase(internalName)) return type;
+        }
+
         AbstractMinecartEntity.Type last = field_7673[field_7673.length - 1];
         AbstractMinecartEntity.Type enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1);
         field_7673 = ArrayUtils.add(field_7673, enumConst);
