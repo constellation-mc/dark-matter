@@ -25,27 +25,27 @@ public interface PaginatedRecipeBookWidget {
         throw new IllegalStateException("Interface not implemented");
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default void updatePages() {
         dm$updatePages();
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default void updatePageSwitchButtons() {
         dm$updatePageSwitchButtons();
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default int getPage() {
         return dm$getPage();
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default void setPage(int page) {
         dm$setPage(page);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default int getPageCount() {
         return dm$getPageCount();
     }
