@@ -7,6 +7,10 @@ import org.jetbrains.annotations.NotNull;
 
 public class TextFormattingUtil {
 
+    private TextFormattingUtil() {
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Registers a new color for an existing {@link Formatting} element.
      *

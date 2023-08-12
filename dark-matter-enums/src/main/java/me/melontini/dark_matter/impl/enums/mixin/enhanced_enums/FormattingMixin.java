@@ -33,6 +33,10 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
 
     @Unique
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Boolean modifier, Integer colorIndex, @Nullable Integer colorValue) {
+        for (Formatting formatting : field_1072) {
+            if (formatting.name().equalsIgnoreCase(internalName)) return formatting;
+        }
+
         Formatting last = field_1072[field_1072.length - 1];
         Formatting enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, name, code, modifier, colorIndex, colorValue);
         field_1072 = ArrayUtils.add(field_1072, enumConst);
@@ -42,6 +46,10 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
 
     @Unique
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Integer colorIndex, @Nullable Integer colorValue) {
+        for (Formatting formatting : field_1072) {
+            if (formatting.name().equalsIgnoreCase(internalName)) return formatting;
+        }
+
         Formatting last = field_1072[field_1072.length - 1];
         Formatting enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, name, code, colorIndex, colorValue);
         field_1072 = ArrayUtils.add(field_1072, enumConst);
@@ -51,6 +59,10 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
 
     @Unique
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Boolean modifier) {
+        for (Formatting formatting : field_1072) {
+            if (formatting.name().equalsIgnoreCase(internalName)) return formatting;
+        }
+
         Formatting last = field_1072[field_1072.length - 1];
         Formatting enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, name, code, modifier);
         field_1072 = ArrayUtils.add(field_1072, enumConst);

@@ -7,6 +7,10 @@ import java.util.UUID;
 
 public class Analytics {
 
+    private Analytics() {
+        throw new UnsupportedOperationException();
+    }
+
     public static UUID getUUID() {
         return AnalyticsInternals.getUUID();
     }

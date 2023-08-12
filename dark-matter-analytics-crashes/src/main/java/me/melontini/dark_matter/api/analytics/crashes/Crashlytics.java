@@ -6,6 +6,11 @@ import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.Nullable;
 
 public class Crashlytics {
+
+    private Crashlytics() {
+        throw new UnsupportedOperationException();
+    }
+
     public static void addHandler(String id, Decider decider, Handler handler) {
         CrashlyticsInternals.addHandler(id, decider, handler);
     }

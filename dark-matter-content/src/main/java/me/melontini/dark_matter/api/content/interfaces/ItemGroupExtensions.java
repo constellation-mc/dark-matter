@@ -21,17 +21,17 @@ public interface ItemGroupExtensions {
     }
 
     @Environment(EnvType.CLIENT)
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default boolean shouldAnimateIcon() {
         return dm$shouldAnimateIcon();
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     default ItemGroup setIconAnimation(AnimatedItemGroup animation) {
         return dm$setIconAnimation(animation);
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     @Environment(EnvType.CLIENT)
     default AnimatedItemGroup getIconAnimation() {
         return dm$getIconAnimation();

@@ -22,6 +22,10 @@ public class RarityMixin implements ExtendableEnum<Rarity> {
 
     @Unique
     private static Rarity dark_matter$extendEnum(String internalName, Formatting formatting) {
+        for (Rarity rarity : field_8905) {
+            if (rarity.name().equalsIgnoreCase(internalName)) return rarity;
+        }
+
         Rarity last = field_8905[field_8905.length - 1];
         Rarity enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, formatting);
         field_8905 = ArrayUtils.add(field_8905, enumConst);
