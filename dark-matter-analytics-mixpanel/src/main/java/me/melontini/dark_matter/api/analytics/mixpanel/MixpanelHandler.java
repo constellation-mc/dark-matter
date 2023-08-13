@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.analytics.mixpanel;
 import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.api.analytics.MessageHandler;
 import me.melontini.dark_matter.api.analytics.Prop;
+import me.melontini.dark_matter.api.analytics.mixpanel.interfaces.Mixpanel;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 
 import java.util.concurrent.Future;
