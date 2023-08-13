@@ -1,7 +1,8 @@
-package me.melontini.dark_matter.api.glitter.particles;
+package me.melontini.dark_matter.impl.glitter.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
+import me.melontini.dark_matter.api.glitter.particles.AbstractScreenParticle;
 import me.melontini.dark_matter.api.mirage.Mirage;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
