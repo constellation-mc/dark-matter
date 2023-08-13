@@ -269,13 +269,8 @@ public class ContentBuilder {
                 builder = new ItemGroup.Builder(null, -1);
             }
             builder.entries((enabledFeatures, entries, operatorEnabled) -> {
-                if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1") && entries instanceof FabricItemGroupEntries fabricEntries) {
-                    if (this.tabStacks != null) this.tabStacks.accept(fabricEntries.getDisplayStacks());
-                    if (this.searchTabStacks != null) this.searchTabStacks.accept(fabricEntries.getSearchTabStacks());
-                } else if (entries instanceof ItemGroup.EntriesImpl) {
-                    if (this.tabStacks != null) this.tabStacks.accept(((ItemGroup.EntriesImpl) entries).parentTabStacks = new LinkedList<>());
-                    if (this.searchTabStacks != null) this.searchTabStacks.accept(((ItemGroup.EntriesImpl) entries).searchTabStacks = new LinkedHashSet<>());
-                }
+                DarkMatterEntriesImpl entries1 = new DarkMatterEntriesImpl(entries);
+                this.entries.collect(entries1);
             });
             builder.icon(() -> ItemGroupBuilder.this.icon.get());
 
