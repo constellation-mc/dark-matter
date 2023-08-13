@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.analytics.mixpanel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
+import me.melontini.dark_matter.api.analytics.mixpanel.interfaces.Mixpanel;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
@@ -19,7 +20,7 @@ import java.util.UUID;
 //TODO (Union, Append, Remove) List properties
 //TODO Group profiles (everything)
 @ApiStatus.Internal
-public class MixpanelAPI {
+public class MixpanelAPI implements Mixpanel {
     private static final String BASE_URL = "https://api.mixpanel.com";
     private static final String EU_URL = "https://api-eu.mixpanel.com";
 
