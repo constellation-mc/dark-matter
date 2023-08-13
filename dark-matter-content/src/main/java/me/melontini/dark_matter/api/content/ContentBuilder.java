@@ -5,7 +5,9 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.minecraft.util.TextUtil;
+import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
@@ -15,6 +17,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.Registries;
@@ -24,7 +27,6 @@ import net.minecraft.util.Identifier;
 
 import java.util.*;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -206,9 +208,8 @@ public class ContentBuilder {
         private Supplier<ItemStack> icon = () -> ItemStack.EMPTY;
         private AnimatedItemGroup animatedIcon;
         private String texture;
-        private Consumer<Collection<ItemStack>> tabStacks;
+        private DarkMatterEntries.Collector entries;
         private Text displayName;
-        private Consumer<Collection<ItemStack>> searchTabStacks;
 
         private ItemGroupBuilder(Identifier id) {
             if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric API", id);
@@ -221,8 +222,12 @@ public class ContentBuilder {
 
         public ItemGroupBuilder icon(ItemStack itemStack) {
             MakeSure.notNull(itemStack, "couldn't build: " + identifier);
-            this.icon = () -> itemStack;
-            return this;
+            return this.icon(() -> itemStack);
+        }
+
+        public ItemGroupBuilder icon(ItemConvertible item) {
+            MakeSure.notNull(item, "couldn't build: " + identifier);
+            return this.icon(new ItemStack(item));
         }
 
         public ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier) {
@@ -244,16 +249,9 @@ public class ContentBuilder {
             return this;
         }
 
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks) {
-            MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
-            this.tabStacks = parentTabStacks;
-            return this;
-        }
-
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, Consumer<Collection<ItemStack>> searchTabStacks) {
-            MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
-            this.tabStacks = parentTabStacks;
-            this.searchTabStacks = searchTabStacks;
+        public ItemGroupBuilder entries(DarkMatterEntries.Collector collector) {
+            MakeSure.notNull(collector, "couldn't build: " + identifier);
+            this.entries = collector;
             return this;
         }
 
