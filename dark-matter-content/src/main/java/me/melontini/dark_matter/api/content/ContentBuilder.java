@@ -1,19 +1,21 @@
 package me.melontini.dark_matter.api.content;
 
 import com.mojang.datafixers.types.Type;
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.impl.content.DarkMatterEntries;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
 import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccessor;
-import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.Utilities;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
@@ -21,12 +23,10 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.registry.Registry;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
-import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 /**
@@ -209,7 +209,7 @@ public class ContentBuilder {
         private Supplier<ItemStack> icon = () -> ItemStack.EMPTY;
         private AnimatedItemGroup animatedIcon;
         private String texture;
-        private Consumer<Collection<ItemStack>> tabStacks;
+        private DarkMatterEntries.Collector entries;
         private Text displayName;
 
         private ItemGroupBuilder(Identifier id) {
@@ -223,8 +223,12 @@ public class ContentBuilder {
 
         public ItemGroupBuilder icon(ItemStack itemStack) {
             MakeSure.notNull(itemStack, "couldn't build: " + identifier);
-            this.icon = () -> itemStack;
-            return this;
+            return this.icon(() -> itemStack);
+        }
+
+        public ItemGroupBuilder icon(ItemConvertible item) {
+            MakeSure.notNull(item, "couldn't build: " + identifier);
+            return this.icon(new ItemStack(item));
         }
 
         public ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier) {
@@ -246,15 +250,9 @@ public class ContentBuilder {
             return this;
         }
 
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks) {
-            MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
-            this.tabStacks = parentTabStacks;
-            return this;
-        }
-
-        public ItemGroupBuilder entries(Consumer<Collection<ItemStack>> parentTabStacks, /*ignored in <=1.19.2*/ Consumer<Collection<ItemStack>> searchStacks) {
-            MakeSure.notNull(parentTabStacks, "couldn't build: " + identifier);
-            this.tabStacks = parentTabStacks;
+        public ItemGroupBuilder entries(DarkMatterEntries.Collector collector) {
+            MakeSure.notNull(collector, "couldn't build: " + identifier);
+            this.entries = collector;
             return this;
         }
 
@@ -279,8 +277,9 @@ public class ContentBuilder {
 
                 @Override
                 public void appendStacks(DefaultedList<ItemStack> stacks) {
-                    if (ItemGroupBuilder.this.tabStacks != null) {
-                        ItemGroupBuilder.this.tabStacks.accept(stacks);
+                    if (ItemGroupBuilder.this.entries != null) {
+                        DarkMatterEntries entries = new DarkMatterEntries(stacks);
+                        ItemGroupBuilder.this.entries.collect(entries);
                         return;
                     }
                     super.appendStacks(stacks);
