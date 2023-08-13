@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.api.content.interfaces;
 
-import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 
@@ -36,6 +35,6 @@ public interface DarkMatterEntries {
     }
 
     interface Collector {
-        void collect(DarkMatterEntriesImpl entries);
+        void collect(DarkMatterEntries entries);
     }
 }
