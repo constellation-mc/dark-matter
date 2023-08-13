@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.impl.analytics.mixpanel;
 
-import me.melontini.dark_matter.api.analytics.mixpanel.Mixpanel;
 import me.melontini.dark_matter.api.analytics.mixpanel.MixpanelHandler;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import org.jetbrains.annotations.ApiStatus;
@@ -14,7 +13,7 @@ public class MixpanelAnalyticsInternals {
 
     public static MixpanelHandler init(String token, boolean eu) {
         MakeSure.notEmpty(token, "Invalid token provided! (null/empty)");
-        return MESSAGE_HANDLERS.computeIfAbsent(token, k -> new MixpanelHandler(new Mixpanel(eu, token)));
+        return MESSAGE_HANDLERS.computeIfAbsent(token, k -> new MixpanelHandler(new MixpanelAPI(eu, token)));
     }
 
 }
