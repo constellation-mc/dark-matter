@@ -33,12 +33,4 @@ public class DarkMatterEntriesImpl implements DarkMatterEntries {
         }
     }
 
-    public Collection<ItemStack> getTabStacks() {
-        return tabStacks;
-    }
-
-    public Set<ItemStack> getSearchStacks() {
-        return searchStacks;
-    }
-
 }
