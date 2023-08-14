@@ -4,8 +4,9 @@ import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
+import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import me.melontini.dark_matter.impl.content.DarkMatterEntries;
+import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
 import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccessor;
@@ -278,7 +279,7 @@ public class ContentBuilder {
                 @Override
                 public void appendStacks(DefaultedList<ItemStack> stacks) {
                     if (ItemGroupBuilder.this.entries != null) {
-                        DarkMatterEntries entries = new DarkMatterEntries(stacks);
+                        DarkMatterEntriesImpl entries = new DarkMatterEntriesImpl(stacks);
                         ItemGroupBuilder.this.entries.collect(entries);
                         return;
                     }

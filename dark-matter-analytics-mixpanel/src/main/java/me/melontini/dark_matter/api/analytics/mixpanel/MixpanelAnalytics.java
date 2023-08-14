@@ -2,6 +2,7 @@ package me.melontini.dark_matter.api.analytics.mixpanel;
 
 import com.google.gson.JsonObject;
 import me.melontini.dark_matter.api.analytics.Prop;
+import me.melontini.dark_matter.api.analytics.mixpanel.interfaces.Mixpanel;
 import me.melontini.dark_matter.impl.analytics.mixpanel.MixpanelAnalyticsInternals;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
