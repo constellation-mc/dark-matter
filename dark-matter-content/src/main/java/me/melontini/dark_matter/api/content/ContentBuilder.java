@@ -267,16 +267,17 @@ public class ContentBuilder {
             } else {
                 builder = new ItemGroup.Builder(null, -1);
             }
-            builder.entries((displayContext, entries) -> {
-                DarkMatterEntriesImpl entries1 = new DarkMatterEntriesImpl(entries);
-                this.entries.collect(entries1);
-            });
+            builder.entries((displayContext, entries) -> {});
             builder.icon(() -> ItemGroupBuilder.this.icon.get());
 
             builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> TextUtil.translatable("itemGroup." + this.identifier.toString().replace(":", "."))));
             if (this.texture != null) builder.texture(this.texture);
 
             ItemGroup group = builder.build();
+            ItemGroupHelper.addItemGroupInjection(group, (enabledFeatures, operatorEnabled, entriesImpl) -> {
+                DarkMatterEntriesImpl entries1 = new DarkMatterEntriesImpl(entriesImpl);
+                this.entries.collect(entries1);
+            });
             if (this.animatedIcon != null) group.dm$setIconAnimation(this.animatedIcon);
             return group;
         }
