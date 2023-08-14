@@ -4,11 +4,18 @@
 
 Split API/Impl in all modules. A lot of package changes.
 
+Almost all classes in `impl` are `@ApiStatus.Internal` and should not be worked with.
+
+### Analytics
+
+* `MixpanelAPI` now implements the `Mixpanel` interface.
+
 ### Content
 
 * `FabricEntityTypeBuilder` and `FabricBlockEntityTypeBuilder` can now be used in `RegistryUtil`. You need to bring your own Fabric API.
 * `ItemGroupHelper.InjectEntries` now provides `ItemGroup.Entries` instead of `ItemGroup.EntriesImpl`.
 * Some constructors in `ContentBuilder` were public.
+* Reworked `ContentBuilder.ItemGroupBuilder#entries`.
 * Non-prefixed methods in interfaces will be removed soon.
 
 ### Danger
@@ -28,16 +35,20 @@ Split API/Impl in all modules. A lot of package changes.
 
 ### Mirage
 
-* Public instances are available in `Mirage`.
+* Public instances are available in `Mirage`. `FakeWorld` and `AlwaysBrightLightmapTextureManager` are now in impl.
 * The init mixin is no longer required.
 * * The game will hang for a while if this mixin is not applied.
 
 ### Glitter
 
 * Particles no longer wait for resource init before ticking.
+* Moved VanillaParticle to `impl`.
+* VanillaParticle should now work on Connector.
 
 ### Recipe Book
 
 * `RecipeBookHelper#createCategory` now only accepts identifiers. 
 * Added `createGroup` to `RecipeBookHelper`.
 * Non-prefixed methods in interfaces will be removed soon.
+* Improved search group detection.
+* Fixed crashes if a category has no groups.
