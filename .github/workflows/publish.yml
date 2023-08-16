@@ -43,7 +43,6 @@ jobs:
           java: |
             17
 
-          github-tag: v${{ env.VERSION_PLAIN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-prerelease: false
 
