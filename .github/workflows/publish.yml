@@ -1,6 +1,9 @@
 
 name: publish
-on: [workflow_dispatch]
+on:
+  push:
+    tags:
+      - 'v*'
 
 jobs:
   publish:
@@ -40,7 +43,6 @@ jobs:
           java: |
             17
 
-          github-tag: v${{ env.VERSION_PLAIN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           github-prerelease: false
 
