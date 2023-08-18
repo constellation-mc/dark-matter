@@ -32,9 +32,9 @@ public abstract class AbstractScreenParticle implements Drawable {
     }
 
     @ApiStatus.Internal
-    public final void renderInternal(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public final void renderInternal(DrawContext context, int mouseX, int mouseY, float delta) {
         if (removed || (screen != null && client.currentScreen != screen)) return;
-        render(matrices, mouseX, mouseY, delta);
+        render(context, mouseX, mouseY, delta);
     }
 
     @Override
