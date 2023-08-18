@@ -21,6 +21,9 @@
     "minecraft": ">=1.19",
     "dark-matter-base": "*"
   },
+  "provides": [
+    "dark_matter_content"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",

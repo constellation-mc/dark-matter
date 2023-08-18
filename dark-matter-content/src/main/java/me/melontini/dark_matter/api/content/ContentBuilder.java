@@ -211,7 +211,7 @@ public class ContentBuilder {
         private Text displayName;
 
         private ItemGroupBuilder(Identifier id) {
-            if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric API", id);
+            if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
             this.identifier = id;
         }
 

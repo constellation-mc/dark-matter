@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.api.glitter.particles;
 
-import me.melontini.dark_matter.api.base.util.MathStuff;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -8,17 +7,16 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractScreenParticle implements Drawable {
     protected static final Random RANDOM = new Random();
-    public double wind = 0.05;
     public double x, y, velX, velY;
     public double prevX, prevY;
-    public int age = 0;
-    public int deathAge = 200;
+    public int age = 0, deathAge = 200;
     protected MinecraftClient client;
     public boolean removed = false;
     protected Screen screen;
@@ -32,6 +30,13 @@ public abstract class AbstractScreenParticle implements Drawable {
         this.prevY = y - velY;
         this.client = MinecraftClient.getInstance();
     }
+
+    @ApiStatus.Internal
+    public final void renderInternal(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        if (removed || (screen != null && client.currentScreen != screen)) return;
+        render(matrices, mouseX, mouseY, delta);
+    }
+
     @Override
     public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.render(context.getMatrices(), mouseX, mouseY, delta);
@@ -41,20 +46,23 @@ public abstract class AbstractScreenParticle implements Drawable {
 
     }
 
-    public final void tick() {
+    @ApiStatus.Internal
+    public final void tickInternal() {
         this.prevX = x;
         this.prevY = y;
 
-        tickLogic();
+        tick();
         age++;
         removed = checkRemoval();
         if (screen != null && client.currentScreen != screen) removed = true;
     }
 
+    protected void tick() {
+        tickLogic();
+    }
+
+    @Deprecated
     protected void tickLogic() {
-        x += velX * 0.99;
-        y += velY * 0.99;
-        velX += wind * MathStuff.nextDouble(RANDOM, -0.5, 1);
     }
 
     protected boolean checkRemoval() {

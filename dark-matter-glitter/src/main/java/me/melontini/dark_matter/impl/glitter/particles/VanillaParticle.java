@@ -65,7 +65,7 @@ public class VanillaParticle extends AbstractScreenParticle {
     }
 
     @Override
-    protected void tickLogic() {
+    protected void tick() {
         particle.tick();
     }
 

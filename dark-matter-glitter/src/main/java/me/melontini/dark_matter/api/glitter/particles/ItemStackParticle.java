@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.api.glitter.particles;
 
-import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.model.BakedModel;
@@ -34,7 +34,7 @@ public class ItemStackParticle extends AbstractScreenParticle {
     }
 
     @Override
-    protected void tickLogic() {
+    protected void tick() {
         x += velX *= 0.99;
         y += velY * 0.99;
         velY += MathStuff.nextDouble(RANDOM, 0.4, 0.9);
