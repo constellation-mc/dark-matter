@@ -9,11 +9,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.particle.ParticleEffect;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -25,8 +23,8 @@ public class ScreenParticleInternals {
         throw new UnsupportedOperationException();
     }
 
-    private static final List<AbstractScreenParticle> SCREEN_PARTICLES = Lists.newArrayList();
-    private static final List<AbstractScreenParticle> SCREEN_PARTICLES_REMOVAL = Lists.newArrayList();
+    private static final Set<AbstractScreenParticle> SCREEN_PARTICLES = new LinkedHashSet<>();
+    private static final Set<AbstractScreenParticle> SCREEN_PARTICLES_REMOVAL = new HashSet<>();
     public static final Random RANDOM = new Random();
 
     public static void addParticle(AbstractScreenParticle particle) {
@@ -209,13 +207,13 @@ public class ScreenParticleInternals {
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.render(matrixStack, i, j, client.getTickDelta());
+            particle.renderInternal(matrixStack, i, j, client.getTickDelta());
         }
     }
 
     public static void tickParticles() {
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.tick();
+            particle.tickInternal();
             if (particle.removed) SCREEN_PARTICLES_REMOVAL.add(particle);
         }
 

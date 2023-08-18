@@ -19,6 +19,9 @@
     "dark-matter-base": "*",
     "dark-matter-analytics": "*"
   },
+  "provides": [
+    "dark_matter_analytics_mixpanel"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",
