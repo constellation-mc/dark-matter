@@ -7,6 +7,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.util.math.MatrixStack;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Random;
 
@@ -31,10 +32,18 @@ public abstract class AbstractScreenParticle implements Drawable {
         this.prevY = y - velY;
         this.client = MinecraftClient.getInstance();
     }
+
+    @ApiStatus.Internal
+    public final void renderInternal(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+        if (removed || (screen != null && client.currentScreen != screen)) return;
+        render(matrices, mouseX, mouseY, delta);
+    }
+
     @Override
     public abstract void render(MatrixStack matrices, int mouseX, int mouseY, float delta);
 
-    public final void tick() {
+    @ApiStatus.Internal
+    public final void tickInternal() {
         this.prevX = x;
         this.prevY = y;
 

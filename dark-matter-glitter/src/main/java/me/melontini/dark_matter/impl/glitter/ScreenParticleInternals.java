@@ -209,13 +209,13 @@ public class ScreenParticleInternals {
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.render(matrixStack, i, j, client.getTickDelta());
+            particle.renderInternal(matrixStack, i, j, client.getTickDelta());
         }
     }
 
     public static void tickParticles() {
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.tick();
+            particle.tickInternal();
             if (particle.removed) SCREEN_PARTICLES_REMOVAL.add(particle);
         }
 
