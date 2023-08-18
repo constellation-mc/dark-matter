@@ -17,6 +17,9 @@
     "fabricloader": "*",
     "minecraft": "*"
   },
+  "provides": [
+    "dark_matter_base"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",

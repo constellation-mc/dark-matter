@@ -11,7 +11,6 @@ import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroupEntries;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
@@ -212,7 +211,7 @@ public class ContentBuilder {
         private Text displayName;
 
         private ItemGroupBuilder(Identifier id) {
-            if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric API", id);
+            if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
             this.identifier = id;
         }
 

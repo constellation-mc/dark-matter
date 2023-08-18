@@ -22,6 +22,9 @@
     "dark-matter-base": "*",
     "dark-matter-enums": "*"
   },
+  "provides": [
+    "dark_matter_recipe_book"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",

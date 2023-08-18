@@ -22,6 +22,9 @@
     "dark-matter-base": "*",
     "dark-matter-analytics": "*"
   },
+  "provides": [
+    "dark_matter_analytics_crashes"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",

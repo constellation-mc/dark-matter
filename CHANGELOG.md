@@ -1,54 +1,15 @@
 ## What's new:
 
-### Major breaking changes!!!
+### Important changes for Glitter.
 
-Split API/Impl in all modules. A lot of package changes.
-
-Almost all classes in `impl` are `@ApiStatus.Internal` and should not be worked with.
-
-### Analytics
-
-* `MixpanelAPI` now implements the `Mixpanel` interface.
-
-### Content
-
-* `FabricEntityTypeBuilder` and `FabricBlockEntityTypeBuilder` can now be used in `RegistryUtil`. You need to bring your own Fabric API.
-* `ItemGroupHelper.InjectEntries` now provides `ItemGroup.Entries` instead of `ItemGroup.EntriesImpl`.
-* Some constructors in `ContentBuilder` were public.
-* Reworked `ContentBuilder.ItemGroupBuilder#entries`.
-* Non-prefixed methods in interfaces will be removed soon.
-
-### Danger
-
-* In an act of desperation, `InstrumentationAccess` will try to attach the ByteBuddy agent if the DM agent one fails.
-* `InstrumentationAccess` now uses `ClassLoader#getSystemClassLoader` instead of `FabricLoader.class#getClassLoader`.
-
-### Enums
-
-* `dark_matter$extendEnum` now checks if identical constants exist and returns the old one if that's the case.
-
-### Minecraft
-
-* `NBTUtil` has been renamed to `NbtUtil`.
-* `NbtUtil` and `NbtBuilder` are now part of `minecraft`.
-* `NbtUtil#writeInventoryToNbt` and `NbtUtil#readInventoryFromNbt` now accept custom keys.
-
-### Mirage
-
-* Public instances are available in `Mirage`. `FakeWorld` and `AlwaysBrightLightmapTextureManager` are now in impl.
-* The init mixin is no longer required.
-* * The game will hang for a while if this mixin is not applied.
+The mod now provides Forge-style mod IDs. So, you can use either `dark-matter-content` or `dark_matter_content`.
 
 ### Glitter
 
-* Particles no longer wait for resource init before ticking.
-* Moved VanillaParticle to `impl`.
-* VanillaParticle should now work on Connector.
+* `tickLogic()` is being replaced by `tick()`.
+* * In later versions `tick()` will become abstract.
+* Internal methods in `AbstractScreenParticle` are now actually internal.
 
-### Recipe Book
+### Content
 
-* `RecipeBookHelper#createCategory` now only accepts identifiers. 
-* Added `createGroup` to `RecipeBookHelper`.
-* Non-prefixed methods in interfaces will be removed soon.
-* Improved search group detection.
-* Fixed crashes if a category has no groups.
+* The `Building {x} ItemGroup without Fabric Item Groups` warning will only get raised if `fabric-item-groups-v0` is not present. (<=1.19.2)
