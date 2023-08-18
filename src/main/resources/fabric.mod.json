@@ -15,6 +15,9 @@
     "fabricloader": "*",
     "minecraft": "*"
   },
+  "provides": [
+    "dark_matter"
+  ],
   "custom": {
     "modmenu": {
       "badges": [ "library" ]

@@ -21,6 +21,9 @@
     "minecraft": "*",
     "dark-matter-base": "*"
   },
+  "provides": [
+    "dark_matter_enums"
+  ],
   "custom": {
     "modmenu": {
       "parent": "dark-matter",
