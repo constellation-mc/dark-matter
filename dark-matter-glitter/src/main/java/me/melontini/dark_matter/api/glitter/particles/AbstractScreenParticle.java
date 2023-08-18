@@ -54,8 +54,8 @@ public abstract class AbstractScreenParticle implements Drawable {
     }
 
     protected void tickLogic() {
-        x += velX * 0.99;
-        y += velY * 0.99;
+        x += velX;
+        y += velY;
         velX += wind * MathStuff.nextDouble(RANDOM, -0.5, 1);
     }
 
