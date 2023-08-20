@@ -16,3 +16,4 @@ The mod now provides Forge-style mod IDs. So, you can use either `dark-matter-co
 ### Content
 
 * The `Building {x} ItemGroup without Fabric Item Groups` warning will only get raised if `fabric-item-groups-v0` is not present. (<=1.19.2)
+* RegistryUtil now features `BooleanSupplier` methods.
