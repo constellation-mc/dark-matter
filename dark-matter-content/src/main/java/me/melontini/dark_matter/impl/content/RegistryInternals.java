@@ -18,12 +18,12 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
@@ -46,6 +46,7 @@ public class RegistryInternals {
         BLOCK_ENTITY_LOOKUP.putIfAbsent(block, t);
     }
 
+    @SuppressWarnings("unchecked")
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> getBlockEntityFromBlock(@NotNull Block block) {
         if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return (BlockEntityType<T>) BLOCK_ENTITY_LOOKUP.get(block);
         else {
@@ -71,73 +72,51 @@ public class RegistryInternals {
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
-        if (shouldRegister) {
-            T item = supplier.get();
-
-            Registry.register(Registries.ITEM, id, item);
-            return item;
-        } else {
-            return null;
-        }
-    }
-
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, EntityType.Builder<T> builder) {
-        if (shouldRegister) {
-            EntityType<T> type = builder.build(Pattern.compile("[\\W]").matcher(id.toString()).replaceAll("_"));
-            Registry.register(Registries.ENTITY_TYPE, id, type);
-            return type;
+    public static @Nullable <T extends Item> T createItem(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.ITEM, id, supplier.get());
         }
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
-        if (shouldRegister) {
-            EntityType<T> type = builder.build();
-            Registry.register(Registries.ENTITY_TYPE, id, type);
-            return type;
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(@NotNull BooleanSupplier shouldRegister, Identifier id, EntityType.Builder<T> builder) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.ENTITY_TYPE, id, builder.build(Pattern.compile("\\W").matcher(id.toString()).replaceAll("_")));
         }
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Block> T createBlock(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
-        if (shouldRegister) {
-            T block = supplier.get();
-
-            Registry.register(Registries.BLOCK, id, block);
-            return block;
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(@NotNull BooleanSupplier shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.ENTITY_TYPE, id, builder.build());
         }
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
-        if (shouldRegister) {
-            BlockEntityType<T> type = builder.build(null);
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, id, type);
-            return type;
+    public static @Nullable <T extends Block> T createBlock(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.BLOCK, id, supplier.get());
         }
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
-        if (shouldRegister) {
-            BlockEntityType<T> type = builder.build(null);
-            Registry.register(Registries.BLOCK_ENTITY_TYPE, id, type);
-            return type;
+    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(@NotNull BooleanSupplier shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, builder.build(null));
         }
         return null;
     }
 
-    @Contract("false, _, _ -> null")
-    public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(boolean shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
-        if (shouldRegister) {
-            Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
+    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(@NotNull BooleanSupplier shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.BLOCK_ENTITY_TYPE, id, builder.build(null));
+        }
+        return null;
+    }
+
+    public static <T extends ScreenHandler> @Nullable ScreenHandlerType<T> createScreenHandler(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(Registries.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
         }
         return null;
     }

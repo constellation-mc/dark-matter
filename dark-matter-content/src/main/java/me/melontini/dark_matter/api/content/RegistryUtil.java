@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 /**
@@ -39,32 +40,22 @@ public class RegistryUtil {
         return block != null ? (T) block.asItem() : null;
     }
 
+    //Items
+
     public static @Nullable <T extends Item> T createItem(Identifier id, Supplier<T> supplier) {
         return createItem(true, id, supplier);
     }
 
     @Contract("false, _, _ -> null")
     public static @Nullable <T extends Item> T createItem(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
+        return createItem(() -> shouldRegister, id, supplier);
+    }
+
+    public static @Nullable <T extends Item> T createItem(BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
         return RegistryInternals.createItem(shouldRegister, id, supplier);
     }
 
-    public static <T extends Entity> EntityType<T> createEntityType(Identifier id, EntityType.Builder<T> builder) {
-        return createEntityType(true, id, builder);
-    }
-
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, EntityType.Builder<T> builder) {
-        return RegistryInternals.createEntityType(shouldRegister, id, builder);
-    }
-
-    public static <T extends Entity> EntityType<T> createEntityType(Identifier id, FabricEntityTypeBuilder<T> builder) {
-        return createEntityType(true, id, builder);
-    }
-
-    @Contract("false, _, _ -> null")
-    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
-        return RegistryInternals.createEntityType(shouldRegister, id, builder);
-    }
+    //Blocks
 
     public static @Nullable <T extends Block> T createBlock(Identifier id, Supplier<T> supplier) {
         return createBlock(true, id, supplier);
@@ -72,8 +63,44 @@ public class RegistryUtil {
 
     @Contract("false, _, _ -> null")
     public static @Nullable <T extends Block> T createBlock(boolean shouldRegister, Identifier id, Supplier<T> supplier) {
+        return createBlock(() -> shouldRegister, id, supplier);
+    }
+
+    public static @Nullable <T extends Block> T createBlock(BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
         return RegistryInternals.createBlock(shouldRegister, id, supplier);
     }
+
+    //Entity Types with vanilla builder
+
+    public static <T extends Entity> EntityType<T> createEntityType(Identifier id, EntityType.Builder<T> builder) {
+        return createEntityType(true, id, builder);
+    }
+
+    @Contract("false, _, _ -> null")
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, EntityType.Builder<T> builder) {
+        return createEntityType(() -> shouldRegister, id, builder);
+    }
+
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(BooleanSupplier shouldRegister, Identifier id, EntityType.Builder<T> builder) {
+        return RegistryInternals.createEntityType(shouldRegister, id, builder);
+    }
+
+    //Entity Types with Fabric builder
+
+    public static <T extends Entity> EntityType<T> createEntityType(Identifier id, FabricEntityTypeBuilder<T> builder) {
+        return createEntityType(true, id, builder);
+    }
+
+    @Contract("false, _, _ -> null")
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(boolean shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
+        return createEntityType(() -> shouldRegister, id, builder);
+    }
+
+    public static @Nullable <T extends Entity> EntityType<T> createEntityType(BooleanSupplier shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
+        return RegistryInternals.createEntityType(shouldRegister, id, builder);
+    }
+
+    //Block Entities with vanilla builder
 
     public static <T extends BlockEntity> BlockEntityType<T> createBlockEntity(Identifier id, BlockEntityType.Builder<T> builder) {
         return createBlockEntity(true, id, builder);
@@ -81,8 +108,14 @@ public class RegistryUtil {
 
     @Contract("false, _, _ -> null")
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
+        return createBlockEntity(() -> shouldRegister, id, builder);
+    }
+
+    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(BooleanSupplier shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
         return RegistryInternals.createBlockEntity(shouldRegister, id, builder);
     }
+
+    //Block Entities with Fabric builder
 
     public static <T extends BlockEntity> BlockEntityType<T> createBlockEntity(Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
         return createBlockEntity(true, id, builder);
@@ -90,8 +123,14 @@ public class RegistryUtil {
 
     @Contract("false, _, _ -> null")
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(boolean shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
+        return createBlockEntity(() -> shouldRegister, id, builder);
+    }
+
+    public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(BooleanSupplier shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
         return RegistryInternals.createBlockEntity(shouldRegister, id, builder);
     }
+
+    //Screen Handlers
 
     public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
         return createScreenHandler(true, id, factory);
@@ -99,6 +138,10 @@ public class RegistryUtil {
 
     @Contract("false, _, _ -> null")
     public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(boolean shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
+        return createScreenHandler(() -> shouldRegister, id, factory);
+    }
+
+    public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(BooleanSupplier shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
         return RegistryInternals.createScreenHandler(shouldRegister, id, factory);
     }
 
