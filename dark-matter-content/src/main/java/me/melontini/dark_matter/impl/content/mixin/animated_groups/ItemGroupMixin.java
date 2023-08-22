@@ -8,11 +8,13 @@ import net.minecraft.item.ItemGroup;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
+import java.util.function.Supplier;
+
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin implements ItemGroupExtensions {
 
     @Unique
-    public AnimatedItemGroup dark_matter$animation;
+    public Supplier<AnimatedItemGroup> dark_matter$animation;
 
     @Environment(EnvType.CLIENT)
     @Override
@@ -21,7 +23,7 @@ public class ItemGroupMixin implements ItemGroupExtensions {
     }
 
     @Override
-    public ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
+    public ItemGroup dm$setIconAnimation(Supplier<AnimatedItemGroup> animation) {
         this.dark_matter$animation = animation;
         return (ItemGroup) (Object) this;
     }
@@ -29,7 +31,7 @@ public class ItemGroupMixin implements ItemGroupExtensions {
     @Environment(EnvType.CLIENT)
     @Override
     public AnimatedItemGroup dm$getIconAnimation() {
-        return this.dark_matter$animation;
+        return this.dark_matter$animation.get();
     }
 }
 

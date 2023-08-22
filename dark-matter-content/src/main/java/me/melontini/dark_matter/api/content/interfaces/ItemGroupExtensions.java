@@ -4,6 +4,8 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.item.ItemGroup;
 
+import java.util.function.Supplier;
+
 public interface ItemGroupExtensions {
 
     @Environment(EnvType.CLIENT)
@@ -12,6 +14,10 @@ public interface ItemGroupExtensions {
     }
 
     default ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
+        return this.dm$setIconAnimation(() -> animation);
+    }
+
+    default ItemGroup dm$setIconAnimation(Supplier<AnimatedItemGroup> animation) {
         throw new IllegalStateException("Interface not implemented");
     }
 
