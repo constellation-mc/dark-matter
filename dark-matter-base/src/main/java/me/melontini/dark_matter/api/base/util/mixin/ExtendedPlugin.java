@@ -14,6 +14,7 @@ import org.spongepowered.asm.service.MixinService;
 import java.util.*;
 import java.util.function.BiPredicate;
 
+@ApiStatus.Obsolete
 public class ExtendedPlugin implements IMixinConfigPlugin {
 
     protected static final MappingResolver MAPPING_RESOLVER = FabricLoader.getInstance().getMappingResolver();
