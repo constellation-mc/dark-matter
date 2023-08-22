@@ -2,11 +2,11 @@ package me.melontini.dark_matter.impl.content.builders;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.content.ContentBuilder;
+import me.melontini.dark_matter.api.content.RegistryUtil;
 import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccessor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.BooleanSupplier;
@@ -40,15 +40,10 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
     }
 
     public T build() {
-        if (this.register.getAsBoolean()) {
-            T item = this.itemSupplier.get();
+        T item = RegistryUtil.createItem(this.register, this.identifier, this.itemSupplier);
 
-            if (this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
-
-            Registry.register(Registry.ITEM, this.identifier, item);
-            return item;
-        }
-        return null;
+        if (item != null && this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
+        return item;
     }
 
 }

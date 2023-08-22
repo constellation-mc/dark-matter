@@ -2,11 +2,11 @@ package me.melontini.dark_matter.impl.content.builders;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.content.ContentBuilder;
+import me.melontini.dark_matter.api.content.RegistryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -46,15 +46,12 @@ public class BlockBuilderImpl<T extends Block> implements ContentBuilder.BlockBu
     }
 
     public T build() {
-        if (this.register.getAsBoolean()) {
-            T block = this.blockSupplier.get();
+        T block = RegistryUtil.createBlock(this.register, this.identifier, this.blockSupplier);
 
+        if (block != null) {
             if (itemFactory != null) itemFactory.produce(block, this.identifier).build();
             if (blockEntityFactory != null) blockEntityFactory.produce(block, this.identifier).build();
-
-            Registry.register(Registry.BLOCK, this.identifier, block);
-            return block;
         }
-        return null;
+        return block;
     }
 }

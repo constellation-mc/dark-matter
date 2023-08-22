@@ -26,9 +26,11 @@ import java.util.function.Supplier;
  */
 @SuppressWarnings("unused")
 public class ContentBuilder {
+
     private ContentBuilder() {
         throw new UnsupportedOperationException();
     }
+
     public interface ItemBuilder<T extends Item> {
 
         static <T extends Item> ItemBuilder<T> create(Identifier identifier, Supplier<T> itemSupplier) {
