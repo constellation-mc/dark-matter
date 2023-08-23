@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util.mixin;
 
+import me.melontini.dark_matter.impl.base.util.mixin.MixinPredicatePlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.PublicizePlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.ShouldApplyPlugin;
 import net.fabricmc.api.EnvType;
@@ -26,7 +27,7 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     @Override
     public final void onLoad(String mixinPackage) {
-        this.plugins.add(DefaultPlugins.shouldApplyPlugin());
+        this.plugins.add(DefaultPlugins.mixinPredicatePlugin());
         this.collectPlugins(this.plugins);
 
         this.plugins.forEach(plugin -> plugin.onPluginLoad(mixinPackage));
@@ -88,30 +89,37 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     //New Methods.
 
+    @ApiStatus.OverrideOnly
     protected void collectPlugins(Set<IPluginPlugin> plugins) {
 
     }
 
+    @ApiStatus.OverrideOnly
     protected void onPluginLoad(String mixinPackage) {
 
     }
 
+    @ApiStatus.OverrideOnly
     protected boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
         return true;
     }
 
+    @ApiStatus.OverrideOnly
     protected void confirmTargets(Set<String> myTargets, Set<String> otherTargets) {
 
     }
 
+    @ApiStatus.OverrideOnly
     protected void getMixins(List<String> mixins) {
 
     }
 
+    @ApiStatus.OverrideOnly
     protected void beforeApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
     }
 
+    @ApiStatus.OverrideOnly
     protected void afterApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
 
     }
@@ -152,6 +160,11 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     public static final class DefaultPlugins {
 
+        public static IPluginPlugin mixinPredicatePlugin() {
+            return new MixinPredicatePlugin();
+        }
+
+        @ApiStatus.Obsolete(since = "2.0.0")
         public static IPluginPlugin shouldApplyPlugin() {
             return new ShouldApplyPlugin();
         }
