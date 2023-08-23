@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.base.util.mixin;
 
-import me.melontini.dark_matter.impl.base.util.mixin.ShouldApplyProcessor;
+import me.melontini.dark_matter.impl.base.util.mixin.ShouldApplyPlugin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
@@ -14,18 +14,21 @@ import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.service.MixinService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 //TODO support custom processors. (plugin-plugins?)
 @ApiStatus.Experimental
 public class ExtendablePlugin implements IMixinConfigPlugin {
 
+    private final Set<IPluginPlugin> plugins = new HashSet<>();
+
     @Override
     public final void onLoad(String mixinPackage) {
+        this.plugins.add(DefaultPlugins.shouldApplyPlugin());
+        this.collectPlugins(this.plugins);
+
+        this.plugins.forEach(plugin -> plugin.onPluginLoad(mixinPackage));
         this.onPluginLoad(mixinPackage);
     }
 
@@ -39,19 +42,17 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
         AtomicBoolean apply = new AtomicBoolean(true);
         try {
             ClassNode node = MixinService.getService().getBytecodeProvider().getClassNode(mixinClassName);
-            List<AnnotationNode> nodes = new ArrayList<>();
+            List<AnnotationNode> annotationNodes = new ArrayList<>();
 
-            if (node.invisibleAnnotations != null) nodes.addAll(node.invisibleAnnotations);
-            if (node.visibleAnnotations != null) nodes.addAll(node.visibleAnnotations);
+            if (node.invisibleAnnotations != null) annotationNodes.addAll(node.invisibleAnnotations);
+            if (node.visibleAnnotations != null) annotationNodes.addAll(node.visibleAnnotations);
 
-            if (!nodes.isEmpty()) {
-                for (AnnotationNode annotationNode : nodes) {
-                    ShouldApplyProcessor.process(apply, annotationNode);
-                    if (!apply.get()) break;
-                }
+            for (IPluginPlugin plugin : this.plugins) {
+                apply.set(plugin.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes));
+                if (!apply.get()) break;
             }
 
-            if (apply.get()) apply.set(this.shouldApplyMixin(targetClassName, mixinClassName, node));
+            if (apply.get()) apply.set(this.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes));
         } catch (Exception e) {
             throw new RuntimeException();
         }
@@ -60,33 +61,41 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     @Override
     public final void acceptTargets(Set<String> myTargets, Set<String> otherTargets) {
+        this.plugins.forEach(plugin -> plugin.confirmTargets(myTargets, otherTargets));
         this.confirmTargets(myTargets, otherTargets);
     }
 
     @Override
     public final List<String> getMixins() {
         List<String> mixins = new ArrayList<>();
+        this.plugins.forEach(plugin -> plugin.getMixins(mixins));
         this.getMixins(mixins);
         return mixins.isEmpty() ? null : mixins;
     }
 
     @Override
     public final void preApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        this.plugins.forEach(plugin -> plugin.beforeApply(targetClassName, targetClass, mixinClassName, mixinInfo));
         this.beforeApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
     @Override
     public final void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
+        this.plugins.forEach(plugin -> plugin.afterApply(targetClassName, targetClass, mixinClassName, mixinInfo));
         this.afterApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 
     //New Methods.
 
+    protected void collectPlugins(Set<IPluginPlugin> plugins) {
+
+    }
+
     protected void onPluginLoad(String mixinPackage) {
 
     }
 
-    protected boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode) {
+    protected boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
         return true;
     }
 
@@ -138,6 +147,15 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     protected MappingResolver getMappingResolver() {
         return FabricLoader.getInstance().getMappingResolver();
+    }
+
+    public static final class DefaultPlugins {
+
+        public static IPluginPlugin shouldApplyPlugin() {
+            return new ShouldApplyPlugin();
+        }
+
+
     }
 
 }
