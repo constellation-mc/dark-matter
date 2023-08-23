@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.entity.EntityType;
@@ -27,6 +28,7 @@ public abstract class RaidMemberMixin implements ExtendableEnum<Raid.Member> {
     }
 
     @Unique
+    @Publicize
     private static Raid.Member dark_matter$extendEnum(String internalName, EntityType<? extends RaiderEntity> type, int[] countInWave) {
         for (Raid.Member member : field_16632) {
             if (member.name().equalsIgnoreCase(internalName)) return member;

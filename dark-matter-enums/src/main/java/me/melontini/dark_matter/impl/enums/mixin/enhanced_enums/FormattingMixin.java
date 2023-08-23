@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.util.Formatting;
@@ -32,6 +33,7 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
     }
 
     @Unique
+    @Publicize
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Boolean modifier, Integer colorIndex, @Nullable Integer colorValue) {
         for (Formatting formatting : field_1072) {
             if (formatting.name().equalsIgnoreCase(internalName)) return formatting;
@@ -45,6 +47,7 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
     }
 
     @Unique
+    @Publicize
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Integer colorIndex, @Nullable Integer colorValue) {
         for (Formatting formatting : field_1072) {
             if (formatting.name().equalsIgnoreCase(internalName)) return formatting;
@@ -58,6 +61,7 @@ public class FormattingMixin implements ExtendableEnum<Formatting> {
     }
 
     @Unique
+    @Publicize
     private static Formatting dark_matter$extendEnum(String internalName, String name, Character code, Boolean modifier) {
         for (Formatting formatting : field_1072) {
             if (formatting.name().equalsIgnoreCase(internalName)) return formatting;

@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.enums.interfaces.EnchantmentTargetHack;
@@ -36,6 +37,7 @@ public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget>
     private Predicate<Item> dark_matter$predicate;
 
     @Unique
+    @Publicize
     private static EnchantmentTarget dark_matter$extendEnum(String internalName, Predicate<Item> predicate) {
         for (EnchantmentTarget target : field_9077) {
             if (target.name().equalsIgnoreCase(internalName)) return target;

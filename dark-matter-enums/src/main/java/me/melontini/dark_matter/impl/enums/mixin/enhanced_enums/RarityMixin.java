@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.util.Formatting;
@@ -21,6 +22,7 @@ public class RarityMixin implements ExtendableEnum<Rarity> {
     }
 
     @Unique
+    @Publicize
     private static Rarity dark_matter$extendEnum(String internalName, Formatting formatting) {
         for (Rarity rarity : field_8905) {
             if (rarity.name().equalsIgnoreCase(internalName)) return rarity;

@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.recipe.book.RecipeBookCategory;
@@ -20,6 +21,7 @@ public class RecipeBookCategoryMixin implements ExtendableEnum<RecipeBookCategor
     }
 
     @Unique
+    @Publicize
     private static RecipeBookCategory dark_matter$extendEnum(String internalName) {
         for (RecipeBookCategory category : field_25767) {
             if (category.name().equalsIgnoreCase(internalName)) return category;

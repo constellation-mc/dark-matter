@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.block.Block;
@@ -21,6 +22,7 @@ public class BoatEntityTypeMixin implements ExtendableEnum<BoatEntity.Type> {
     }
 
     @Unique
+    @Publicize
     private static BoatEntity.Type dark_matter$extendEnum(String internalName, Block base, String name) {
         for (BoatEntity.Type type : field_7724) {
             if (type.name().equalsIgnoreCase(internalName)) return type;

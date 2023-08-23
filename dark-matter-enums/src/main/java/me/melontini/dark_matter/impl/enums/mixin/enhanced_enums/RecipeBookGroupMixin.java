@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.client.recipebook.RecipeBookGroup;
@@ -22,6 +23,7 @@ public class RecipeBookGroupMixin implements ExtendableEnum<RecipeBookGroup> {
     }
 
     @Unique
+    @Publicize
     private static RecipeBookGroup dark_matter$extendEnum(String internalName, ItemStack... stacks) {
         for (RecipeBookGroup group : field_1805) {
             if (group.name().equalsIgnoreCase(internalName)) return group;
