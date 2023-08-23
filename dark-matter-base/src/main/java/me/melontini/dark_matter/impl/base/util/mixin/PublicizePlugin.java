@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.base.util.mixin;
 import me.melontini.dark_matter.api.base.util.mixin.IPluginPlugin;
 import me.melontini.dark_matter.api.base.util.mixin.Publicize;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
@@ -13,6 +14,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
 
+@ApiStatus.Internal
 public class PublicizePlugin implements IPluginPlugin {
 
     private static final String PUBLICIZE_DESC = "L" + Publicize.class.getName().replace(".", "/") + ";";
