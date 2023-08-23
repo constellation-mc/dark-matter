@@ -24,7 +24,6 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
 
     protected static final EnvType ENV_TYPE = FabricLoader.getInstance().getEnvironmentType();
     protected static final Version MC_VERSION = parseMCVersion();
-    private static final List<Map<String, Object>> EMPTY_ANN_ARRAY = Collections.unmodifiableList(new ArrayList<>());
     private static final String SHOULD_APPLY_DESC = "L" + MixinShouldApply.class.getName().replace(".", "/") + ";";
     private final IPluginPlugin shouldApplyPlugin = ExtendablePlugin.DefaultPlugins.shouldApplyPlugin();
 
@@ -74,7 +73,7 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
     }
 
     public static boolean checkMods(Map<String, Object> values) {
-        List<Map<String, Object>> array = (List<Map<String, Object>>) values.getOrDefault("mods", EMPTY_ANN_ARRAY);
+        List<Map<String, Object>> array = (List<Map<String, Object>>) values.getOrDefault("mods", AsmUtil.emptyAnnotationList());
         if (array.isEmpty()) return true;
 
         for (int i = 0; i < array.size(); i += 2) {

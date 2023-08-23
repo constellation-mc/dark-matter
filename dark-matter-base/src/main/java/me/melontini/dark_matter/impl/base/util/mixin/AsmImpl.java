@@ -3,12 +3,11 @@ package me.melontini.dark_matter.impl.base.util.mixin;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class AsmImpl {
+
+    private static final List<Map<String, Object>> EMPTY_ANN_LIST = Collections.unmodifiableList(new ArrayList<>());
 
     public static Map<String, Object> mapAnnotationNode(AnnotationNode node) {
         Map<String, Object> values = new HashMap<>();
@@ -57,6 +56,10 @@ public class AsmImpl {
             return value;
         }
         return value;
+    }
+
+    public static List<Map<String, Object>> emptyAnnotationList() {
+        return EMPTY_ANN_LIST;
     }
 
 }

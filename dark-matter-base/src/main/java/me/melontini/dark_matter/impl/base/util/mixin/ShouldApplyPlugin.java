@@ -13,7 +13,9 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiPredicate;
 
@@ -26,8 +28,6 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         case LOADED -> FabricLoader.getInstance().isModLoaded(s);
         case NOT_LOADED -> !FabricLoader.getInstance().isModLoaded(s);
     };
-
-    private static final List<Map<String, Object>> EMPTY_ANN_ARRAY = Collections.unmodifiableList(new ArrayList<>());
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
@@ -59,7 +59,7 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
     }
 
     private static boolean checkMods(@NotNull Map<String, Object> values) {
-        List<Map<String, Object>> array = (List<Map<String, Object>>) values.getOrDefault("mods", EMPTY_ANN_ARRAY);
+        List<Map<String, Object>> array = (List<Map<String, Object>>) values.getOrDefault("mods", AsmUtil.emptyAnnotationList());
         if (array.isEmpty()) return true;
 
         for (Map<String, Object> map : array) {
