@@ -23,7 +23,7 @@ public class PublicizePlugin implements IPluginPlugin {
             for (FieldNode fieldNode : targetClass.fields) {
                 if (fieldNode.visibleAnnotations != null && !fieldNode.visibleAnnotations.isEmpty()) {
                     for (AnnotationNode annotationNode : fieldNode.visibleAnnotations) {
-                        if (annotationNode.desc.equals(PUBLICIZE_DESC)) {
+                        if (PUBLICIZE_DESC.equals(annotationNode.desc)) {
                             publicize(fieldNode);
                             fieldNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
                             break;
@@ -37,7 +37,7 @@ public class PublicizePlugin implements IPluginPlugin {
             for (MethodNode methodNode : targetClass.methods) {
                 if (methodNode.visibleAnnotations != null && !methodNode.visibleAnnotations.isEmpty()) {
                     for (AnnotationNode annotationNode : methodNode.visibleAnnotations) {
-                        if (annotationNode.desc.equals(PUBLICIZE_DESC)) {
+                        if (PUBLICIZE_DESC.equals(annotationNode.desc)) {
                             publicize(methodNode);
                             methodNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
                             break;
