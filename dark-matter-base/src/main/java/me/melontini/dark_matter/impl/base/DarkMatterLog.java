@@ -58,6 +58,22 @@ public class DarkMatterLog {
         BACKING.info(msg, args);
     }
 
+    public static void debug(String msg) {
+        BACKING.debug(msg);
+    }
+
+    public static void debug(String msg, Throwable t) {
+        BACKING.debug(msg, t);
+    }
+
+    public static void debug(Object msg) {
+        BACKING.debug(msg);
+    }
+
+    public static void debug(String msg, Object... args) {
+        BACKING.debug(msg, args);
+    }
+
     public static void traceCalls() {
         STACK_WALKER.walk(s -> {
             s.forEach(stackFrame -> {
