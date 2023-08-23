@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util.mixin;
 
+import me.melontini.dark_matter.impl.base.util.mixin.PublicizePlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.ShouldApplyPlugin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -155,6 +156,9 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
             return new ShouldApplyPlugin();
         }
 
+        public static IPluginPlugin publicizePlugin() {
+            return new PublicizePlugin();
+        }
 
     }
 
