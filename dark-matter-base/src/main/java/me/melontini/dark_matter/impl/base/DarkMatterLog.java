@@ -8,7 +8,7 @@ import static me.melontini.dark_matter.api.base.util.Utilities.STACK_WALKER;
 
 @ApiStatus.Internal
 public class DarkMatterLog {
-    private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_METHOD_MIX_WRAPPED);
+    private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_CLASS_MIX_WRAPPED);
 
     public static void error(String msg) {
         BACKING.error(msg);
