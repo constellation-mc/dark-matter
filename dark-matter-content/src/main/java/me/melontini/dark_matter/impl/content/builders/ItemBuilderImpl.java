@@ -20,11 +20,11 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
     private BooleanSupplier register = () -> true;
     private ItemGroup itemGroup;
 
-    public ItemBuilderImpl(Identifier identifier, Supplier<T> itemSupplier) {
-        MakeSure.notNull(identifier, "null identifier provided.");
-        MakeSure.notNull(itemSupplier, "couldn't build: " + identifier);
+    public ItemBuilderImpl(Identifier id, Supplier<T> itemSupplier) {
+        MakeSure.notNull(id, "null identifier provided.");
+        MakeSure.notNull(itemSupplier, "couldn't build: " + id);
 
-        this.identifier = identifier;
+        this.identifier = id;
         this.itemSupplier = itemSupplier;
     }
 

@@ -27,6 +27,8 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     private Text displayName;
 
     public ItemGroupBuilderImpl(Identifier id) {
+        MakeSure.notNull(id, "null identifier provided.");
+
         if (!FabricLoader.getInstance().isModLoaded("fabric-item-groups-v0")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
         this.identifier = id;
     }

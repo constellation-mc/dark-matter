@@ -19,11 +19,11 @@ public class BlockBuilderImpl<T extends Block> implements ContentBuilder.BlockBu
     private ContentBuilder.BlockBuilder.ItemFactory<?> itemFactory;
     private ContentBuilder.BlockBuilder.BlockEntityFactory<?> blockEntityFactory;
 
-    public BlockBuilderImpl(Identifier identifier, Supplier<T> blockSupplier) {
-        MakeSure.notNull(identifier, "null identifier provided.");
-        MakeSure.notNull(blockSupplier, "couldn't build: " + identifier);
+    public BlockBuilderImpl(Identifier id, Supplier<T> blockSupplier) {
+        MakeSure.notNull(id, "null identifier provided.");
+        MakeSure.notNull(blockSupplier, "couldn't build: " + id);
 
-        this.identifier = identifier;
+        this.identifier = id;
         this.blockSupplier = blockSupplier;
     }
 
