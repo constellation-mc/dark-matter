@@ -7,6 +7,7 @@ import me.melontini.dark_matter.api.base.util.mixin.Mod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -44,7 +45,7 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         }
     }
 
-    public static void process(AtomicBoolean bool, AnnotationNode node) {
+    private static void process(AtomicBoolean bool, AnnotationNode node) {
         Map<String, Object> values = AsmUtil.mapAnnotationNode(node);
 
         if (values.isEmpty()) return;
@@ -56,13 +57,13 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         bool.set(checkMCVersion(values));
     }
 
-    private static boolean checkMods(Map<String, Object> values) {
+    private static boolean checkMods(@NotNull Map<String, Object> values) {
         List<Map<String, Object>> array = (List<Map<String, Object>>) values.getOrDefault("mods", EMPTY_ANN_ARRAY);
         if (array.isEmpty()) return true;
 
-        for (int i = 0; i < array.size(); i += 2) {//TODO: what?
-            String name = (String) array.get(i).get("value");
-            Mod.Mode mode = (Mod.Mode) array.get(i).getOrDefault("mode", Mod.Mode.LOADED);
+        for (Map<String, Object> map : array) {
+            String  name = (String) map.get("value");
+            Mod.Mode mode = (Mod.Mode) map.getOrDefault("mode", Mod.Mode.LOADED);
 
             if (!MOD_PREDICATE.test(name, mode)) {
                 return false;
@@ -72,7 +73,7 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         return true;
     }
 
-    public static boolean checkMCVersion(Map<String, Object> values) {
+    private static boolean checkMCVersion(@NotNull Map<String, Object> values) {
         String version = (String) values.getOrDefault("mcVersion", "");
 
         if (version.isEmpty()) return true;
