@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
-import me.melontini.dark_matter.api.base.util.mixin.Publicize;
+import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.minecraft.util.Formatting;

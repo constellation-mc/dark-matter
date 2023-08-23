@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.base.util.mixin;
 
 import me.melontini.dark_matter.api.base.util.mixin.IPluginPlugin;
-import me.melontini.dark_matter.api.base.util.mixin.Publicize;
+import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;

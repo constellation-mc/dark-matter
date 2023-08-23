@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.api.base.util.mixin;
+package me.melontini.dark_matter.api.base.util.mixin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
