@@ -4,7 +4,6 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.*;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.jetbrains.annotations.ApiStatus;
-import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
@@ -27,6 +26,7 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
     protected static final Version MC_VERSION = parseMCVersion();
     private static final List<Map<String, Object>> EMPTY_ANN_ARRAY = Collections.unmodifiableList(new ArrayList<>());
     private static final String SHOULD_APPLY_DESC = "L" + MixinShouldApply.class.getName().replace(".", "/") + ";";
+    private final IPluginPlugin shouldApplyPlugin = ExtendablePlugin.DefaultPlugins.shouldApplyPlugin();
 
     @Override
     public void onLoad(String mixinPackage) {
@@ -41,9 +41,13 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
         try {
+            List<AnnotationNode> annotationNodes = new ArrayList<>();
             ClassNode node = MixinService.getService().getBytecodeProvider().getClassNode(mixinClassName);
-            return processAnnotations(node.visibleAnnotations, mixinClassName) &&
-                    processAnnotations(node.invisibleAnnotations, mixinClassName);
+
+            if (node.visibleAnnotations != null) annotationNodes.addAll(node.visibleAnnotations);
+            if (node.invisibleAnnotations != null) annotationNodes.addAll(node.invisibleAnnotations);
+
+            return shouldApplyPlugin.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -99,17 +103,7 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
     }
 
     public static Map<String, Object> mapAnnotationNode(AnnotationNode node) {
-        Map<String, Object> values = new HashMap<>();
-
-        if (node.values == null) return values;
-
-        for (int i = 0; i < node.values.size(); i += 2) {
-            String name = (String) node.values.get(i);
-            Object value = mapObjectFromAnnotation(node.values.get(i + 1));
-            if (name != null && value != null) values.putIfAbsent(name, value);
-        }
-
-        return values;
+        return AsmUtil.mapAnnotationNode(node);
     }
 
     public static Object mapObjectFromAnnotation(Object value) {
@@ -117,34 +111,7 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
     }
 
     public static Object mapObjectFromAnnotation(Object value, boolean loadEnums, boolean loadClasses) {
-        if (value instanceof List<?> list) {
-            List<Object> process = new ArrayList<>(list.size());
-            for (Object o : list) {
-                process.add(mapObjectFromAnnotation(o));
-            }
-            return process;
-        } else if (value instanceof AnnotationNode node) {
-            return mapAnnotationNode(node);
-        } else if (value instanceof Type type && loadClasses) {
-            try {
-                return Class.forName(type.getClassName());
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else if (value instanceof String[] enum0 && loadEnums) {
-            try {
-                Class<?> cls = Class.forName(enum0[0].replace("/", ".").substring(1, enum0[0].length() - 1));
-                if (Enum.class.isAssignableFrom(cls)) {
-                    value = Enum.valueOf((Class<? extends Enum>) cls, enum0[1]);
-                    return value;
-                }
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        } else {
-            return value;
-        }
-        return value;
+        return AsmUtil.mapObjectFromAnnotation(value, loadEnums, loadClasses);
     }
 
     public static Version parseMCVersion() {
@@ -176,8 +143,6 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
 
     @Override
     public void postApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        if (targetClass.visibleAnnotations != null && !targetClass.visibleAnnotations.isEmpty()) {//strip our annotation from the class
-            targetClass.visibleAnnotations.removeIf(node -> SHOULD_APPLY_DESC.equals(node.desc));
-        }
+        this.shouldApplyPlugin.afterApply(targetClassName, targetClass, mixinClassName, mixinInfo);
     }
 }
