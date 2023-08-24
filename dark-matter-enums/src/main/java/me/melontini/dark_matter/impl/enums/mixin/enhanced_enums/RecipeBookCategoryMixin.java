@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.*;
@@ -31,6 +32,7 @@ public class RecipeBookCategoryMixin implements ExtendableEnum<RecipeBookCategor
         RecipeBookCategory enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1);
         field_25767 = ArrayUtils.add(field_25767, enumConst);
         EnumUtils.clearEnumCache(RecipeBookCategory.class);
+        DarkMatterLog.debug("Extended enum {}", enumConst);
         return enumConst;
     }
 

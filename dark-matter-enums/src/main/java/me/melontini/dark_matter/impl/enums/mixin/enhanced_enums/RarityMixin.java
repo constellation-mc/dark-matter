@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 import org.apache.commons.lang3.ArrayUtils;
@@ -32,6 +33,7 @@ public class RarityMixin implements ExtendableEnum<Rarity> {
         Rarity enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1, formatting);
         field_8905 = ArrayUtils.add(field_8905, enumConst);
         EnumUtils.clearEnumCache(Rarity.class);
+        DarkMatterLog.debug("Extended enum {}", enumConst);
         return enumConst;
     }
 
