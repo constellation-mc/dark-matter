@@ -48,6 +48,7 @@ public class MinecraftClientMixin {
         try {
             DARK_MATTER$VALUES_TO_RENDER.clear();
 
+            ValueTrackerImpl.checkTimers();
             ValueTrackerImpl.getView().forEach((id, supplier) -> DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
         } catch (Throwable ignored) {}
     }

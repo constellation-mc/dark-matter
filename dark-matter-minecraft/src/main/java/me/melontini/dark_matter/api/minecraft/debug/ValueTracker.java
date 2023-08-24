@@ -4,6 +4,7 @@ import me.melontini.dark_matter.impl.minecraft.debug.ValueTrackerImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
+import java.time.Duration;
 import java.util.function.Supplier;
 
 @ApiStatus.Experimental
@@ -26,6 +27,16 @@ public final class ValueTracker {
     }
 
     /**
+     * This method is used to track anything using a supplier, but you can specify a duration.
+     * <p>
+     * Once the time is up, the tracker will be removed.
+     * @param s unique id/name for the tracker.
+     */
+    public static void addTracker(String s, Supplier<?> supplier, Duration duration) {
+        ValueTrackerImpl.addTracker(s, supplier, duration);
+    }
+
+    /**
      * This method is used to add a tracker for an object field.
      * @param s unique id/name for the tracker.
      */
@@ -34,11 +45,31 @@ public final class ValueTracker {
     }
 
     /**
+     * This method is used to add a tracker for an object field, but you can specify a duration.
+     * <p>
+     * Once the time is up, the tracker will be removed.
+     * @param s unique id/name for the tracker.
+     */
+    public static void addTracker(String s, Field f, Object o, Duration duration) {
+        ValueTrackerImpl.addFieldTracker(s, f, o, duration);
+    }
+
+    /**
      * This method is used to add a tracker for a static field.
      * @param s unique id/name for the tracker.
      */
     public static void addTracker(String s, Field f) {
         ValueTrackerImpl.addStaticFieldTracker(s, f);
+    }
+
+    /**
+     * This method is used to add a tracker for a static field, but you can specify a duration.
+     * <p>
+     * Once the time is up, the tracker will be removed.
+     * @param s unique id/name for the tracker.
+     */
+    public static void addTracker(String s, Field f, Duration duration) {
+        ValueTrackerImpl.addStaticFieldTracker(s, f, duration);
     }
 
     public static void removeTracker(String s) {
