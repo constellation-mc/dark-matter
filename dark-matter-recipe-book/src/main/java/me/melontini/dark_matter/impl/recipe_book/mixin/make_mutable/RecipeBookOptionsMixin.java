@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Mixin(value = RecipeBookOptions.class, priority = 800)
 public class RecipeBookOptionsMixin {
+
     @Shadow
     @Final
     @Mutable
@@ -25,4 +26,5 @@ public class RecipeBookOptionsMixin {
     private static void dark_matter$makeMutable(CallbackInfo ci) {
         CATEGORY_OPTION_NAMES = new HashMap<>(CATEGORY_OPTION_NAMES);
     }
+
 }

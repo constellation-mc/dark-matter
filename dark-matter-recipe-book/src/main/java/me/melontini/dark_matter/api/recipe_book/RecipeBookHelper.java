@@ -10,49 +10,100 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.util.Identifier;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
-public class RecipeBookHelper {
+public final class RecipeBookHelper {
 
     private RecipeBookHelper() {
         throw new UnsupportedOperationException();
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addRecipePredicate(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
-        RecipeBookInternals.addRecipePredicate(type, function);
+    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> lookup) {
+        RecipeBookInternals.registerGroupLookup(type, lookup);
+    }
+
+    //
+    // Register groups.
+    //
+
+    @Environment(EnvType.CLIENT)
+    public static void registerGroups(RecipeBookCategory category, RecipeBookGroup... groups) {
+        registerGroups(category, Arrays.asList(groups));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, RecipeBookGroup group) {
-        RecipeBookInternals.addToGetGroups(category, group);
+    public static void registerGroups(RecipeBookCategory category, int index, RecipeBookGroup... groups) {
+        registerGroups(category, index, Arrays.asList(groups));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, int index, RecipeBookGroup group) {
-        RecipeBookInternals.addToGetGroups(category, index, group);
+    public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.registerGroups(category, groups);
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToGetGroups(category, groups);
+    public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.registerGroups(category, index, groups);
+    }
+
+    //
+    // Add to search.
+    //
+
+    @Environment(EnvType.CLIENT)
+    public static void addToSearchGroup(RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
+        addToSearchGroup(searchGroup, Arrays.asList(groups));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToGetGroups(category, index, groups);
+    public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
+        addToSearchGroup(searchGroup, index, Arrays.asList(groups));
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToSearchMap(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToSearchMap(searchGroup, groups);
+    public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.addToSearchGroup(searchGroup, groups);
     }
 
     @Environment(EnvType.CLIENT)
-    public static void addToSearchMap(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToSearchMap(searchGroup, index, groups);
+    public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.addToSearchGroup(searchGroup, index, groups);
     }
+
+    //
+    // Register and add to search.
+    //
+
+    @Environment(EnvType.CLIENT)
+    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
+        registerAndAddToSearch(category, searchGroup, Arrays.asList(groups));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
+        registerAndAddToSearch(category, searchGroup, index, Arrays.asList(groups));
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.registerGroups(category, groups);
+        groups.remove(searchGroup);
+        RecipeBookInternals.addToSearchGroup(searchGroup, groups);
+    }
+
+    @Environment(EnvType.CLIENT)
+    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+        RecipeBookInternals.registerGroups(category, index, groups);
+        groups.remove(searchGroup);
+        RecipeBookInternals.addToSearchGroup(searchGroup, index, groups);
+    }
+
+    //
+    // Creating groups and categories
+    //
 
     public static RecipeBookCategory createCategory(Identifier id) {
         return RecipeBookInternals.createCategory(id.toString().replace('/', '_').replace(':', '_'));
@@ -62,4 +113,51 @@ public class RecipeBookHelper {
     public static RecipeBookGroup createGroup(Identifier id, ItemStack... stacks) {
         return RecipeBookInternals.createGroup(id.toString().replace('/', '_').replace(':', '_'), stacks);
     }
+
+    //
+    // Old, deprecated code.
+    //
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addRecipePredicate(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
+        registerGroupLookup(type, function);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToGetGroups(RecipeBookCategory category, RecipeBookGroup group) {
+        registerGroups(category, group);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToGetGroups(RecipeBookCategory category, int index, RecipeBookGroup group) {
+        registerGroups(category, index, group);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToGetGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
+        registerGroups(category, groups);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToGetGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
+        registerGroups(category, index, groups);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToSearchMap(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+        addToSearchGroup(searchGroup, groups);
+    }
+
+    @Deprecated(since = "2.0.0")
+    @Environment(EnvType.CLIENT)
+    public static void addToSearchMap(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+        addToSearchGroup(searchGroup, index, groups);
+    }
+
 }
