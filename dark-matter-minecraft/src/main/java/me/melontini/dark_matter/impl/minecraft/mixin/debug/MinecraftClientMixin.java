@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.minecraft.mixin.debug;
 
 import com.google.common.base.Strings;
-import me.melontini.dark_matter.api.minecraft.debug.ValueTracker;
+import me.melontini.dark_matter.impl.minecraft.debug.ValueTrackerImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawableHelper;
@@ -14,7 +14,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -49,25 +48,7 @@ public class MinecraftClientMixin {
         try {
             DARK_MATTER$VALUES_TO_RENDER.clear();
 
-            ValueTracker.MANUAL_TRACK.forEach((s, o) -> DARK_MATTER$VALUES_TO_RENDER.add(s + ": " + (o != null ? o.toString() : "null")));
-
-            for (Field field : ValueTracker.AUTO_TRACK_STATIC) {
-                try {
-                    DARK_MATTER$VALUES_TO_RENDER.add(field.getDeclaringClass().getName() + "." + field.getName() + ": " + field.get(null));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            ValueTracker.AUTO_TRACK.forEach((field, o) -> {
-                try {
-                    for (Object o1 : o) {
-                        DARK_MATTER$VALUES_TO_RENDER.add(o1.toString() + "." + field.getName() + ": " + field.get(o1));
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            ValueTrackerImpl.getView().forEach((id, supplier) -> DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
         } catch (Throwable ignored) {}
     }
 }
