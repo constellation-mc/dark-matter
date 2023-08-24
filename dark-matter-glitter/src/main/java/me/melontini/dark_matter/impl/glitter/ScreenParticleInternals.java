@@ -204,6 +204,8 @@ public class ScreenParticleInternals {
     }
 
     public static void renderParticles(MinecraftClient client, MatrixStack matrixStack) {
+        if (SCREEN_PARTICLES.isEmpty()) return;
+
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
@@ -212,6 +214,8 @@ public class ScreenParticleInternals {
     }
 
     public static void tickParticles() {
+        if (SCREEN_PARTICLES.isEmpty()) return;
+
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
             particle.tickInternal();
             if (particle.removed) SCREEN_PARTICLES_REMOVAL.add(particle);
