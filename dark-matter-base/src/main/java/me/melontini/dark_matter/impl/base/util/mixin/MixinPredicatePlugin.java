@@ -63,19 +63,18 @@ public class MixinPredicatePlugin implements IPluginPlugin {
 
                 Optional<ModContainer> container = FabricLoader.getInstance().getModContainer(id);
 
-                switch (state) {
+                return switch (state) {
                     case LOADED -> {
                         boolean b = container.filter(modContainer -> predicate.test(modContainer.getMetadata().getVersion())).isPresent();
                         DarkMatterLog.debug("Checking mod {}. {} ({}): {}", id, state, version, b);
-                        return b;
+                        yield b;
                     }
                     case NOT_LOADED -> {
                         boolean b = container.map(modContainer -> !predicate.test(modContainer.getMetadata().getVersion())).orElse(true);
                         DarkMatterLog.debug("Checking mod {}. {} ({}): {}", id, state, version, b);
-                        return b;
+                        yield  b;
                     }
-                    default -> throw new IllegalStateException("Unexpected value: " + state);
-                }
+                };
             } catch (Exception e) {
                 DarkMatterLog.error("Error while checking mods", e);
                 return true;
