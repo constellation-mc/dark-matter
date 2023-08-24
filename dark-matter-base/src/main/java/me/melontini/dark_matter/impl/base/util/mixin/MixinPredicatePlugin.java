@@ -13,11 +13,11 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.util.Annotations;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApiStatus.Internal
 public class MixinPredicatePlugin implements IPluginPlugin {
@@ -26,14 +26,9 @@ public class MixinPredicatePlugin implements IPluginPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
-        if (mergedAnnotations.isEmpty()) return true;
-
-        Optional<AnnotationNode> optional = mergedAnnotations.stream().filter(node -> node.desc.equals(PREDICATE_DESC)).findFirst();
-
-        AtomicBoolean apply = new AtomicBoolean(true);
-        optional.ifPresent(node -> process(apply, node));
-
-        return apply.get();
+        AnnotationNode annotationNode = Annotations.getVisible(mixinNode, MixinPredicate.class);
+        if (annotationNode == null) return true;
+        return process(annotationNode);
     }
 
     @Override
@@ -43,13 +38,10 @@ public class MixinPredicatePlugin implements IPluginPlugin {
         }
     }
 
-    private static void process(AtomicBoolean bool, AnnotationNode node) {
+    private static boolean process(AnnotationNode node) {
         Map<String, Object> values = AsmUtil.mapAnnotationNode(node);
-
-        if (values.isEmpty()) return;
-
-        if (!bool.get()) return;
-        bool.set(checkMods(values));
+        if (values.isEmpty()) return true;
+        return checkMods(values);
     }
 
     private static boolean checkMods(@NotNull Map<String, Object> values) {

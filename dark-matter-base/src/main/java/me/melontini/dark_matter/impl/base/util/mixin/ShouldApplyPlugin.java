@@ -12,11 +12,10 @@ import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.util.Annotations;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApiStatus.Internal
 public final class ShouldApplyPlugin implements IPluginPlugin {
@@ -25,14 +24,9 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
-        if (mergedAnnotations.isEmpty()) return true;
-
-        Optional<AnnotationNode> optional = mergedAnnotations.stream().filter(node -> node.desc.equals(SHOULD_APPLY_DESC)).findFirst();
-
-        AtomicBoolean apply = new AtomicBoolean(true);
-        optional.ifPresent(node -> process(apply, node));
-
-        return apply.get();
+        AnnotationNode node = Annotations.getVisible(mixinNode, MixinShouldApply.class);
+        if (node == null) return true;
+        return process(node);
     }
 
     @Override
@@ -42,16 +36,10 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         }
     }
 
-    private static void process(AtomicBoolean bool, AnnotationNode node) {
+    private static boolean process(AnnotationNode node) {
         Map<String, Object> values = AsmUtil.mapAnnotationNode(node);
-
-        if (values.isEmpty()) return;
-
-        if (!bool.get()) return;
-        bool.set(checkMods(values));
-
-        if (!bool.get()) return;
-        bool.set(checkMCVersion(values));
+        if (values.isEmpty()) return true;
+        return checkMods(values) && checkMCVersion(values);
     }
 
     private static boolean checkMods(@NotNull Map<String, Object> values) {

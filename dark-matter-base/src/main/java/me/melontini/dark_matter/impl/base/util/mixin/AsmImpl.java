@@ -12,7 +12,7 @@ public class AsmImpl {
     public static Map<String, Object> mapAnnotationNode(AnnotationNode node) {
         Map<String, Object> values = new HashMap<>();
 
-        if (node.values == null) return values;
+        if (node == null || node.values == null) return values;
 
         for (int i = 0; i < node.values.size(); i += 2) {
             String name = (String) node.values.get(i);

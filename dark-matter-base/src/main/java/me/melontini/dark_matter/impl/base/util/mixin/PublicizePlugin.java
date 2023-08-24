@@ -5,11 +5,11 @@ import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
+import org.spongepowered.asm.util.Annotations;
 
 import java.lang.reflect.Modifier;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -19,34 +19,20 @@ public class PublicizePlugin implements IPluginPlugin {
 
     private static final String PUBLICIZE_DESC = "L" + Publicize.class.getName().replace(".", "/") + ";";
 
-    @Override //Note:
+    @Override
     public void afterApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
-        if (targetClass.fields != null && !targetClass.fields.isEmpty()) {
-            for (FieldNode fieldNode : targetClass.fields) {
-                if (fieldNode.visibleAnnotations != null && !fieldNode.visibleAnnotations.isEmpty()) {
-                    for (AnnotationNode annotationNode : fieldNode.visibleAnnotations) {
-                        if (PUBLICIZE_DESC.equals(annotationNode.desc)) {
-                            publicize(fieldNode);
-                            fieldNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
-                            break;
-                        }
-                    }
-                }
-            }
+        for (FieldNode fieldNode : targetClass.fields) {
+            if (Annotations.getVisible(fieldNode, Publicize.class) == null) continue;
+
+            publicize(fieldNode);
+            fieldNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
         }
 
-        if (targetClass.methods != null && !targetClass.methods.isEmpty()) {
-            for (MethodNode methodNode : targetClass.methods) {
-                if (methodNode.visibleAnnotations != null && !methodNode.visibleAnnotations.isEmpty()) {
-                    for (AnnotationNode annotationNode : methodNode.visibleAnnotations) {
-                        if (PUBLICIZE_DESC.equals(annotationNode.desc)) {
-                            publicize(methodNode);
-                            methodNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
-                            break;
-                        }
-                    }
-                }
-            }
+        for (MethodNode methodNode : targetClass.methods) {
+            if (Annotations.getVisible(methodNode, Publicize.class) == null) continue;
+
+            publicize(methodNode);
+            methodNode.visibleAnnotations.removeIf(node -> PUBLICIZE_DESC.equals(node.desc));
         }
     }
 
