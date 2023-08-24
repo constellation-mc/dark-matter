@@ -23,11 +23,11 @@ public class ValueTrackerImpl {
         TRACKERS.remove(s);
     }
 
-    public static void addFieldTracker(String s, Field f, Supplier<Object> objectSupplier) {
+    public static void addFieldTracker(String s, Field f, Object o) {
         ReflectionUtil.setAccessible(f);
-        TRACKERS.putIfAbsent(s, () -> {
+        TRACKERS.put(s, () -> {
             try {
-                return f.get(objectSupplier.get());
+                return f.get(o);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }

@@ -29,8 +29,8 @@ public final class ValueTracker {
      * This method is used to add a tracker for an object field.
      * @param s unique id/name for the tracker.
      */
-    public static void addTracker(String s, Field f, Supplier<Object> objectSupplier) {
-        ValueTrackerImpl.addFieldTracker(s, f, objectSupplier);
+    public static void addTracker(String s, Field f, Object o) {
+        ValueTrackerImpl.addFieldTracker(s, f, o);
     }
 
     /**
