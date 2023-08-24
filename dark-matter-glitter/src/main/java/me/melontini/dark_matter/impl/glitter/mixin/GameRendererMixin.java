@@ -19,7 +19,7 @@ public class GameRendererMixin {
 
     @Shadow @Final private MinecraftClient client;
 
-    @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/client/MinecraftClient;world:Lnet/minecraft/client/world/ClientWorld;", ordinal = 1, shift = At.Shift.BY, by = -3), method = "render")
+    @Inject(at = @At(value = "INVOKE", target = "net/minecraft/client/util/math/MatrixStack.<init>()V", ordinal = 1, shift = At.Shift.BY, by = 2), method = "render")
     private void dark_matter$setLocalMatrixStack(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Local(ordinal = 1) MatrixStack matrixStack2, @Share("matrixStack2") LocalRef<MatrixStack> matrixStackLocalRef) {
         matrixStackLocalRef.set(matrixStack2);
     }
