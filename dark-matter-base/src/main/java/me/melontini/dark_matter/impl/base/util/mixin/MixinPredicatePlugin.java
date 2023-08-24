@@ -26,6 +26,8 @@ public class MixinPredicatePlugin implements IPluginPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
+        if (mergedAnnotations.isEmpty()) return true;
+
         Optional<AnnotationNode> optional = mergedAnnotations.stream().filter(node -> node.desc.equals(PREDICATE_DESC)).findFirst();
 
         AtomicBoolean apply = new AtomicBoolean(true);
