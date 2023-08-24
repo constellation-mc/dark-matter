@@ -1,13 +1,10 @@
 package me.melontini.dark_matter.impl.glitter.particles;
 
 import com.mojang.blaze3d.systems.RenderSystem;
-import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import me.melontini.dark_matter.api.glitter.particles.AbstractScreenParticle;
 import me.melontini.dark_matter.api.mirage.Mirage;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.loader.api.FabricLoader;
-import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -23,9 +20,6 @@ import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
 import net.minecraft.util.registry.Registry;
 
-import java.lang.reflect.Field;
-import java.util.Map;
-
 /**
  * Render vanilla particle types on screen!
  * <p>
@@ -33,8 +27,7 @@ import java.util.Map;
  */
 @Environment(EnvType.CLIENT)
 public class VanillaParticle extends AbstractScreenParticle {
-    private static boolean typeChangedByForge = false;
-    private static Field factoriesField = null;
+
     private static final Camera CAMERA = new Camera();
     private final Particle particle;
 
@@ -120,34 +113,13 @@ public class VanillaParticle extends AbstractScreenParticle {
     }
 
     public static <T extends ParticleEffect> Particle createScreenParticle(T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
-        if (!typeChangedByForge) {
-            ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(parameters.getType()));
-            return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
-        } else {
-            try {
-                ParticleFactory<T> particleFactory = ((Map<Identifier, ParticleFactory<T>>) factoriesField.get(MinecraftClient.getInstance().particleManager)).get(Registry.PARTICLE_TYPE.getId(parameters.getType()));
-                return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+        ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(parameters.getType()));
+        return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
     }
 
-    static {
-        MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
-        String forge = resolver.mapFieldName("intermediary", "net.minecraft.class_702", "field_3835", "Ljava/util/Map;");
-        Field field = null;
-        for (Field field1 : MinecraftClient.getInstance().particleManager.getClass().getFields()) {
-            if (field1.getName().equals(forge)) {
-                field = field1;
-                break;
-            }
-        }
-
-        if (field != null && field.getType() != Int2ObjectMap.class) {
-            typeChangedByForge = true;
-            factoriesField = field;
-            factoriesField.setAccessible(true);
-        }
+    @SuppressWarnings("unused")
+    private static Identifier getParticleId(int index) {
+        return Registry.PARTICLE_TYPE.getId(Registry.PARTICLE_TYPE.get(index));
     }
+
 }
