@@ -17,20 +17,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiPredicate;
 
 @ApiStatus.Internal
 public final class ShouldApplyPlugin implements IPluginPlugin {
 
     private static final String SHOULD_APPLY_DESC = "L" + MixinShouldApply.class.getName().replace(".", "/") + ";";
 
-    private static final BiPredicate<String, Mod.Mode> MOD_PREDICATE = (s, mode) -> switch (mode) {
-        case LOADED -> FabricLoader.getInstance().isModLoaded(s);
-        case NOT_LOADED -> !FabricLoader.getInstance().isModLoaded(s);
-    };
-
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
+        if (mergedAnnotations.isEmpty()) return true;
+
         Optional<AnnotationNode> optional = mergedAnnotations.stream().filter(node -> node.desc.equals(SHOULD_APPLY_DESC)).findFirst();
 
         AtomicBoolean apply = new AtomicBoolean(true);
@@ -63,12 +59,13 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
         if (array.isEmpty()) return true;
 
         for (Map<String, Object> map : array) {
-            String  name = (String) map.get("value");
+            String name = (String) map.get("value");
             Mod.Mode mode = (Mod.Mode) map.getOrDefault("mode", Mod.Mode.LOADED);
 
-            if (!MOD_PREDICATE.test(name, mode)) {
-                return false;
-            }
+            return switch (mode) {
+                case LOADED -> FabricLoader.getInstance().isModLoaded(name);
+                case NOT_LOADED -> !FabricLoader.getInstance().isModLoaded(name);
+            };
         }
 
         return true;
