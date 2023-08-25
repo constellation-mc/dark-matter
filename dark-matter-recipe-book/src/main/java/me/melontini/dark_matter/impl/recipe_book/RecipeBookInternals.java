@@ -26,7 +26,7 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    private static final Map<RecipeType<?>, List<Function<Recipe<?>, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
+    private static final Map<RecipeType<?>, Set<Function<Recipe<?>, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
 
     @Environment(EnvType.CLIENT)
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
@@ -51,50 +51,56 @@ public final class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
-        var list = GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new ArrayList<>(1));
-
-        if (!list.contains(function)) {
-            list.add(function);
-        }
+        GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new LinkedHashSet<>(1)).add(function);
     }
 
     @Environment(EnvType.CLIENT)
     public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
         if (isVanillaCategory(category)) {
-            getGroupsForCategory(category).addAll(groups);
+            List<RecipeBookGroup> groupList = getGroupsForCategory(category);
+            (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+            groupList.addAll(groups);
             return;
         }
 
-        GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>(groups.size())).addAll(groups);
+        List<RecipeBookGroup> groupList = GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
+        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+        groupList.addAll(groups);
     }
 
     @Environment(EnvType.CLIENT)
     public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
         MakeSure.isFalse(index < 0, "Index can't be below 0!");
         if (isVanillaCategory(category)) {
-            getGroupsForCategory(category).addAll(index, groups);
+            List<RecipeBookGroup> groupList = getGroupsForCategory(category);
+            (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+
+            if (index >= groupList.size()) groupList.addAll(groups);
+            else groupList.addAll(index, groups);
             return;
         }
 
-        if (GROUPS_FOR_CATEGORY.containsKey(category)) {
-            GROUPS_FOR_CATEGORY.get(category).addAll(index, groups);
-        } else {
-            GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>(groups.size())).addAll(groups);
-        }
+        List<RecipeBookGroup> groupList = GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
+        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+
+        if (index >= groupList.size()) groupList.addAll(groups);
+        else groupList.addAll(index, groups);
     }
 
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
-        RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>()).addAll(MakeSure.notEmpty(groups));
+        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
+        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+        groupList.addAll(groups);
     }
 
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
-        if (RecipeBookGroup.SEARCH_MAP.containsKey(searchGroup)) {
-            RecipeBookGroup.SEARCH_MAP.get(MakeSure.notNull(searchGroup)).addAll(index, MakeSure.notEmpty(groups));
-        } else {
-            RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>()).addAll(MakeSure.notEmpty(groups));
-        }
+        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
+        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+
+        if (index >= groupList.size()) groupList.addAll(groups);
+        else groupList.addAll(index, groups);
     }
 
     public static RecipeBookCategory createCategory(String internalName) {
@@ -114,8 +120,8 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    public static Optional<List<Function<Recipe<?>, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
-        return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableList(GROUP_LOOKUPS.get(type))) : Optional.empty();
+    public static Optional<Set<Function<Recipe<?>, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
+        return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableSet(GROUP_LOOKUPS.get(type))) : Optional.empty();
     }
 
     @Environment(EnvType.CLIENT)
