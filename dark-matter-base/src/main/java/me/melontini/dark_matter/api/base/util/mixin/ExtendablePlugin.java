@@ -19,7 +19,6 @@ import org.spongepowered.asm.service.MixinService;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-//TODO support custom processors. (plugin-plugins?)
 @ApiStatus.Experimental
 public class ExtendablePlugin implements IMixinConfigPlugin {
 
