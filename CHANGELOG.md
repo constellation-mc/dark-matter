@@ -1,19 +1,53 @@
 ## What's new:
 
-### Important changes for Glitter.
+### Breaking changes for content and notable for others.
 
-The mod now provides Forge-style mod IDs. So, you can use either `dark-matter-content` or `dark_matter_content`.
+### Base
 
-### Glitter
-
-* `tickLogic()` is being replaced by `tick()`.
-* * In later versions `tick()` will become abstract.
-* Internal methods in `AbstractScreenParticle` are now actually internal.
-* `AbstractScreenParticle` no longer contains any display ticking logic.
-* Removed the multiplication by `0.99` of `Particle`'s velocity.
-* Screen-bounded particles will no longer flicker for a frame after their screen was closed.
+* Introducing new and improved `ExtendablePlugin`!
+  * This is a successor of `ExtendedPlugin`, but with more features!
+  * One of the main feature is plugin support (Plugin-Plugins)
+  * Default plugins include: `MixinPredicatePlugin`, `ShouldApplyPlugin`, `PublicizePlugin`.
+  * Only MixinPredicatePlugin is on by default.
+  * Plugins can be added using the inner `DefaultPlugins` class.
+* Added `@MixinPredicate`. Part of `MixinPredicatePlugin`
+  * This annotation succeeds `@MixinShouldApply`.
+  * This also comes with a better version of `@Mod`, where you can specify a version predicate.
+* Added `@Publicize`. Part of `PublicizePlugin`
+  * Patches annotated fields and methods from `private` to `public`.
+  * This is meant for static members which need to be accessed from the outside.
+* Added `AsmUtil`.
+  * This includes `mapAnnotationNode()` and `mapObjectFromAnnotation()` from `ExtendedPlugin`.
+* Added `of()` methods to `Tuple` and `MutableTuple`.
+* Fixed `@MixinShouldApply` skipping every second mod.
 
 ### Content
 
-* The `Building {x} ItemGroup without Fabric Item Groups` warning will only get raised if `fabric-item-groups-v0` is not present. (<=1.19.2)
-* RegistryUtil now features `BooleanSupplier` methods.
+* Split api/impl in content builder.
+* Added `ItemGroup` as a parameter of `AnimatedItemGroup`
+
+### Enums
+
+* A debug message is now logged after extending enums.
+
+### Glitter
+
+* The passed MatrixStack should be new in less cases. (<1.20)
+
+### Minecraft
+
+* ValueTracker gets a facelift!
+  * Instead of using fields/classes as ids, we use actual string IDs.
+  * Now you can track anything using a supplier!
+  * Reflection is still supported, but wrapped in a supplier.
+  * You can now add timed trackers which will disappear after the timer is up.
+  * So it should actually be useful now.
+
+### Recipe Book
+
+* Methods in `RecipeBookHelper` were renamed to make more sense and better represent what they do.
+  * Old methods are still present, but are deprecated.
+  * The singular group parameter was replaced by varargs.
+  * `addToSearchGroup()`, `registerGroups()` and `registerAndAddToSearch()` should have overload parity.
+* Added `registerAndAddToSearch()` to `RecipeBookHelper`. Saves one line!
+* Duplicate groups should now be handled better.
