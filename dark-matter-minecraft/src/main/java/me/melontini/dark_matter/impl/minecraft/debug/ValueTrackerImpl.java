@@ -80,6 +80,8 @@ public class ValueTrackerImpl {
     }
 
     public static void checkTimers() {
+        if (TIMERS.isEmpty()) return;
+
         Instant now = Instant.now();
         TIMERS.forEach((s, tuple) -> {
             if (tuple.left().plus(tuple.right()).isBefore(now)) {
