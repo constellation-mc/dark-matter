@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 @ApiStatus.Internal
 public class ValueTrackerImpl {
 
-    private static final Map<String, Supplier<?>> TRACKERS = new HashMap<>();
+    private static final Map<String, Supplier<?>> TRACKERS = new LinkedHashMap<>();
     private static final Map<String, Supplier<?>> VIEW = Collections.unmodifiableMap(TRACKERS);
 
     private static final Map<String, Tuple<Instant, Duration>> TIMERS = new HashMap<>();
