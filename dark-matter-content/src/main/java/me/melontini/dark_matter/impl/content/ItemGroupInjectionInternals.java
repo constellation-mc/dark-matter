@@ -14,7 +14,6 @@ public class ItemGroupInjectionInternals {
     }
 
     private static final Map<ItemGroup, List<ItemGroupHelper.InjectEntries>> INJECTED_GROUPS = new LinkedHashMap<>();
-    private static final Map<ItemGroup, List<ItemGroupHelper.InjectEntries>> VIEW = Collections.unmodifiableMap(INJECTED_GROUPS);
 
     public static void addItemGroupInjection(ItemGroup group, ItemGroupHelper.InjectEntries injectEntries) {
         var list = INJECTED_GROUPS.computeIfAbsent(group, group1 -> new ArrayList<>());
@@ -24,7 +23,7 @@ public class ItemGroupInjectionInternals {
         }
     }
 
-    public static Map<ItemGroup, List<ItemGroupHelper.InjectEntries>> getView() {
-        return VIEW;
+    public static Optional<List<ItemGroupHelper.InjectEntries>> getItemGroupInjections(ItemGroup group) {
+        return INJECTED_GROUPS.containsKey(group) ? Optional.of(INJECTED_GROUPS.get(group)) : Optional.empty();
     }
 }
