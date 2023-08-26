@@ -1,6 +1,11 @@
 package me.melontini.dark_matter.api.base.util.classes;
 
 public class MutableTuple<L, R> {
+
+    public static <L, R> MutableTuple<L, R> of(L left, R right) {
+        return new MutableTuple<>(left, right);
+    }
+
     private L left;
     private R right;
 

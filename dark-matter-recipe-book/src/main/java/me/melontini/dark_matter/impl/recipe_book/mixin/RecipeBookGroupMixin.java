@@ -12,8 +12,10 @@ import java.util.List;
 
 @Mixin(RecipeBookGroup.class)
 public class RecipeBookGroupMixin {
+
     @Inject(at = @At("HEAD"), method = "getGroups", cancellable = true)
     private static void dark_matter$getGroups(RecipeBookCategory category, CallbackInfoReturnable<List<RecipeBookGroup>> cir) {
-        if (RecipeBookInternals.hasGroups(category)) cir.setReturnValue(RecipeBookInternals.getGroups(category));
+        RecipeBookInternals.getGroups(category).ifPresent(cir::setReturnValue);
     }
+
 }

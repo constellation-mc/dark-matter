@@ -1,7 +1,9 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import org.apache.commons.lang3.ArrayUtils;
 import org.spongepowered.asm.mixin.*;
@@ -20,6 +22,7 @@ public class AbstractMinecraftEntityTypeMixin implements ExtendableEnum<Abstract
     }
 
     @Unique
+    @Publicize
     private static AbstractMinecartEntity.Type dark_matter$extendEnum(String internalName) {
         for (AbstractMinecartEntity.Type type : field_7673) {
             if (type.name().equalsIgnoreCase(internalName)) return type;
@@ -29,6 +32,7 @@ public class AbstractMinecraftEntityTypeMixin implements ExtendableEnum<Abstract
         AbstractMinecartEntity.Type enumConst = dark_matter$invokeCtx(internalName, last.ordinal() + 1);
         field_7673 = ArrayUtils.add(field_7673, enumConst);
         EnumUtils.clearEnumCache(AbstractMinecartEntity.Type.class);
+        DarkMatterLog.debug("Extended enum {}", enumConst);
         return enumConst;
     }
 

@@ -1,6 +1,4 @@
-package me.melontini.dark_matter.api.base.util.mixin;
-
-import org.jetbrains.annotations.ApiStatus;
+package me.melontini.dark_matter.api.base.util.mixin.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -9,11 +7,8 @@ import java.lang.annotation.Target;
 
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.TYPE)
-@ApiStatus.Obsolete(since = "2.0.0")
-public @interface MixinShouldApply {
+public @interface MixinPredicate {
 
     Mod[] mods() default {};
-
-    String mcVersion() default "";
 
 }

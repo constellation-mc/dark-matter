@@ -5,7 +5,7 @@ import net.fabricmc.api.EnvType;
 import net.minecraft.util.crash.CrashReport;
 import org.jetbrains.annotations.Nullable;
 
-public class Crashlytics {
+public final class Crashlytics {
 
     private Crashlytics() {
         throw new UnsupportedOperationException();
@@ -28,4 +28,5 @@ public class Crashlytics {
     public interface Handler {
         void handle(CrashReport report, Throwable cause, @Nullable String latestLog, EnvType envType);
     }
+
 }

@@ -1,11 +1,12 @@
 package me.melontini.dark_matter.impl.enums;
 
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ArrayUtils;
 import org.jetbrains.annotations.ApiStatus;
+import org.objectweb.asm.Opcodes;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Constructor;
@@ -32,27 +33,18 @@ public class EnumInternals {
             Class<?> enumArrayClass = enumClass.arrayType();
 
             Field enumArray = ENUM_TO_FIELD.getOrDefault(enumClass, null); //we can't just request $VALUES directly because the field uses internal field_[some number] name format.
-            if (enumArray == null)
-                for (Field field : enumClass.getDeclaredFields()) {
-                    if (Modifier.isPrivate(field.getModifiers()) && Modifier.isStatic(field.getModifiers()) && field.isSynthetic() && field.getType() == enumArrayClass) {
-                        enumArray = field;
-                        break;
-                    }
-                }
-            MakeSure.notNull(enumArray, "(reflection) couldn't find enum's $VALUES");
-            ENUM_TO_FIELD.putIfAbsent(enumClass, enumArray);
-            try {
-                enumClass.getMethod("values").invoke(enumClass);//we need to init enumClass to access its fields, duh.
-            } catch (Exception ignored) {
-                throw new IllegalStateException("(reflection) couldn't find values() in an enum");
+            if (enumArray == null) {
+                int mod = Modifier.PRIVATE | Modifier.STATIC | Opcodes.ACC_SYNTHETIC;
+                enumArray = Arrays.stream(enumClass.getDeclaredFields()).filter(field -> (field.getModifiers() & mod) == mod && field.getType() == enumArrayClass)
+                        .findFirst().orElseThrow();
             }
+            ENUM_TO_FIELD.putIfAbsent(enumClass, MakeSure.notNull(enumArray, "(reflection) couldn't find enum's $VALUES"));
+            enumClass.getMethod("values").invoke(enumClass);//we need to init enumClass to access its fields, duh.
 
-            //this list seems redundant, can't I just use an array?
-            List<T> entries = new ArrayList<>(Arrays.asList((T[]) ReflectionUtil.getField(enumArray, enumClass)));
-            T last = entries.get(entries.size() - 1);
+            T[] entries = (T[]) ReflectionUtil.getField(enumArray, enumClass);
+            T last = entries[entries.length - 1];
 
-            List<Object> list = new ArrayList<>(Arrays.asList(internalName, last.ordinal() + 1));
-            list.addAll(Arrays.stream(params).toList());
+            Object[] list = ArrayUtils.addAll(new Object[]{internalName, last.ordinal() + 1}, params);
 
             T entry;
             try {
