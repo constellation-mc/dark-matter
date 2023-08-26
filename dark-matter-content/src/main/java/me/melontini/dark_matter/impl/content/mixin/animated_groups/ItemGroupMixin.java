@@ -14,24 +14,31 @@ import java.util.function.Supplier;
 public class ItemGroupMixin implements ItemGroupExtensions {
 
     @Unique
-    public Supplier<AnimatedItemGroup> dark_matter$animation;
+    public Supplier<AnimatedItemGroup> dark_matter$animationSupplier;
+    @Unique
+    public AnimatedItemGroup dark_matter$animation;
 
     @Environment(EnvType.CLIENT)
     @Override
     public boolean dm$shouldAnimateIcon() {
-        return dark_matter$animation != null;
+        return dark_matter$animationSupplier != null;
     }
 
     @Override
     public ItemGroup dm$setIconAnimation(Supplier<AnimatedItemGroup> animation) {
-        this.dark_matter$animation = animation;
+        this.dark_matter$animationSupplier = animation;
         return (ItemGroup) (Object) this;
     }
 
     @Environment(EnvType.CLIENT)
     @Override
     public AnimatedItemGroup dm$getIconAnimation() {
-        return this.dark_matter$animation.get();
+        if (dark_matter$animation == null) {
+            if (dark_matter$animationSupplier == null) throw new IllegalStateException("No animation set, but getIconAnimation() was called");
+            dark_matter$animation = dark_matter$animationSupplier.get();
+        }
+        return dark_matter$animation;
     }
+
 }
 
