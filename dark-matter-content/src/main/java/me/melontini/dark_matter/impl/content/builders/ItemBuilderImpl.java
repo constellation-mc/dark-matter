@@ -2,8 +2,8 @@ package me.melontini.dark_matter.impl.content.builders;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.content.ContentBuilder;
+import me.melontini.dark_matter.api.content.ItemGroupHelper;
 import me.melontini.dark_matter.api.content.RegistryUtil;
-import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccessor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
@@ -41,8 +41,7 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
 
     public T build() {
         T item = RegistryUtil.createItem(this.register, this.identifier, this.itemSupplier);
-
-        if (item != null && this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
+        if (item != null && this.itemGroup != null) ItemGroupHelper.addItemGroupInjection(this.itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item));
         return item;
     }
 

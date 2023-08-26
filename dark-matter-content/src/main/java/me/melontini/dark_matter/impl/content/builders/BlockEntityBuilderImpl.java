@@ -7,8 +7,9 @@ import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -42,7 +43,7 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
     public BlockEntityType<T> build(Type<?> type) {
         if (this.register.getAsBoolean()) {
             BlockEntityType<T> t = BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type);
-            Registry.register(Registry.BLOCK_ENTITY_TYPE, identifier, t);
+            Registry.register(Registries.BLOCK_ENTITY_TYPE, identifier, t);
             for (Block block : blocks) {
                 RegistryInternals.putBlockIfAbsent(block, t);
             }

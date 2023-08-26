@@ -2,19 +2,21 @@ package me.melontini.dark_matter.impl.content.builders;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.content.ContentBuilder;
+import me.melontini.dark_matter.api.content.ItemGroupHelper;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
+import me.melontini.dark_matter.api.minecraft.util.TextUtil;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
-import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
 import net.fabricmc.api.EnvType;
+import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.collection.DefaultedList;
 
+import java.util.Objects;
 import java.util.function.Supplier;
 
 public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
@@ -29,7 +31,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     public ItemGroupBuilderImpl(Identifier id) {
         MakeSure.notNull(id, "null identifier provided.");
 
-        if (!FabricLoader.getInstance().isModLoaded("fabric-item-groups-v0")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
+        if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
         this.identifier = id;
     }
 
@@ -66,39 +68,25 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
 
 
     public ItemGroup build() {
-        ((ItemGroupArrayExtender) ItemGroup.BREWING).dark_matter$crack_array();
-        ItemGroup itemGroup = new ItemGroup(ItemGroup.GROUPS.length - 1, identifier.toString().replace(":", ".")) {
-            @Override
-            public ItemStack getIcon() {
-                return ItemGroupBuilderImpl.this.icon.get();
-            }
+        ItemGroup.Builder builder;
+        if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
+            builder = FabricItemGroup.builder(this.identifier);
+        } else {
+            builder = new ItemGroup.Builder(null, -1);
+        }
+        builder.entries((enabledFeatures, entries, operatorEnabled) -> {});
+        builder.icon(() -> ItemGroupBuilderImpl.this.icon.get());
 
-            @Override
-            public ItemStack createIcon() {
-                return ItemStack.EMPTY;
-            }
+        builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> TextUtil.translatable("itemGroup." + this.identifier.toString().replace(":", "."))));
+        if (this.texture != null) builder.texture(this.texture);
 
-            @Override
-            public void appendStacks(DefaultedList<ItemStack> stacks) {
-                if (ItemGroupBuilderImpl.this.entries != null) {
-                    DarkMatterEntriesImpl entries = new DarkMatterEntriesImpl(stacks);
-                    ItemGroupBuilderImpl.this.entries.collect(entries);
-                    return;
-                }
-                super.appendStacks(stacks);
-            }
-
-            @Override
-            public Text getDisplayName() {
-                if (ItemGroupBuilderImpl.this.displayName != null) return ItemGroupBuilderImpl.this.displayName;
-                return super.getDisplayName();
-            }
-        };
-
-        if (this.animatedIcon != null) itemGroup.dm$setIconAnimation(this.animatedIcon);
-        if (this.texture != null) itemGroup.setTexture(this.texture);
-
-        return itemGroup;
+        ItemGroup group = builder.build();
+        ItemGroupHelper.addItemGroupInjection(group, (enabledFeatures, operatorEnabled, entriesImpl) -> {
+            DarkMatterEntriesImpl entries1 = new DarkMatterEntriesImpl(entriesImpl);
+            this.entries.collect(entries1);
+        });
+        if (this.animatedIcon != null) group.dm$setIconAnimation(this.animatedIcon);
+        return group;
     }
 
 }
