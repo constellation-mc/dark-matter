@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.minecraft.debug;
 
 import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
+import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -25,15 +26,18 @@ public class ValueTrackerImpl {
     }
 
     public static void addTracker(String s, Supplier<?> supplier) {
+        MakeSure.notNulls(s, supplier);
         TRACKERS.putIfAbsent(s, supplier);
     }
 
     public static void addTracker(String s, Supplier<?> supplier, Duration duration) {
+        MakeSure.notNulls(s, supplier, duration);
         TRACKERS.putIfAbsent(s, supplier);
         TIMERS.put(s, Tuple.of(Instant.now(), duration));
     }
 
     public static void addFieldTracker(String s, Field f, Object o) {
+        MakeSure.notNulls(s, f, o);
         ReflectionUtil.setAccessible(f);
         TRACKERS.put(s, () -> {
             try {
@@ -45,6 +49,7 @@ public class ValueTrackerImpl {
     }
 
     public static void addFieldTracker(String s, Field f, Object o, Duration duration) {
+        MakeSure.notNulls(s, f, o, duration);
         ReflectionUtil.setAccessible(f);
         TRACKERS.put(s, () -> {
             try {
@@ -57,6 +62,7 @@ public class ValueTrackerImpl {
     }
 
     public static void addStaticFieldTracker(String s, Field f) {
+        MakeSure.notNulls(s, f);
         ReflectionUtil.setAccessible(f);
         TRACKERS.putIfAbsent(s, () -> {
             try {
@@ -68,6 +74,7 @@ public class ValueTrackerImpl {
     }
 
     public static void addStaticFieldTracker(String s, Field f, Duration duration) {
+        MakeSure.notNulls(s, f, duration);
         ReflectionUtil.setAccessible(f);
         TRACKERS.putIfAbsent(s, () -> {
             try {
