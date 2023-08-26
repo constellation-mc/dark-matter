@@ -51,11 +51,13 @@ public final class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
+        MakeSure.notNulls(type, function);
         GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new LinkedHashSet<>(1)).add(function);
     }
 
     @Environment(EnvType.CLIENT)
     public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
+        MakeSure.notNulls(category, groups);
         if (isVanillaCategory(category)) {
             List<RecipeBookGroup> groupList = getGroupsForCategory(category);
             (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
@@ -70,6 +72,7 @@ public final class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
+        MakeSure.notNulls(category, groups);
         MakeSure.isFalse(index < 0, "Index can't be below 0!");
         if (isVanillaCategory(category)) {
             List<RecipeBookGroup> groupList = getGroupsForCategory(category);
@@ -89,6 +92,7 @@ public final class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+        MakeSure.notNulls(searchGroup, groups);
         List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
         (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
         groupList.addAll(groups);
@@ -96,6 +100,7 @@ public final class RecipeBookInternals {
 
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+        MakeSure.notNulls(searchGroup, groups);
         List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
         (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
 

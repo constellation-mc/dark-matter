@@ -9,6 +9,8 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.util.Identifier;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
@@ -24,10 +26,12 @@ public final class RecipeBookHelper {
      * Allows you to map a recipe to a group.
      * <p>
      * This supports adding multiple lookups for the same type. So, multiple mods can map their recipes of the same type.
+     * <p>
+     * It's recommended to keep this simple, as it will be run for every recipe.
      * @param lookup The lookup function. Please note, the function must return null if the recipe doesn't match.
      */
     @Environment(EnvType.CLIENT)
-    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> lookup) {
+    public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
         RecipeBookInternals.registerGroupLookup(type, lookup);
     }
 
@@ -43,7 +47,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void registerGroups(RecipeBookCategory category, RecipeBookGroup... groups) {
+    public static void registerGroups(@NotNull RecipeBookCategory category, RecipeBookGroup... groups) {
         registerGroups(category, Arrays.asList(groups));
     }
 
@@ -55,7 +59,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void registerGroups(RecipeBookCategory category, int index, RecipeBookGroup... groups) {
+    public static void registerGroups(@NotNull RecipeBookCategory category, int index, RecipeBookGroup... groups) {
         registerGroups(category, index, Arrays.asList(groups));
     }
 
@@ -67,7 +71,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
+    public static void registerGroups(@NotNull RecipeBookCategory category, List<RecipeBookGroup> groups) {
         RecipeBookInternals.registerGroups(category, groups);
     }
 
@@ -79,7 +83,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
+    public static void registerGroups(@NotNull RecipeBookCategory category, int index, @NotNull List<RecipeBookGroup> groups) {
         RecipeBookInternals.registerGroups(category, index, groups);
     }
 
@@ -93,7 +97,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
+    public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
         addToSearchGroup(searchGroup, Arrays.asList(groups));
     }
 
@@ -103,7 +107,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
+    public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
         addToSearchGroup(searchGroup, index, Arrays.asList(groups));
     }
 
@@ -113,7 +117,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+    public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, @NotNull List<RecipeBookGroup> groups) {
         RecipeBookInternals.addToSearchGroup(searchGroup, groups);
     }
 
@@ -123,7 +127,7 @@ public final class RecipeBookHelper {
      * You can also use {@link RecipeBookHelper#registerAndAddToSearch(RecipeBookCategory, RecipeBookGroup, RecipeBookGroup...)}
      */
     @Environment(EnvType.CLIENT)
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+    public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, int index, @NotNull List<RecipeBookGroup> groups) {
         RecipeBookInternals.addToSearchGroup(searchGroup, index, groups);
     }
 
@@ -135,7 +139,7 @@ public final class RecipeBookHelper {
      * Register and add to search.
      */
     @Environment(EnvType.CLIENT)
-    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
+    public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, RecipeBookGroup... groups) {
         registerAndAddToSearch(category, searchGroup, Arrays.asList(groups));
     }
 
@@ -143,7 +147,7 @@ public final class RecipeBookHelper {
      * Register and add to search. Here you can specify the index for the groups.
      */
     @Environment(EnvType.CLIENT)
-    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
+    public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, int index, RecipeBookGroup... groups) {
         registerAndAddToSearch(category, searchGroup, index, Arrays.asList(groups));
     }
 
@@ -151,7 +155,7 @@ public final class RecipeBookHelper {
      * Register and add to search.
      */
     @Environment(EnvType.CLIENT)
-    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
+    public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, @NotNull List<RecipeBookGroup> groups) {
         RecipeBookInternals.registerGroups(category, groups);
         groups.remove(searchGroup);
         RecipeBookInternals.addToSearchGroup(searchGroup, groups);
@@ -161,7 +165,7 @@ public final class RecipeBookHelper {
      * Register and add to search. Here you can specify the index for the groups.
      */
     @Environment(EnvType.CLIENT)
-    public static void registerAndAddToSearch(RecipeBookCategory category, RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
+    public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, int index, @NotNull List<RecipeBookGroup> groups) {
         RecipeBookInternals.registerGroups(category, index, groups);
         groups.remove(searchGroup);
         RecipeBookInternals.addToSearchGroup(searchGroup, index, groups);
@@ -174,7 +178,7 @@ public final class RecipeBookHelper {
     /**
      * Creates a {@link RecipeBookCategory}. This is meant to be used in the main init of your mod.
      */
-    public static RecipeBookCategory createCategory(Identifier id) {
+    public static RecipeBookCategory createCategory(@NotNull Identifier id) {
         return RecipeBookInternals.createCategory(id.toString().replace('/', '_').replace(':', '_'));
     }
 
@@ -183,7 +187,7 @@ public final class RecipeBookHelper {
      * @param stacks This is the icon displayed in the recipe book. Values above 2 do not work.
      */
     @Environment(EnvType.CLIENT)
-    public static RecipeBookGroup createGroup(Identifier id, ItemStack... stacks) {
+    public static RecipeBookGroup createGroup(@NotNull Identifier id, ItemStack... stacks) {
         return RecipeBookInternals.createGroup(id.toString().replace('/', '_').replace(':', '_'), stacks);
     }
 
