@@ -29,13 +29,17 @@ public class PrependingLogger {
         return "[" + caller.getName() + "] ";
     };
     public static final Function<Logger, String> NAME_CLASS_MIX = logger -> {
-        Class<?> caller = Utilities.getCallerClass(3);
-        return "(" + logger.getName() + " / " + caller.getSimpleName() + ") ";
+        Class<?> cls = Utilities.getCallerClass(3);
+        String[] split = cls.getName().split("\\.");
+        String caller = split[split.length - 1];
+        return "(" + logger.getName() + " / " + caller + ") ";
     };
 
     public static final Function<Logger, String> NAME_CLASS_MIX_WRAPPED = logger -> {
-        Class<?> caller = Utilities.getCallerClass(4);
-        return "(" + logger.getName() + " / " + caller.getSimpleName() + ") ";
+        Class<?> cls = Utilities.getCallerClass(4);
+        String[] split = cls.getName().split("\\.");
+        String caller = split[split.length - 1];
+        return "(" + logger.getName() + " / " + caller + ") ";
     };
     private static final Function<Logger, String> DEFAULT = logger -> "";
     private final Logger backing;

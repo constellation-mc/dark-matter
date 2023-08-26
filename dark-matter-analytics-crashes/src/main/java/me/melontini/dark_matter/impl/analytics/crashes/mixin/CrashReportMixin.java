@@ -20,6 +20,7 @@ import java.nio.file.Files;
 
 @Mixin(CrashReport.class)
 public abstract class CrashReportMixin {
+
     @Shadow @Final private Throwable cause;
 
     @Inject(at = @At("RETURN"), method = "writeToFile")
@@ -31,11 +32,12 @@ public abstract class CrashReportMixin {
                 latestLog = Files.readString(FabricLoader.getInstance().getGameDir().resolve("logs/latest.log"));
             } catch (IOException ignored) {}
 
-            for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : CrashlyticsInternals.getHandlers()) {
+            for (Tuple<Crashlytics.Decider, Crashlytics.Handler> tuple : CrashlyticsInternals.getView().values()) {
                 if (tuple.left().shouldHandle((CrashReport) (Object) this, this.cause, latestLog, envType)) {
                     tuple.right().handle((CrashReport) (Object) this, this.cause, latestLog, envType);
                 }
             }
         }
     }
+
 }

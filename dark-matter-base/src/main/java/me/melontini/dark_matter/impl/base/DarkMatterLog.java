@@ -8,7 +8,7 @@ import static me.melontini.dark_matter.api.base.util.Utilities.STACK_WALKER;
 
 @ApiStatus.Internal
 public class DarkMatterLog {
-    private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_METHOD_MIX_WRAPPED);
+    private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_CLASS_MIX_WRAPPED);
 
     public static void error(String msg) {
         BACKING.error(msg);
@@ -56,6 +56,22 @@ public class DarkMatterLog {
 
     public static void info(String msg, Object... args) {
         BACKING.info(msg, args);
+    }
+
+    public static void debug(String msg) {
+        BACKING.debug(msg);
+    }
+
+    public static void debug(String msg, Throwable t) {
+        BACKING.debug(msg, t);
+    }
+
+    public static void debug(Object msg) {
+        BACKING.debug(msg);
+    }
+
+    public static void debug(String msg, Object... args) {
+        BACKING.debug(msg, args);
     }
 
     public static void traceCalls() {
