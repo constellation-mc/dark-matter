@@ -26,9 +26,7 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptionsRegistryHolder;
 import net.minecraft.world.dimension.DimensionType;
 import net.minecraft.world.dimension.DimensionTypes;
-import net.minecraft.world.gen.GeneratorOptions;
 import net.minecraft.world.gen.WorldPresets;
-import net.minecraft.world.level.LevelProperties;
 import net.minecraft.world.level.storage.LevelStorage;
 import org.apache.commons.io.FileUtils;
 import org.jetbrains.annotations.ApiStatus;
@@ -37,7 +35,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -55,27 +52,18 @@ public class FakeWorld extends ClientWorld {
         DataConfiguration dataConfiguration = MinecraftServer.DEMO_LEVEL_INFO.getDataConfiguration();
         SaveLoading.DataPacks dataPacks = new SaveLoading.DataPacks(resourcePackManager, dataConfiguration, true, false);
 
-        Function<DynamicRegistryManager, DimensionOptionsRegistryHolder> function = WorldPresets::createDemoOptions;
         try {
             Pair<DataConfiguration, LifecycledResourceManager> pair = dataPacks.load();
             LifecycledResourceManager lifecycledResourceManager = pair.getSecond();
+
             CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries = ServerDynamicRegistryType.createCombinedDynamicRegistries();
-            CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries2 = SaveLoading.withRegistriesLoaded(
-                    lifecycledResourceManager, combinedDynamicRegistries, ServerDynamicRegistryType.WORLDGEN, RegistryLoader.DYNAMIC_REGISTRIES
-            );
+            CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries2 = SaveLoading.withRegistriesLoaded(lifecycledResourceManager, combinedDynamicRegistries, ServerDynamicRegistryType.WORLDGEN, RegistryLoader.DYNAMIC_REGISTRIES);
+
             DynamicRegistryManager.Immutable immutable = combinedDynamicRegistries2.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS);
             DynamicRegistryManager.Immutable immutable2 = RegistryLoader.load(lifecycledResourceManager, immutable, RegistryLoader.DIMENSION_REGISTRIES);
 
-            SaveLoading.LoadContextSupplierContext context = new SaveLoading.LoadContextSupplierContext(lifecycledResourceManager, dataConfiguration, immutable, immutable2);
-            DimensionOptionsRegistryHolder.DimensionsConfig dimensionsConfig = function.apply(
-                            context.worldGenRegistryManager())
-                    .toConfig(context.dimensionsRegistryManager().get(RegistryKeys.DIMENSION));
-            SaveLoading.LoadContext<?> loadContext = new SaveLoading.LoadContext<>(
-                    new LevelProperties(MinecraftServer.DEMO_LEVEL_INFO, GeneratorOptions.DEMO_OPTIONS, dimensionsConfig.specialWorldProperty(), dimensionsConfig.getLifecycle()),
-                    dimensionsConfig.toDynamicRegistryManager());
-            CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries3 = combinedDynamicRegistries2.with(
-                    ServerDynamicRegistryType.DIMENSIONS,
-                    loadContext.dimensionsRegistryManager());
+            DimensionOptionsRegistryHolder.DimensionsConfig dimensionsConfig = WorldPresets.createDemoOptions(immutable).toConfig(immutable2.get(RegistryKeys.DIMENSION));
+            CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries3 = combinedDynamicRegistries2.with(ServerDynamicRegistryType.DIMENSIONS, dimensionsConfig.toDynamicRegistryManager());
 
             ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), new ServerInfo("fake_name", "0.0.0.0", true), new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
             networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(combinedDynamicRegistries3)).toImmutable());
