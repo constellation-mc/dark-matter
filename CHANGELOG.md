@@ -16,6 +16,10 @@
 * Added `@Publicize`. Part of `PublicizePlugin`
   * Patches annotated fields and methods from `private` to `public`.
   * This is meant for static members that need to be accessed from the outside.
+* Added `@ConstructDummy`. Part of `ConstructDummyPlugin`
+  * If not present, attempts to construct a dummy override of a method.
+  * This is only meant for `HEAD` and `TAIL` `@Inject`s.
+  * "Use at your own risk".
 * Added `AsmUtil`.
   * This includes `mapAnnotationNode()` and `mapObjectFromAnnotation()` from `ExtendedPlugin`.
 * Added `of()` methods to `Tuple` and `MutableTuple`.
