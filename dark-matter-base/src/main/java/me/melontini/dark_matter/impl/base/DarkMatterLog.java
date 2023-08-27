@@ -1,13 +1,12 @@
 package me.melontini.dark_matter.impl.base;
 
 import me.melontini.dark_matter.api.base.util.PrependingLogger;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.Internal
 public final class DarkMatterLog {
 
-    private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_CLASS_MIX_WRAPPED);
+    private static final PrependingLogger BACKING = PrependingLogger.get("Dark Matter", PrependingLogger.NAME_CLASS_MIX_WRAPPED);
 
     public static void error(String msg) {
         BACKING.error(msg);
