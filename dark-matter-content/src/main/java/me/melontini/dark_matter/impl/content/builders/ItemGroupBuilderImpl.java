@@ -13,6 +13,8 @@ import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -70,7 +72,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     public ItemGroup build() {
         ItemGroup.Builder builder;
         if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
-            builder = FabricItemGroup.builder(this.identifier);
+            builder = FabricItemGroup.builder();
         } else {
             builder = new ItemGroup.Builder(null, -1);
         }
@@ -86,6 +88,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
             this.entries.collect(entries1);
         });
         if (this.animatedIcon != null) group.dm$setIconAnimation(this.animatedIcon);
+        Registry.register(Registries.ITEM_GROUP, this.identifier, group);
         return group;
     }
 
