@@ -5,14 +5,16 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 @ApiStatus.Internal
-public class CrashlyticsInternals {
+public final class CrashlyticsInternals {
+
     private static final Map<String, Tuple<Crashlytics.Decider, Crashlytics.Handler>> HANDLERS = new HashMap<>();
+    private static final Map<String, Tuple<Crashlytics.Decider, Crashlytics.Handler>> VIEW = Collections.unmodifiableMap(HANDLERS);
+
     public static void addHandler(String id, Crashlytics.Decider decider, Crashlytics.Handler handler) {
         MakeSure.notEmpty(id, "Empty or null id provided!");
         MakeSure.notNulls("Null arguments provided!", decider, handler);
@@ -24,8 +26,8 @@ public class CrashlyticsInternals {
         HANDLERS.remove(id);
     }
 
-    public static Collection<Tuple<Crashlytics.Decider, Crashlytics.Handler>> getHandlers() {
-        return Collections.unmodifiableCollection(HANDLERS.values());
+    public static Map<String, Tuple<Crashlytics.Decider, Crashlytics.Handler>> getView() {
+        return VIEW;
     }
 
 }

@@ -2,7 +2,7 @@ package me.melontini.dark_matter.impl.minecraft.mixin.debug;
 
 import com.google.common.base.Strings;
 import com.llamalad7.mixinextras.sugar.Local;
-import me.melontini.dark_matter.api.minecraft.debug.ValueTracker;
+import me.melontini.dark_matter.impl.minecraft.debug.ValueTrackerImpl;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.gui.DrawContext;
@@ -13,7 +13,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -25,7 +24,7 @@ public class MinecraftClientMixin {
     private final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER), method = "render")
-    private void cracker$renderValueTrack(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Local DrawContext context) {
+    private void dark_matter$renderValueTrack(float tickDelta, long startTime, boolean tick, CallbackInfo ci, @Local DrawContext context) {
         try {
             if (!DARK_MATTER$VALUES_TO_RENDER.isEmpty()) {
                 //MatrixStack stack = new MatrixStack();
@@ -43,29 +42,12 @@ public class MinecraftClientMixin {
     }
 
     @Inject(at = @At("TAIL"), method = "tick")
-    private void cracker$tickValueTrack(CallbackInfo ci) {
+    private void dark_matter$tickValueTrack(CallbackInfo ci) {
         try {
             DARK_MATTER$VALUES_TO_RENDER.clear();
 
-            ValueTracker.MANUAL_TRACK.forEach((s, o) -> DARK_MATTER$VALUES_TO_RENDER.add(s + ": " + (o != null ? o.toString() : "null")));
-
-            for (Field field : ValueTracker.AUTO_TRACK_STATIC) {
-                try {
-                    DARK_MATTER$VALUES_TO_RENDER.add(field.getDeclaringClass().getName() + "." + field.getName() + ": " + field.get(null));
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            ValueTracker.AUTO_TRACK.forEach((field, o) -> {
-                try {
-                    for (Object o1 : o) {
-                        DARK_MATTER$VALUES_TO_RENDER.add(o1.toString() + "." + field.getName() + ": " + field.get(o1));
-                    }
-                } catch (IllegalAccessException e) {
-                    throw new RuntimeException(e);
-                }
-            });
+            ValueTrackerImpl.checkTimers();
+            ValueTrackerImpl.getView().forEach((id, supplier) -> DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
         } catch (Throwable ignored) {}
     }
 }

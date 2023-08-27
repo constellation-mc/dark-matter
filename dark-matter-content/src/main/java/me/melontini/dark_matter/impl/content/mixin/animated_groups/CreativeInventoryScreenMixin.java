@@ -22,7 +22,7 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT, method = "renderTabIcon", cancellable = true)
     private void dark_matter$drawGroupIcon(DrawContext context, ItemGroup group, CallbackInfo ci, boolean bl, boolean bl2, int i, int j, int k, int l, int m) {
         if (group.dm$shouldAnimateIcon()) {
-            group.dm$getIconAnimation().animateIcon(context, l, m, bl, bl2);
+            group.dm$getIconAnimation().animateIcon(group, context, l, m, bl, bl2);
             ci.cancel();
         }
     }

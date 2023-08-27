@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.content.interfaces;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.item.ItemGroup;
 
 @FunctionalInterface
 public interface AnimatedItemGroup {
@@ -16,5 +17,5 @@ public interface AnimatedItemGroup {
      * @param itemY the y-coordinate of the icon
      */
     @Environment(EnvType.CLIENT)
-    void animateIcon(DrawContext context, int itemX, int itemY, boolean selected, boolean isTopRow);
+    void animateIcon(ItemGroup group, DrawContext context, int itemX, int itemY, boolean selected, boolean isTopRow);
 }

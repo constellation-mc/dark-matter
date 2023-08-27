@@ -5,6 +5,7 @@ import net.fabricmc.api.Environment;
 
 @Environment(EnvType.CLIENT)
 public interface PaginatedRecipeBookWidget {
+
     default void dm$updatePages() {
         throw new IllegalStateException("Interface not implemented");
     }
@@ -49,4 +50,5 @@ public interface PaginatedRecipeBookWidget {
     default int getPageCount() {
         return dm$getPageCount();
     }
+
 }

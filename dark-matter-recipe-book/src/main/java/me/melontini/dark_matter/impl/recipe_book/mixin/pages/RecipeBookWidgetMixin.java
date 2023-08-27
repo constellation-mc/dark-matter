@@ -73,10 +73,8 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     private void dark_matter$renderPageText(DrawContext context) {
         int x = (this.parentWidth - 135) / 2 - this.leftOffset - 30;
         int y = (this.parentHeight + 169) / 2 + 3;
-        int displayPage = this.page + 1;
-        int displayPages = this.pages;
         if (this.pages > 1) {
-            String string = "" + displayPage + "/" + displayPages;
+            String string = this.page + 1 + "/" + this.pages;
             int textLength = this.client.textRenderer.getWidth(string);
             context.drawText(this.client.textRenderer, string, (int) (x - textLength / 2F + 20F), y, -1, false);
         }
