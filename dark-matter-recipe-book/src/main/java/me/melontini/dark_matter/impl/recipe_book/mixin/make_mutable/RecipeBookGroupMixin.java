@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Mixin(value = RecipeBookGroup.class, priority = 800)
 public class RecipeBookGroupMixin {
+
     @Shadow
     @Final
     @Mutable
@@ -44,8 +45,9 @@ public class RecipeBookGroupMixin {
         FURNACE = new ArrayList<>(FURNACE);
         CRAFTING = new ArrayList<>(CRAFTING);
 
-        Map<RecipeBookGroup, List<RecipeBookGroup>> groupListMap = new HashMap<>();
-        SEARCH_MAP.forEach((group, groups) -> groupListMap.put(group, new ArrayList<>(groups)));
-        SEARCH_MAP = groupListMap;
+        Map<RecipeBookGroup, List<RecipeBookGroup>> newMap = new HashMap<>();
+        SEARCH_MAP.forEach((group, groups) -> newMap.put(group, new ArrayList<>(groups)));
+        SEARCH_MAP = newMap;
     }
+
 }

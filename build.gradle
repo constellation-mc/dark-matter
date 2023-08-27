@@ -78,7 +78,7 @@ allprojects {
         modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
 
         if (project.name != "dark-matter-base" && project.name != rootProject.name) {
-            implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+            implementation(annotationProcessor("io.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
             api(project(path: ':dark-matter-base', configuration: 'namedElements'))
         }
     }
@@ -109,7 +109,7 @@ allprojects {
 }
 
 dependencies {
-    localRuntime(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
+    localRuntime(annotationProcessor("io.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}"))
     localRuntime("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}")
 
     def apiModules = [

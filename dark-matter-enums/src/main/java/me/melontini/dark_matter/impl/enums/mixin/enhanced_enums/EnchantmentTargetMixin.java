@@ -1,7 +1,9 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.impl.enums.interfaces.EnchantmentTargetHack;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.item.Item;
@@ -36,6 +38,7 @@ public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget>
     private Predicate<Item> dark_matter$predicate;
 
     @Unique
+    @Publicize
     private static EnchantmentTarget dark_matter$extendEnum(String internalName, Predicate<Item> predicate) {
         for (EnchantmentTarget target : field_9077) {
             if (target.name().equalsIgnoreCase(internalName)) return target;
@@ -46,6 +49,7 @@ public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget>
         ((EnchantmentTargetHack) (Object) enumConst).dark_matter$setPredicate(predicate);
         field_9077 = ArrayUtils.add(field_9077, enumConst);
         EnumUtils.clearEnumCache(EnchantmentTarget.class);
+        DarkMatterLog.debug("Extended enum {}", enumConst);
         return enumConst;
     }
 

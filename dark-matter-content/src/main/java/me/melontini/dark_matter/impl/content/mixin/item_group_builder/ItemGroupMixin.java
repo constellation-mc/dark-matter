@@ -14,10 +14,7 @@ public class ItemGroupMixin {
 
     @Inject(at = @At(value = "FIELD", target = "Lnet/minecraft/item/ItemGroup;displayStacks:Ljava/util/Collection;", shift = At.Shift.BEFORE), method = "updateEntries")
     private void dark_matter$injectEntries(ItemGroup.DisplayContext displayContext, CallbackInfo ci, @Local ItemGroup.EntriesImpl entriesImpl) {
-        if (ItemGroupInjectionInternals.INJECTED_GROUPS.containsKey((ItemGroup) (Object) this)) {
-            for (ItemGroupHelper.InjectEntries injectEntries : ItemGroupInjectionInternals.INJECTED_GROUPS.get((ItemGroup) (Object) this)) {
-                injectEntries.inject(displayContext.enabledFeatures(), displayContext.hasPermissions(), entriesImpl);
-            }
-        }
+        ItemGroupInjectionInternals.getItemGroupInjections((ItemGroup) (Object) this)
+                .ifPresent(injectEntries -> injectEntries.forEach(entryInjector -> entryInjector.inject(displayContext.enabledFeatures(), displayContext.hasPermissions(), entriesImpl)));
     }
 }

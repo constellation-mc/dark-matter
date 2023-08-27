@@ -17,7 +17,7 @@ import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
 @ApiStatus.Internal
-public class UploaderInternals {
+public final class UploaderInternals {
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String MCLO_GS_API = "https://api.mclo.gs/1/log";

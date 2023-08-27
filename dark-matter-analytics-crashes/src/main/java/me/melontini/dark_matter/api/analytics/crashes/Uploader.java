@@ -2,7 +2,7 @@ package me.melontini.dark_matter.api.analytics.crashes;
 
 import me.melontini.dark_matter.impl.analytics.crashes.UploaderInternals;
 
-public class Uploader {
+public final class Uploader {
 
     private Uploader() {
         throw new UnsupportedOperationException();
