@@ -12,10 +12,11 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.recipe.book.RecipeBookOptions;
+import net.minecraft.registry.DynamicRegistryManager;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.*;
-import java.util.function.Function;
+import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
 @ApiStatus.Internal
@@ -26,7 +27,7 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    private static final Map<RecipeType<?>, Set<Function<Recipe<?>, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
+    private static final Map<RecipeType<?>, Set<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
 
     @Environment(EnvType.CLIENT)
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
@@ -50,7 +51,7 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
+    public static void registerGroupLookup(RecipeType<?> type, BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup> function) {
         MakeSure.notNulls(type, function);
         GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new LinkedHashSet<>(1)).add(function);
     }
@@ -125,7 +126,7 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    public static Optional<Set<Function<Recipe<?>, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
+    public static Optional<Set<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
         return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableSet(GROUP_LOOKUPS.get(type))) : Optional.empty();
     }
 

@@ -8,12 +8,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 public final class RecipeBookHelper {
@@ -32,6 +34,21 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
+        RecipeBookInternals.registerGroupLookup(type, (recipe, dynamicRegistryManager) -> lookup.apply(recipe));
+    }
+
+    /**
+     * Allows you to map a recipe to a group, but with a dynamic registry manager.
+     * <p>
+     * Please, use the above method if you don't need this, since the registry might be null if {@link RecipeBookGroup#getGroups(RecipeBookCategory)} wasn't called by {@link net.minecraft.client.recipebook.ClientRecipeBook#reload(Iterable, DynamicRegistryManager)}
+     * <p>
+     * This supports adding multiple lookups for the same type. So, multiple mods can map their recipes of the same type.
+     * <p>
+     * It's recommended to keep this simple, as it will be run for every recipe.
+     * @param lookup The lookup function. Please note, the function must return null if the recipe doesn't match.
+     */
+    @Environment(EnvType.CLIENT)
+    public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull BiFunction<Recipe<?>, @Nullable DynamicRegistryManager, @Nullable RecipeBookGroup> lookup) {
         RecipeBookInternals.registerGroupLookup(type, lookup);
     }
 
