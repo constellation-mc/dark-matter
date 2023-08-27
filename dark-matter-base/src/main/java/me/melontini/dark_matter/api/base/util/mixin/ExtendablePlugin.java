@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util.mixin;
 
+import me.melontini.dark_matter.impl.base.util.mixin.ConstructDummyPlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.MixinPredicatePlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.PublicizePlugin;
 import me.melontini.dark_matter.impl.base.util.mixin.ShouldApplyPlugin;
@@ -170,6 +171,14 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
         public static IPluginPlugin publicizePlugin() {
             return new PublicizePlugin();
+        }
+
+        /**
+         * See {@link me.melontini.dark_matter.api.base.util.mixin.annotations.ConstructDummy}
+         */
+        @ApiStatus.Experimental
+        public static IPluginPlugin constructDummyPlugin() {
+            return new ConstructDummyPlugin();
         }
 
     }

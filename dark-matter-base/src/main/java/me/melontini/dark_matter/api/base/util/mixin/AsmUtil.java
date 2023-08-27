@@ -1,6 +1,8 @@
 package me.melontini.dark_matter.api.base.util.mixin;
 
 import me.melontini.dark_matter.impl.base.util.mixin.AsmImpl;
+import net.fabricmc.loader.api.MappingResolver;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 
 import java.util.List;
@@ -24,5 +26,16 @@ public class AsmUtil {
         return AsmImpl.emptyAnnotationList();
     }
 
+    public static Type mapTypeFromDescriptor(Type descriptor, MappingResolver resolver) {
+        return Type.getType(AsmImpl.remapMethodDescriptor(descriptor, resolver));
+    }
+
+    public static String mapStringFromDescriptor(Type descriptor, MappingResolver resolver) {
+        return AsmImpl.remapMethodDescriptor(descriptor, resolver);
+    }
+
+    public static String getDescriptor(String arg, MappingResolver resolver) {
+        return AsmImpl.getDescriptor(arg, resolver);
+    }
 
 }
