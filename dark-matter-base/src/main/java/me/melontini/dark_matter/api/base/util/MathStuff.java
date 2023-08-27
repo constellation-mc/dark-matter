@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.base.util;
 
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public final class MathStuff {
 
@@ -13,16 +14,56 @@ public final class MathStuff {
         return min >= max ? min : random.nextDouble() * (max - min) + min;
     }
 
+    public static double nextDouble(double min, double max) {
+        return min >= max ? min : threadRandom().nextDouble() * (max - min) + min;
+    }
+
     public static float nextFloat(Random random, float min, float max) {
         return min >= max ? min : random.nextFloat() * (max - min) + min;
+    }
+
+    public static float nextFloat(float min, float max) {
+        return min >= max ? min : threadRandom().nextFloat() * (max - min) + min;
     }
 
     public static int nextInt(Random random, int min, int max) {
         return min >= max ? min : random.nextInt(max - min + 1) + min;
     }
 
+    public static int nextInt(int min, int max) {
+        return min >= max ? min : threadRandom().nextInt(max - min + 1) + min;
+    }
+
     public static long nextLong(Random random, long min, long max) {
         return min >= max ? min : random.nextLong(max - min + 1) + min;
+    }
+
+    public static long nextLong(long min, long max) {
+        return min >= max ? min : threadRandom().nextLong(max - min + 1) + min;
+    }
+
+    public static ThreadLocalRandom threadRandom() {
+        return ThreadLocalRandom.current();
+    }
+
+    public static Random random() {
+        return new Random();
+    }
+
+    public static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    public static float clamp(float value, float min, float max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    public static int clamp(int value, int min, int max) {
+        return Math.max(min, Math.min(max, value));
+    }
+
+    public static long clamp(long value, long min, long max) {
+        return Math.max(min, Math.min(max, value));
     }
 
     public static int fastCeil(double value) {
