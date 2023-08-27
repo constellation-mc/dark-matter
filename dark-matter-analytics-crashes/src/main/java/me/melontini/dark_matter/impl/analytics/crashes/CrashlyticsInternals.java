@@ -18,7 +18,7 @@ public final class CrashlyticsInternals {
     public static void addHandler(String id, Crashlytics.Decider decider, Crashlytics.Handler handler) {
         MakeSure.notEmpty(id, "Empty or null id provided!");
         MakeSure.notNulls("Null arguments provided!", decider, handler);
-        HANDLERS.putIfAbsent(id, new Tuple<>(decider, handler));
+        HANDLERS.putIfAbsent(id, Tuple.of(decider, handler));
     }
 
     public static void removeHandler(String id) {
