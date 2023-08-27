@@ -74,7 +74,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
         } else {
             builder = new ItemGroup.Builder(null, -1);
         }
-        builder.entries((enabledFeatures, entries, operatorEnabled) -> {});
+        builder.entries((displayContext, operatorEnabled) -> {});
         builder.icon(() -> ItemGroupBuilderImpl.this.icon.get());
 
         builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> TextUtil.translatable("itemGroup." + this.identifier.toString().replace(":", "."))));
