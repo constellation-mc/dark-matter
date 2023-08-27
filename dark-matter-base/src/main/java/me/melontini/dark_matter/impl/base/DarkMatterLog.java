@@ -4,10 +4,9 @@ import me.melontini.dark_matter.api.base.util.PrependingLogger;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.ApiStatus;
 
-import static me.melontini.dark_matter.api.base.util.Utilities.STACK_WALKER;
-
 @ApiStatus.Internal
-public class DarkMatterLog {
+public final class DarkMatterLog {
+
     private static final PrependingLogger BACKING = new PrependingLogger(LogManager.getLogger("Dark Matter"), PrependingLogger.NAME_CLASS_MIX_WRAPPED);
 
     public static void error(String msg) {
@@ -74,17 +73,4 @@ public class DarkMatterLog {
         BACKING.debug(msg, args);
     }
 
-    public static void traceCalls() {
-        STACK_WALKER.walk(s -> {
-            s.forEach(stackFrame -> {
-                StringBuilder b = new StringBuilder();
-                b.append("at: ").append(stackFrame.getLineNumber());
-                b.append("   ");
-                b.append(stackFrame.getClassName()).append("#").append(stackFrame.getMethodName()).append(stackFrame.getDescriptor());
-                if (stackFrame.isNativeMethod()) b.append(" native method");
-                BACKING.getBacking().error(b.toString());
-            });
-            return null;
-        });
-    }
 }
