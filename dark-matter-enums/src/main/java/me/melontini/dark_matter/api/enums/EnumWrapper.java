@@ -115,7 +115,7 @@ public class EnumWrapper {
         }
         public static Raid.Member extend(String internalName, EntityType<? extends RaiderEntity> type, int[] countInWave) {
             MakeSure.notEmpty(internalName, "Tried to extend Raid.Member with an empty internalName");
-            MakeSure.isFalse(countInWave.length == 0, "Tried to extend Raid.Member with empty countInWave array");
+            MakeSure.isTrue(countInWave.length > 0, "Tried to extend Raid.Member with empty countInWave array");
 
             return (Raid.Member) Raid.Member.values()[0].dark_matter$extend(internalName, type, countInWave);
         }

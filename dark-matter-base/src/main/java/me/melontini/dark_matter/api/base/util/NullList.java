@@ -1,23 +1,52 @@
 package me.melontini.dark_matter.api.base.util;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.function.Predicate;
-import java.util.function.UnaryOperator;
+import org.jetbrains.annotations.NotNull;
 
-public class NullList<E> extends ArrayList<E> {
-    @Override
-    public void trimToSize() {
+import java.util.*;
+
+public class NullList<E> implements List<E> {
+
+    private final List<E> list;
+
+    public NullList() {
+        list = new ArrayList<>();
+    }
+
+    public NullList(List<E> list) {
+        this.list = list;
     }
 
     @Override
-    public void ensureCapacity(int minCapacity) {
+    public int size() {
+        return list.size();
     }
 
     @Override
-    public E set(int index, E element) {
-        return get(index);
+    public boolean isEmpty() {
+        return list.isEmpty();
+    }
+
+    @Override
+    public boolean contains(Object o) {
+        return list.contains(o);
+    }
+
+    @NotNull
+    @Override
+    public Iterator<E> iterator() {
+        return list.iterator();
+    }
+
+    @NotNull
+    @Override
+    public Object[] toArray() {
+        return list.toArray();
+    }
+
+    @NotNull
+    @Override
+    public <T> T[] toArray(@NotNull T[] a) {
+        return list.toArray(a);
     }
 
     @Override
@@ -26,57 +55,85 @@ public class NullList<E> extends ArrayList<E> {
     }
 
     @Override
-    public void add(int index, E element) {
-    }
-
-    @Override
-    protected void removeRange(int fromIndex, int toIndex) {
-    }
-
-    @Override
     public boolean remove(Object o) {
         return false;
     }
 
     @Override
-    public E remove(int index) {
-        return get(index);
+    public boolean containsAll(@NotNull Collection<?> c) {
+        return this.list.containsAll(c);
     }
 
     @Override
-    public boolean removeAll(Collection<?> c) {
+    public boolean addAll(@NotNull Collection<? extends E> c) {
         return false;
     }
 
     @Override
-    public boolean removeIf(Predicate<? super E> filter) {
+    public boolean addAll(int index, @NotNull Collection<? extends E> c) {
+        return false;
+    }
+
+    @Override
+    public boolean removeAll(@NotNull Collection<?> c) {
+        return false;
+    }
+
+    @Override
+    public boolean retainAll(@NotNull Collection<?> c) {
         return false;
     }
 
     @Override
     public void clear() {
+
     }
 
     @Override
-    public boolean retainAll(Collection<?> c) {
-        return false;
+    public E get(int index) {
+        return this.list.get(index);
     }
 
     @Override
-    public void replaceAll(UnaryOperator<E> operator) {
+    public E set(int index, E element) {
+        return this.list.get(index);
     }
 
     @Override
-    public boolean addAll(Collection<? extends E> c) {
-        return false;
+    public void add(int index, E element) {
+
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends E> c) {
-        return false;
+    public E remove(int index) {
+        return this.list.get(index);
     }
 
     @Override
-    public void sort(Comparator<? super E> c) {
+    public int indexOf(Object o) {
+        return this.list.indexOf(o);
+    }
+
+    @Override
+    public int lastIndexOf(Object o) {
+        return this.list.lastIndexOf(o);
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<E> listIterator() {
+        return this.list.listIterator();
+    }
+
+    @NotNull
+    @Override
+    public ListIterator<E> listIterator(int index) {
+        return this.list.listIterator(index);
+    }
+
+    @NotNull
+    @Override
+    public List<E> subList(int fromIndex, int toIndex) {
+        return this.list.subList(fromIndex, toIndex);
     }
 }
