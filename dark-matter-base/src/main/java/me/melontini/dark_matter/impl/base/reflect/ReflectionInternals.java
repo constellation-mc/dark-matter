@@ -188,7 +188,7 @@ public class ReflectionInternals {
                 offset = 12; //fallback to 12 just in case
             }
         }
-        MakeSure.isFalse(offset == -1);
+        MakeSure.isTrue(offset != -1);
         return offset;
     }
 

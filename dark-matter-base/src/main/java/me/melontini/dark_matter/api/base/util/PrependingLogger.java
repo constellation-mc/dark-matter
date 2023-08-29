@@ -1,46 +1,51 @@
 package me.melontini.dark_matter.api.base.util;
 
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.util.function.Function;
 
-import static me.melontini.dark_matter.api.base.util.Utilities.getCallerName;
-
 @SuppressWarnings("unused")
 public class PrependingLogger {
-    public static final Function<Logger, String> LOGGER_NAME = logger -> !Utilities.IS_DEV ? "(" + logger.getName() + ") " : "";
-    public static final Function<Logger, String> METHOD_CALLER = logger -> "[" + getCallerName(3) + "] ";
-    public static final Function<Logger, String> METHOD_CALLER_WRAPPED = logger -> "[" + getCallerName(4) + "] ";
+
+    public static final Function<Logger, String> LOGGER_NAME = PrependingLogger::getNameOrEmpty;
+
+    public static final Function<Logger, String> METHOD_CALLER = logger -> {
+        String[] caller = Utilities.getCallerName(3).split("\\.");
+        return "[" + caller[caller.length - 1] + "] ";
+    };
+    public static final Function<Logger, String> METHOD_CALLER_WRAPPED = logger -> {
+        String[] caller = Utilities.getCallerName(4).split("\\.");
+        return "[" + caller[caller.length - 1] + "] ";
+    };
+
     public static final Function<Logger, String> NAME_METHOD_MIX = logger -> {
         String[] caller = Utilities.getCallerName(3).split("\\.");
-        return "(" + logger.getName() + " / " + caller[caller.length - 1] + ") ";
+        return getNameOrEmpty(logger) + "[" + caller[caller.length - 1] + "] ";
     };
     public static final Function<Logger, String> NAME_METHOD_MIX_WRAPPED = logger -> {
         String[] caller = Utilities.getCallerName(4).split("\\.");
-        return "(" + logger.getName() + " / " + caller[caller.length - 1] + ") ";
+        return getNameOrEmpty(logger) + "[" + caller[caller.length - 1] + "] ";
     };
 
     public static final Function<Logger, String> CALLING_CLASS = logger -> {
-        Class<?> caller = Utilities.getCallerClass(3);
-        return "[" + caller.getName() + "] ";
+        String[] cls = Utilities.getCallerClass(3).getName().split("\\.");
+        return "[" + cls[cls.length - 1] + "] ";
     };
     public static final Function<Logger, String> CALLING_CLASS_WRAPPED = logger -> {
-        Class<?> caller = Utilities.getCallerClass(4);
-        return "[" + caller.getName() + "] ";
-    };
-    public static final Function<Logger, String> NAME_CLASS_MIX = logger -> {
-        Class<?> cls = Utilities.getCallerClass(3);
-        String[] split = cls.getName().split("\\.");
-        String caller = split[split.length - 1];
-        return "(" + logger.getName() + " / " + caller + ") ";
+        String[] cls = Utilities.getCallerClass(4).getName().split("\\.");
+        return "[" + cls[cls.length - 1] + "] ";
     };
 
-    public static final Function<Logger, String> NAME_CLASS_MIX_WRAPPED = logger -> {
-        Class<?> cls = Utilities.getCallerClass(4);
-        String[] split = cls.getName().split("\\.");
-        String caller = split[split.length - 1];
-        return "(" + logger.getName() + " / " + caller + ") ";
+    public static final Function<Logger, String> NAME_CLASS_MIX = logger -> {
+        String[] cls = Utilities.getCallerClass(3).getName().split("\\.");
+        return getNameOrEmpty(logger) + "[" + cls[cls.length - 1] + "] ";
     };
+    public static final Function<Logger, String> NAME_CLASS_MIX_WRAPPED = logger -> {
+        String[] cls = Utilities.getCallerClass(4).getName().split("\\.");
+        return getNameOrEmpty(logger) +  "[" + cls[cls.length - 1] + "] ";
+    };
+
     private static final Function<Logger, String> DEFAULT = logger -> "";
     private final Logger backing;
     protected Function<Logger, String> prefixGetter = DEFAULT;
@@ -52,6 +57,23 @@ public class PrependingLogger {
 
     public PrependingLogger(Logger backing) {
         this.backing = backing;
+    }
+
+    public static PrependingLogger get() {
+        String[] cls = Utilities.getCallerClass(2).getName().split("\\.");
+        return new PrependingLogger(LogManager.getLogger(cls[cls.length - 1]), LOGGER_NAME);
+    }
+
+    public static PrependingLogger get(String name) {
+        return new PrependingLogger(LogManager.getLogger(name), LOGGER_NAME);
+    }
+
+    public static PrependingLogger get(String name, Function<Logger, String> prefixGetter) {
+        return new PrependingLogger(LogManager.getLogger(name), prefixGetter);
+    }
+
+    private static String getNameOrEmpty(Logger logger) {
+        return !Utilities.isDev() ? "(" + logger.getName() + ") " : "";
     }
 
     public void fatal(String msg) {

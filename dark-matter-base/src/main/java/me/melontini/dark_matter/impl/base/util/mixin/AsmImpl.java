@@ -75,7 +75,7 @@ public class AsmImpl {
 
     public static String getDescriptor(String arg, MappingResolver resolver) {
         if (arg.startsWith("L")) arg = "L" + resolver.mapClassName("intermediary", arg.substring(1, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
-        if (arg.startsWith("[")) arg = "[L" + resolver.mapClassName("intermediary", arg.substring(1).replace("/", ".")).replace(".", "/") + ";";
+        if (arg.startsWith("[")) arg = "[L" + resolver.mapClassName("intermediary", arg.substring(2, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
         return arg;
     }
 }
