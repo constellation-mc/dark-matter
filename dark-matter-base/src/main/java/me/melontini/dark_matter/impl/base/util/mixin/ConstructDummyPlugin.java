@@ -42,6 +42,8 @@ public class ConstructDummyPlugin implements IPluginPlugin {
             String owner = (String) values.get("owner");
             String name = (String) values.get("name");
             String desc = (String) values.get("desc");
+            int access = (int) values.getOrDefault("access", Opcodes.ACC_PUBLIC);
+
             Type descType = Type.getType(desc);
 
             MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
@@ -57,7 +59,7 @@ public class ConstructDummyPlugin implements IPluginPlugin {
                 }
             }
 
-            MethodNode methodNode = new MethodNode(Opcodes.ASM9, Opcodes.ACC_PUBLIC, mappedName, mappedDesc, null, null);
+            MethodNode methodNode = new MethodNode(Opcodes.ASM9, access, mappedName, mappedDesc, null, null);
 
             methodNode.visitVarInsn(Opcodes.ALOAD, 0);
             Type[] args = mappedDescType.getArgumentTypes();
