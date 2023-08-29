@@ -25,6 +25,7 @@ import net.minecraft.util.registry.Registry;
 
 import java.lang.reflect.Field;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Render vanilla particle types on screen!
@@ -33,8 +34,7 @@ import java.util.Map;
  */
 @Environment(EnvType.CLIENT)
 public class VanillaParticle extends AbstractScreenParticle {
-    private static boolean typeChangedByForge = false;
-    private static Field factoriesField = null;
+
     private static final Camera CAMERA = new Camera();
     private final Particle particle;
 
@@ -120,18 +120,25 @@ public class VanillaParticle extends AbstractScreenParticle {
     }
 
     public static <T extends ParticleEffect> Particle createScreenParticle(T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
+        return Optional.ofNullable(getFactory(parameters))
+                .map(factory -> factory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ))
+                .orElseThrow(() -> new NullPointerException("Particle type has no factory!"));
+    }
+
+    private static <T extends ParticleEffect> ParticleFactory<T> getFactory(T particleType) {
         if (!typeChangedByForge) {
-            ParticleFactory<T> particleFactory = (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(parameters.getType()));
-            return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
+            return (ParticleFactory<T>) MinecraftClient.getInstance().particleManager.factories.get(Registry.PARTICLE_TYPE.getRawId(particleType.getType()));
         } else {
             try {
-                ParticleFactory<T> particleFactory = ((Map<Identifier, ParticleFactory<T>>) factoriesField.get(MinecraftClient.getInstance().particleManager)).get(Registry.PARTICLE_TYPE.getId(parameters.getType()));
-                return particleFactory == null ? null : particleFactory.createParticle(parameters, Mirage.FAKE_WORLD, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
-            } catch (Exception e) {
+                return ((Map<Identifier, ParticleFactory<T>>) factoriesField.get(MinecraftClient.getInstance().particleManager)).get(Registry.PARTICLE_TYPE.getId(particleType.getType()));
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         }
     }
+
+    private static boolean typeChangedByForge = false;
+    private static Field factoriesField = null;
 
     static {
         MappingResolver resolver = FabricLoader.getInstance().getMappingResolver();
