@@ -73,7 +73,7 @@ public final class RecipeBookInternals {
     @Environment(EnvType.CLIENT)
     public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(category, groups);
-        MakeSure.isFalse(index < 0, "Index can't be below 0!");
+        MakeSure.isTrue(index >= 0, "Index can't be below 0!");
         if (isVanillaCategory(category)) {
             List<RecipeBookGroup> groupList = getGroupsForCategory(category);
             (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
