@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.base.util.mixin.annotations;
 
 import org.jetbrains.annotations.ApiStatus;
+import org.objectweb.asm.Opcodes;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -22,10 +23,15 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ConstructDummy {
 
-    String owner(); //Only used to remap the method name.
+    /**
+     * Only used to remap the method name.
+     */
+    String owner();
 
     String name();
 
     String desc();
+
+    int access() default Opcodes.ACC_PUBLIC;
 
 }

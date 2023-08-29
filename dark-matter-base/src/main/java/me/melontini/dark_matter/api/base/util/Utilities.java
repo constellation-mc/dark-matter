@@ -7,13 +7,15 @@ import java.util.List;
 import java.util.Random;
 import java.util.function.*;
 
-public class Utilities {
+public final class Utilities {
     private Utilities() {
         throw new UnsupportedOperationException();
     }
 
     public static boolean IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
+
     public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
+
     public static final Random RANDOM = new Random();
 
     public static <T> T pickAtRandom(@NotNull T[] list) {
@@ -58,6 +60,10 @@ public class Utilities {
 
     public static <T, U> boolean test(T obj, U obj1, BiPredicate<T, U> test) {
         return test.test(obj, obj1);
+    }
+
+    public static boolean isDev() {
+        return IS_DEV;
     }
 
     public static String getCallerName() {
