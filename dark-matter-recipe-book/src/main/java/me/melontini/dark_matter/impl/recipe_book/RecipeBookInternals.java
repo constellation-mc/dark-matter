@@ -27,7 +27,7 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    private static final Map<RecipeType<?>, Set<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
+    private static final Map<RecipeType<?>, List<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
 
     @Environment(EnvType.CLIENT)
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
@@ -53,7 +53,7 @@ public final class RecipeBookInternals {
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(RecipeType<?> type, BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup> function) {
         MakeSure.notNulls(type, function);
-        GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new LinkedHashSet<>(1)).add(function);
+        GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new ArrayList<>(1)).add(0, function);
     }
 
     @Environment(EnvType.CLIENT)
@@ -126,8 +126,8 @@ public final class RecipeBookInternals {
     }
 
     @Environment(EnvType.CLIENT)
-    public static Optional<Set<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
-        return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableSet(GROUP_LOOKUPS.get(type))) : Optional.empty();
+    public static Optional<List<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
+        return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableList(GROUP_LOOKUPS.get(type))) : Optional.empty();
     }
 
     @Environment(EnvType.CLIENT)
