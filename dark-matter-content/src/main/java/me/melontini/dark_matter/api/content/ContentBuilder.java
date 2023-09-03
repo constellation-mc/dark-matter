@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.content;
 
 import com.mojang.datafixers.types.Type;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.impl.content.builders.BlockBuilderImpl;
@@ -33,6 +34,13 @@ public class ContentBuilder {
     }
 
     public interface CommonBuilder<T> {
+
+        CommonBuilder<T> register(BooleanSupplier booleanSupplier);
+
+        default CommonBuilder<T> register(boolean bool) {
+            return register(bool ? Utilities.getTruth() : Utilities.getFalse());
+        }
+
         @Nullable T build();
 
         default Optional<T> optional() {
@@ -46,12 +54,6 @@ public class ContentBuilder {
             return new ItemBuilderImpl<>(identifier, itemSupplier);
         }
 
-        ItemBuilder<T> registerCondition(BooleanSupplier booleanSupplier);
-
-        default ItemBuilder<T> registerCondition(boolean bool) {
-            return registerCondition(() -> bool);
-        }
-
         ContentBuilder.ItemBuilder<T> itemGroup(ItemGroup group);
     }
 
@@ -59,12 +61,6 @@ public class ContentBuilder {
 
         static <T extends Block> BlockBuilder<T> create(Identifier identifier, Supplier<T> blockSupplier) {
             return new BlockBuilderImpl<>(identifier, blockSupplier);
-        }
-
-        BlockBuilder<T> registerCondition(BooleanSupplier booleanSupplier);
-
-        default BlockBuilder<T> registerCondition(boolean bool) {
-            return registerCondition(() -> bool);
         }
 
         <I extends Item> ContentBuilder.BlockBuilder<T> item(ContentBuilder.BlockBuilder.ItemFactory<I> factory);
@@ -89,12 +85,6 @@ public class ContentBuilder {
         }
 
         BlockEntityBuilder<T> type(Type<?> type);
-
-        BlockEntityBuilder<T> registerCondition(BooleanSupplier booleanSupplier);
-
-        default BlockEntityBuilder<T> registerCondition(boolean bool) {
-            return registerCondition(() -> bool);
-        }
     }
 
     public interface ItemGroupBuilder extends CommonBuilder<ItemGroup> {

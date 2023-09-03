@@ -2,6 +2,7 @@ package me.melontini.dark_matter.impl.content.builders;
 
 import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.ContentBuilder;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.minecraft.block.Block;
@@ -22,7 +23,7 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
     private final Set<Block> blocks;
     private Type<?> type = null;
     private final Identifier identifier;
-    private BooleanSupplier register = () -> true;
+    private BooleanSupplier register = Utilities.getTruth();
 
     public BlockEntityBuilderImpl(Identifier id, BlockEntityType.BlockEntityFactory<? extends T> factory, Block... blocks) {
         MakeSure.notNull(id, "null identifier provided.");
@@ -42,7 +43,8 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
         return this;
     }
 
-    public ContentBuilder.BlockEntityBuilder<T> registerCondition(BooleanSupplier booleanSupplier) {
+    @Override
+    public ContentBuilder.BlockEntityBuilder<T> register(BooleanSupplier booleanSupplier) {
         MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
         this.register = booleanSupplier;
         return this;
