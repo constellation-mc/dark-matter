@@ -9,6 +9,7 @@ import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,6 +20,7 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
 
     private final BlockEntityType.BlockEntityFactory<? extends T> factory;
     private final Set<Block> blocks;
+    private Type<?> type = null;
     private final Identifier identifier;
     private BooleanSupplier register = () -> true;
 
@@ -33,13 +35,21 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
         Collections.addAll(this.blocks, blocks);
     }
 
+    @Override
+    public ContentBuilder.BlockEntityBuilder<T> type(Type<?> type) {
+        MakeSure.notNull(type, "couldn't build: " + identifier);
+        this.type = type;
+        return this;
+    }
+
     public ContentBuilder.BlockEntityBuilder<T> registerCondition(BooleanSupplier booleanSupplier) {
         MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
         this.register = booleanSupplier;
         return this;
     }
 
-    public BlockEntityType<T> build(Type<?> type) {
+    @Override
+    public @Nullable BlockEntityType<T> build() {
         if (this.register.getAsBoolean()) {
             BlockEntityType<T> t = BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type);
             Registry.register(Registry.BLOCK_ENTITY_TYPE, identifier, t);
@@ -50,5 +60,4 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
         }
         return null;
     }
-
 }

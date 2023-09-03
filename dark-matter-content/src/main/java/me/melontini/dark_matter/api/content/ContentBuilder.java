@@ -18,6 +18,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
@@ -31,7 +32,15 @@ public class ContentBuilder {
         throw new UnsupportedOperationException();
     }
 
-    public interface ItemBuilder<T extends Item> {
+    public interface CommonBuilder<T> {
+        @Nullable T build();
+
+        default Optional<T> optional() {
+            return Optional.ofNullable(build());
+        }
+    }
+
+    public interface ItemBuilder<T extends Item> extends CommonBuilder<T> {
 
         static <T extends Item> ItemBuilder<T> create(Identifier identifier, Supplier<T> itemSupplier) {
             return new ItemBuilderImpl<>(identifier, itemSupplier);
@@ -44,11 +53,9 @@ public class ContentBuilder {
         }
 
         ContentBuilder.ItemBuilder<T> itemGroup(ItemGroup group);
-
-        @Nullable T build();
     }
 
-    public interface BlockBuilder<T extends Block> {
+    public interface BlockBuilder<T extends Block> extends CommonBuilder<T> {
 
         static <T extends Block> BlockBuilder<T> create(Identifier identifier, Supplier<T> blockSupplier) {
             return new BlockBuilderImpl<>(identifier, blockSupplier);
@@ -64,8 +71,6 @@ public class ContentBuilder {
 
         <B extends BlockEntity> ContentBuilder.BlockBuilder<T> blockEntity(ContentBuilder.BlockBuilder.BlockEntityFactory<B> factory);
 
-        T build();
-
         @FunctionalInterface
         interface ItemFactory<I extends Item> {
             ItemBuilder<I> produce(Block block, Identifier identifier);
@@ -77,26 +82,22 @@ public class ContentBuilder {
         }
     }
 
-    public interface BlockEntityBuilder<T extends BlockEntity> {
+    public interface BlockEntityBuilder<T extends BlockEntity> extends CommonBuilder<BlockEntityType<T>> {
 
         static <T extends BlockEntity> BlockEntityBuilder<T> create(Identifier id, BlockEntityType.BlockEntityFactory<? extends T> factory, Block... blocks) {
             return new BlockEntityBuilderImpl<>(id, factory, blocks);
         }
+
+        BlockEntityBuilder<T> type(Type<?> type);
 
         BlockEntityBuilder<T> registerCondition(BooleanSupplier booleanSupplier);
 
         default BlockEntityBuilder<T> registerCondition(boolean bool) {
             return registerCondition(() -> bool);
         }
-
-        default BlockEntityType<T> build() {
-            return build(null);
-        }
-
-        BlockEntityType<T> build(Type<?> type);
     }
 
-    public interface ItemGroupBuilder {
+    public interface ItemGroupBuilder extends CommonBuilder<ItemGroup> {
 
         static ItemGroupBuilder create(Identifier id) {
             return new ItemGroupBuilderImpl(id);
@@ -119,7 +120,5 @@ public class ContentBuilder {
         ItemGroupBuilder entries(DarkMatterEntries.Collector collector);
 
         ItemGroupBuilder displayName(Text displayName);
-
-        ItemGroup build();
     }
 }
