@@ -46,8 +46,8 @@ public class AnalyticsInternals {
         upgradeToJson(config);
         Path configPath = FabricLoader.getInstance().getConfigDir().resolve("dark-matter/analytics.json");
         if (Files.exists(configPath)) {
-            try {
-                config = GSON.fromJson(Files.newBufferedReader(configPath), Config.class);
+            try(var reader = Files.newBufferedReader(configPath)) {
+                config = GSON.fromJson(reader, Config.class);
                 if (config.userUUID != null && !Analytics.nullID.equals(config.userUUID)) oldID = config.userUUID;
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
