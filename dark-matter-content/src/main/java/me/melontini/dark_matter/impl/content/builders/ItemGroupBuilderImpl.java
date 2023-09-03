@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.content.builders;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.ContentBuilder;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
@@ -15,6 +16,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.collection.DefaultedList;
 
+import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
 public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
@@ -24,6 +26,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     private Supplier<AnimatedItemGroup> animatedIcon;
     private String texture;
     private DarkMatterEntries.Collector entries;
+    private BooleanSupplier register = Utilities.getTruth();
     private Text displayName;
 
     public ItemGroupBuilderImpl(Identifier id) {
@@ -33,12 +36,14 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
         this.identifier = id;
     }
 
+    @Override
     public ContentBuilder.ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier) {
         MakeSure.notNull(itemStackSupplier, "couldn't build: " + identifier);
         this.icon = itemStackSupplier;
         return this;
     }
 
+    @Override
     public ContentBuilder.ItemGroupBuilder animatedIcon(Supplier<AnimatedItemGroup> animatedIcon) {
         if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) return this;
         MakeSure.notNull(animatedIcon, "couldn't build: " + identifier);
@@ -46,18 +51,21 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
         return this;
     }
 
+    @Override
     public ContentBuilder.ItemGroupBuilder texture(String texture) {
         MakeSure.notEmpty(texture, "couldn't build: " + identifier);
         this.texture = texture;
         return this;
     }
 
+    @Override
     public ContentBuilder.ItemGroupBuilder entries(DarkMatterEntries.Collector collector) {
         MakeSure.notNull(collector, "couldn't build: " + identifier);
         this.entries = collector;
         return this;
     }
 
+    @Override
     public ContentBuilder.ItemGroupBuilder displayName(Text displayName) {
         MakeSure.notNull(displayName, "couldn't build: " + identifier);
         this.displayName = displayName;
@@ -65,7 +73,17 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     }
 
 
+    @Override
+    public ContentBuilder.ItemGroupBuilder register(BooleanSupplier booleanSupplier) {
+        MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
+        this.register = booleanSupplier;
+        return this;
+    }
+
+    @Override
     public ItemGroup build() {
+        if (!this.register.getAsBoolean()) return null;
+
         ((ItemGroupArrayExtender) ItemGroup.BREWING).dark_matter$crack_array();
         ItemGroup itemGroup = new ItemGroup(ItemGroup.GROUPS.length - 1, identifier.toString().replace(":", ".")) {
             @Override
