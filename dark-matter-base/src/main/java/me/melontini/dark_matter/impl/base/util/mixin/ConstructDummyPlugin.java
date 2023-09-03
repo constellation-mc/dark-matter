@@ -23,10 +23,6 @@ import java.util.Map;
 @ApiStatus.Internal
 public class ConstructDummyPlugin implements IPluginPlugin {
 
-    public static IPluginPlugin get() {
-        return new ConstructDummyPlugin();
-    }
-
     @Override //I have a feeling this is a bad idea.
     public void beforeApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         ClassNode mixinNode = mixinInfo.getClassNode(ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES | ClassReader.SKIP_CODE);
