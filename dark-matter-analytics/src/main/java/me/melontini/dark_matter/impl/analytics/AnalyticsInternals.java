@@ -2,7 +2,6 @@ package me.melontini.dark_matter.impl.analytics;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
@@ -48,7 +47,7 @@ public class AnalyticsInternals {
         if (Files.exists(configPath)) {
             try(var reader = Files.newBufferedReader(configPath)) {
                 config = GSON.fromJson(reader, Config.class);
-                if (config.userUUID != null && !Analytics.nullID.equals(config.userUUID)) oldID = config.userUUID;
+                oldID = config.userUUID;
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
