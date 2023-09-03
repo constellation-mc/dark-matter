@@ -48,7 +48,7 @@ public class AnalyticsInternals {
         if (Files.exists(configPath)) {
             try {
                 config = GSON.fromJson(Files.newBufferedReader(configPath), Config.class);
-                if (!Analytics.nullID.equals(config.userUUID)) oldID = config.userUUID;
+                if (config.userUUID != null && !Analytics.nullID.equals(config.userUUID)) oldID = config.userUUID;
                 Files.write(configPath, GSON.toJson(config).getBytes());
             } catch (IOException e) {
                 throw new RuntimeException(e);
@@ -88,6 +88,6 @@ public class AnalyticsInternals {
         public boolean enabled = true;
         public boolean crashesEnabled = true;
         @Deprecated
-        public UUID userUUID = Analytics.nullID;
+        public UUID userUUID;
     }
 }
