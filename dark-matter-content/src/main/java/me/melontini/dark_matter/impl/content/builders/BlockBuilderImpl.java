@@ -36,6 +36,11 @@ public class BlockBuilderImpl<T extends Block> implements ContentBuilder.BlockBu
     }
 
     @Override
+    public Identifier getId() {
+        return this.identifier;
+    }
+
+    @Override
     public <I extends Item> ContentBuilder.BlockBuilder<T> item(ContentBuilder.BlockBuilder.ItemFactory<I> factory) {
         MakeSure.notNull(factory, "couldn't build: " + identifier);
         this.itemFactory = factory;

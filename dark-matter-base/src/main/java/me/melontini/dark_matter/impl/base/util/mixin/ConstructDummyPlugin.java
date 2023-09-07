@@ -20,6 +20,8 @@ import org.spongepowered.asm.util.Annotations;
 
 import java.util.Map;
 
+import static me.melontini.dark_matter.api.base.util.Utilities.cast;
+
 @ApiStatus.Internal
 public class ConstructDummyPlugin implements IPluginPlugin {
 
@@ -35,10 +37,10 @@ public class ConstructDummyPlugin implements IPluginPlugin {
             if (Annotations.getVisible(method, Inject.class) == null) throw new IllegalStateException("@ConstructDummy can only be applied to methods annotated with @Inject!");
 
             Map<String, Object> values = AsmUtil.mapAnnotationNode(node);
-            String owner = (String) values.get("owner");
-            String name = (String) values.get("name");
-            String desc = (String) values.get("desc");
-            int access = (int) values.getOrDefault("access", Opcodes.ACC_PUBLIC);
+            String owner = cast(values.get("owner"));
+            String name = cast(values.get("name"));
+            String desc = cast(values.get("desc"));
+            int access = cast(values.getOrDefault("access", Opcodes.ACC_PUBLIC));
 
             Type descType = Type.getType(desc);
 
