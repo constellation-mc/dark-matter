@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.content;
 
+import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -29,7 +30,7 @@ import java.util.regex.Pattern;
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
 @ApiStatus.Internal
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "Convert2MethodRef"})
 public class RegistryInternals {
     private RegistryInternals() {
         throw new UnsupportedOperationException();
@@ -72,52 +73,45 @@ public class RegistryInternals {
         return null;
     }
 
-    public static @Nullable <T extends Item> T createItem(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
+    public static @Nullable <V, T extends V> T create(@NotNull BooleanSupplier shouldRegister, Identifier id, Registry<V> registry, Supplier<T> value) {
         if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.ITEM, id, supplier.get());
+            return Registry.register(registry, id, value.get());
         }
         return null;
+    }
+
+    public static <T> T create(BooleanSupplier shouldRegister, Identifier id, String registry, Supplier<T> value) {
+        if (shouldRegister.getAsBoolean()) {
+            return Registry.register(cast(MakeSure.notNull(Registry.REGISTRIES.get(Identifier.tryParse(registry)))), id, value.get());
+        }
+        return null;
+    }
+
+    public static @Nullable <T extends Item> T createItem(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
+        return create(shouldRegister, id, Registry.ITEM, supplier);
     }
 
     public static @Nullable <T extends Entity> EntityType<T> createEntityType(@NotNull BooleanSupplier shouldRegister, Identifier id, EntityType.Builder<T> builder) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.ENTITY_TYPE, id, builder.build(Pattern.compile("\\W").matcher(id.toString()).replaceAll("_")));
-        }
-        return null;
+        return create(shouldRegister, id, Registry.ENTITY_TYPE, () -> builder.build(Pattern.compile("\\W").matcher(id.toString()).replaceAll("_")));
     }
 
     public static @Nullable <T extends Entity> EntityType<T> createEntityType(@NotNull BooleanSupplier shouldRegister, Identifier id, FabricEntityTypeBuilder<T> builder) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.ENTITY_TYPE, id, builder.build());
-        }
-        return null;
+        return create(shouldRegister, id, Registry.ENTITY_TYPE, () -> builder.build());
     }
 
     public static @Nullable <T extends Block> T createBlock(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<T> supplier) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.BLOCK, id, supplier.get());
-        }
-        return null;
+        return create(shouldRegister, id, Registry.BLOCK, supplier);
     }
 
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(@NotNull BooleanSupplier shouldRegister, Identifier id, BlockEntityType.Builder<T> builder) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.BLOCK_ENTITY_TYPE, id, builder.build(null));
-        }
-        return null;
+        return create(shouldRegister, id, Registry.BLOCK_ENTITY_TYPE, () -> builder.build(null));
     }
 
     public static @Nullable <T extends BlockEntity> BlockEntityType<T> createBlockEntity(@NotNull BooleanSupplier shouldRegister, Identifier id, FabricBlockEntityTypeBuilder<T> builder) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.BLOCK_ENTITY_TYPE, id, builder.build(null));
-        }
-        return null;
+        return create(shouldRegister, id, Registry.BLOCK_ENTITY_TYPE, () -> builder.build());
     }
 
     public static <T extends ScreenHandler> @Nullable ScreenHandlerType<T> createScreenHandler(@NotNull BooleanSupplier shouldRegister, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
-        if (shouldRegister.getAsBoolean()) {
-            return Registry.register(Registry.SCREEN_HANDLER, id, new ScreenHandlerType<>(factory.get()));
-        }
-        return null;
+        return create(shouldRegister, id, Registry.SCREEN_HANDLER, () -> new ScreenHandlerType<>(factory.get()));
     }
 }

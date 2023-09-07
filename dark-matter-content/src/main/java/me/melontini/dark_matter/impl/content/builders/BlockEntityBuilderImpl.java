@@ -4,12 +4,12 @@ import com.mojang.datafixers.types.Type;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.ContentBuilder;
+import me.melontini.dark_matter.api.content.RegistryUtil;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -53,8 +53,7 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
     @Override
     public @Nullable BlockEntityType<T> build() {
         if (this.register.getAsBoolean()) {
-            BlockEntityType<T> t = BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type);
-            Registry.register(Registry.BLOCK_ENTITY_TYPE, identifier, t);
+            BlockEntityType<T> t = RegistryUtil.create(true, this.identifier, "block_entity_type", () -> BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type));
             for (Block block : blocks) {
                 RegistryInternals.putBlockIfAbsent(block, t);
             }
