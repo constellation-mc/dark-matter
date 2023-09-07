@@ -13,6 +13,7 @@ import net.minecraft.item.Item;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -53,6 +54,18 @@ public class RegistryUtil {
     }
 
     public static @Nullable <T> T create(@NotNull BooleanSupplier shouldRegister, Identifier id, String registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister, id, registry, value);
+    }
+
+    public static @Nullable <T> T create(Identifier id, Registry<T> registry, Supplier<T> value) {
+        return RegistryInternals.create(Utilities.getTruth(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(boolean shouldRegister, Identifier id, Registry<T> registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister ? Utilities.getTruth() : Utilities.getFalse(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(@NotNull BooleanSupplier shouldRegister, Identifier id, Registry<T> registry, Supplier<T> value) {
         return RegistryInternals.create(shouldRegister, id, registry, value);
     }
 
