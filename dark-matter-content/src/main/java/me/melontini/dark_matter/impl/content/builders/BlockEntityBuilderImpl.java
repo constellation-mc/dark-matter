@@ -51,6 +51,11 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
     }
 
     @Override
+    public Identifier getId() {
+        return this.identifier;
+    }
+
+    @Override
     public @Nullable BlockEntityType<T> build() {
         if (this.register.getAsBoolean()) {
             BlockEntityType<T> t = RegistryUtil.create(true, this.identifier, "block_entity_type", () -> BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type));
