@@ -26,6 +26,8 @@ import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 import java.util.regex.Pattern;
 
+import static me.melontini.dark_matter.api.base.util.Utilities.cast;
+
 @ApiStatus.Internal
 @SuppressWarnings("unused")
 public class RegistryInternals {
@@ -45,9 +47,8 @@ public class RegistryInternals {
         BLOCK_ENTITY_LOOKUP.putIfAbsent(block, t);
     }
 
-    @SuppressWarnings("unchecked")
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> getBlockEntityFromBlock(@NotNull Block block) {
-        if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return (BlockEntityType<T>) BLOCK_ENTITY_LOOKUP.get(block);
+        if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return cast(BLOCK_ENTITY_LOOKUP.get(block));
         else {
             if (((SimpleRegistry<?>) Registry.BLOCK_ENTITY_TYPE).frozen && !DONE) {
                 Registry.BLOCK_ENTITY_TYPE.forEach(beType -> {
@@ -56,12 +57,12 @@ public class RegistryInternals {
                     }
                 });
                 DONE = true;
-                if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return (BlockEntityType<T>) BLOCK_ENTITY_LOOKUP.get(block);
+                if (BLOCK_ENTITY_LOOKUP.containsKey(block)) return cast(BLOCK_ENTITY_LOOKUP.get(block));
             }
             if (block instanceof BlockWithEntity blockWithEntity) {
                 var be = blockWithEntity.createBlockEntity(BlockPos.ORIGIN, block.getDefaultState());
                 if (be != null) {
-                    var type = (BlockEntityType<T>) be.getType();
+                    BlockEntityType<T> type = cast(be.getType());
                     BLOCK_ENTITY_LOOKUP.putIfAbsent(block, type);
                     be.markRemoved();
                     return type;
