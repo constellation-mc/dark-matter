@@ -41,7 +41,17 @@ public class ContentBuilder {
             return register(bool ? Utilities.getTruth() : Utilities.getFalse());
         }
 
+        Identifier getId();
+
         @Nullable T build();
+
+        default Optional<T> buildOrEmpty() {
+            try {
+                return Optional.ofNullable(build());
+            } catch (Throwable t) {
+                return Optional.empty();
+            }
+        }
 
         default Optional<T> optional() {
             return Optional.ofNullable(build());

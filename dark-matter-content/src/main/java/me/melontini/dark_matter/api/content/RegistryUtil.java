@@ -10,6 +10,7 @@ import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registry;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
@@ -39,7 +40,33 @@ public class RegistryUtil {
     }
 
     public static <T extends Item> T asItem(Block block) {
-        return block != null ? (T) block.asItem() : null;
+        return block != null ? Utilities.cast(block.asItem()) : null;
+    }
+
+    //Generic
+
+    public static @Nullable <T> T create(Identifier id, String registry, Supplier<T> value) {
+        return RegistryInternals.create(Utilities.getTruth(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(boolean shouldRegister, Identifier id, String registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister ? Utilities.getTruth() : Utilities.getFalse(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(@NotNull BooleanSupplier shouldRegister, Identifier id, String registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister, id, registry, value);
+    }
+
+    public static @Nullable <T> T create(Identifier id, Registry<T> registry, Supplier<T> value) {
+        return RegistryInternals.create(Utilities.getTruth(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(boolean shouldRegister, Identifier id, Registry<T> registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister ? Utilities.getTruth() : Utilities.getFalse(), id, registry, value);
+    }
+
+    public static @Nullable <T> T create(@NotNull BooleanSupplier shouldRegister, Identifier id, Registry<T> registry, Supplier<T> value) {
+        return RegistryInternals.create(shouldRegister, id, registry, value);
     }
 
     //Items
