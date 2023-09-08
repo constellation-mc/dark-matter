@@ -83,6 +83,11 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     }
 
     @Override
+    public Identifier getId() {
+        return this.identifier;
+    }
+
+    @Override
     public ItemGroup build() {
         if (!this.register.getAsBoolean()) return null;
 

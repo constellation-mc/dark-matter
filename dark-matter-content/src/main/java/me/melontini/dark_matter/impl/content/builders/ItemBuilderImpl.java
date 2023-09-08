@@ -43,6 +43,11 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
     }
 
     @Override
+    public Identifier getId() {
+        return this.identifier;
+    }
+
+    @Override
     public T build() {
         T item = RegistryUtil.createItem(this.register, this.identifier, this.itemSupplier);
         if (item != null && this.itemGroup != null) ItemGroupHelper.addItemGroupInjection(this.itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item));

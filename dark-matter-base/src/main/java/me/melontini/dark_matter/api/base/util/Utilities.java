@@ -39,6 +39,10 @@ public final class Utilities {
         return FALSE;
     }
 
+    public static <F,U> U cast(F o) {
+        return (U) o;
+    }
+
     public static void run(Runnable runnable) {
         runnable.run();
     }
