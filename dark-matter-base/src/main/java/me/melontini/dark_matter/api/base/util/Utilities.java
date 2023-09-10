@@ -1,11 +1,13 @@
 package me.melontini.dark_matter.api.base.util;
 
+import me.melontini.dark_matter.api.base.util.classes.ThrowingRunnable;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
+import java.util.concurrent.Callable;
 import java.util.function.*;
 
 public final class Utilities {
@@ -41,6 +43,27 @@ public final class Utilities {
     public static <T> Optional<T> ifLoaded(String modId, Supplier<T> supplier) {
         if (FabricLoader.getInstance().isModLoaded(modId)) {
             return Optional.ofNullable(supplier.get());
+        }
+        return Optional.empty();
+    }
+
+    public static void ifLoadedWeak(String modId, ThrowingRunnable runnable) {
+        if (FabricLoader.getInstance().isModLoaded(modId)) {
+            try {
+                runnable.run();
+            } catch (Exception ignored) {
+                // ignored
+            }
+        }
+    }
+
+    public static <T> Optional<T> ifLoadedWeak(String modId, Callable<T> supplier) {
+        if (FabricLoader.getInstance().isModLoaded(modId)) {
+            try {
+                return Optional.ofNullable(supplier.call());
+            } catch (Exception e) {
+                return Optional.empty();
+            }
         }
         return Optional.empty();
     }
