@@ -4,6 +4,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 import java.util.function.*;
 
@@ -29,6 +30,19 @@ public final class Utilities {
     public static <T> T pickAtRandom(@NotNull List<T> list) {
         MakeSure.notEmpty(list);
         return list.get(RANDOM.nextInt(list.size()));
+    }
+
+    public static void ifLoaded(String modId, Runnable runnable) {
+        if (FabricLoader.getInstance().isModLoaded(modId)) {
+            runnable.run();
+        }
+    }
+
+    public static <T> Optional<T> ifLoaded(String modId, Supplier<T> supplier) {
+        if (FabricLoader.getInstance().isModLoaded(modId)) {
+            return Optional.ofNullable(supplier.get());
+        }
+        return Optional.empty();
     }
 
     public static BooleanSupplier getTruth() {
