@@ -2,9 +2,6 @@ package me.melontini.dark_matter.impl.glitter.mixin;
 
 import me.melontini.dark_matter.impl.glitter.ScreenParticleInternals;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.resource.ResourcePackManager;
-import net.minecraft.server.SaveLoader;
-import net.minecraft.world.level.storage.LevelStorage;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -19,7 +16,7 @@ public abstract class MinecraftClientMixin {
     }
 
     @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
-    private void dark_matter$tickScreen(String levelName, LevelStorage.Session session, ResourcePackManager dataPackManager, SaveLoader saveLoader, CallbackInfo ci) {
+    private void dark_matter$tickScreen(CallbackInfo ci) {
         ScreenParticleInternals.tickParticles();
     }
 }
