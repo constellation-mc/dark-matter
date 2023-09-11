@@ -51,7 +51,7 @@ public final class Utilities {
         if (FabricLoader.getInstance().isModLoaded(modId)) {
             try {
                 runnable.run();
-            } catch (Exception ignored) {
+            } catch (Throwable ignored) {
                 // ignored
             }
         }
@@ -61,7 +61,7 @@ public final class Utilities {
         if (FabricLoader.getInstance().isModLoaded(modId)) {
             try {
                 return Optional.ofNullable(supplier.call());
-            } catch (Exception e) {
+            } catch (Throwable e) {
                 return Optional.empty();
             }
         }
