@@ -1,13 +1,13 @@
 package me.melontini.dark_matter.impl.recipe_book.mixin.pages;
 
 import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.client.recipebook.ClientRecipeBook;
-import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -121,7 +121,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         int index = 0;
 
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
-            if (RecipeBookGroup.SEARCH_MAP.containsKey(widget.getCategory())) {
+            if (RecipeBookHelper.isSearchGroup(widget.getCategory())) {
                 widget.visible = true;
 
                 widget.dm$setPage((int) Math.floor(wc / 6f));
