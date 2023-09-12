@@ -111,37 +111,15 @@ public class ReflectionInternals {
         return f;
     }
 
-    public static <T> Constructor<T> setAccessible(Constructor<T> constructor, boolean set) {
-        MakeSure.notNull(constructor, "Tried to setAccessible a null constructor");
+    public static <T extends AccessibleObject> T setAccessible(T member, boolean set) {
+        MakeSure.notNull(member, "Tried to setAccessible a null constructor");
         try {
-            constructor.setAccessible(set);
+            member.setAccessible(set);
         } catch (Exception e) {
             int i = getOverrideOffset();
-            UnsafeInternals.getUnsafe().putBoolean(constructor, i, set);
+            UnsafeInternals.getUnsafe().putBoolean(member, i, set);
         }
-        return constructor;
-    }
-
-    public static Method setAccessible(Method method, boolean set) {
-        MakeSure.notNull(method, "Tried to setAccessible a null method");
-        try {
-            method.setAccessible(set);
-        } catch (Exception e) {
-            int i = getOverrideOffset();
-            UnsafeInternals.getUnsafe().putBoolean(method, i, set);
-        }
-        return method;
-    }
-
-    public static Field setAccessible(Field field, boolean set) {
-        MakeSure.notNull(field, "Tried to setAccessible a null field");
-        try {
-            field.setAccessible(set);
-        } catch (Exception e) {
-            int i = getOverrideOffset();
-            UnsafeInternals.getUnsafe().putBoolean(field, i, set);
-        }
-        return field;
+        return member;
     }
 
     public static Field tryRemoveFinal(Field f) {

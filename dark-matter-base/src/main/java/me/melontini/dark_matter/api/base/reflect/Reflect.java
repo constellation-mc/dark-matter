@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.base.reflect;
 import me.melontini.dark_matter.impl.base.reflect.ReflectionInternals;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -91,27 +92,11 @@ public class Reflect {
     // set accessible
     //
 
-    public static <T> Constructor<T> setAccessible(Constructor<T> constructor) {
-        return ReflectionInternals.setAccessible(constructor, true);
+    public static <T extends AccessibleObject> T setAccessible(T member) {
+        return ReflectionInternals.setAccessible(member, true);
     }
 
-    public static <T> Constructor<T> setAccessible(Constructor<T> constructor, boolean set) {
-        return ReflectionInternals.setAccessible(constructor, set);
-    }
-
-    public static Method setAccessible(Method method) {
-        return ReflectionInternals.setAccessible(method, true);
-    }
-
-    public static Method setAccessible(Method method, boolean set) {
-        return ReflectionInternals.setAccessible(method, set);
-    }
-
-    public static Field setAccessible(Field field) {
-        return ReflectionInternals.setAccessible(field, true);
-    }
-
-    public static Field setAccessible(Field field, boolean set) {
-        return ReflectionInternals.setAccessible(field, set);
+    public static <T extends AccessibleObject> T setAccessible(T member, boolean set) {
+        return ReflectionInternals.setAccessible(member, set);
     }
 }
