@@ -5,8 +5,7 @@ import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawableHelper;
-import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.client.gui.DrawContext;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
@@ -120,7 +119,7 @@ public class ValueTrackerImpl {
     public static class Renderer {
         static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
 
-        public static void render(MatrixStack stack) {
+        public static void render(DrawContext context) {
             if (!DARK_MATTER$VALUES_TO_RENDER.isEmpty()) {
                 var textRenderer = MinecraftClient.getInstance().textRenderer;
                 for (int i = 0; i < DARK_MATTER$VALUES_TO_RENDER.size(); ++i) {
@@ -128,8 +127,8 @@ public class ValueTrackerImpl {
                     if (!Strings.isNullOrEmpty(string)) {
                         int k = textRenderer.getWidth(string);
                         int m = 2 + 9 * i;
-                        DrawableHelper.fill(stack, 1, m - 1, 2 + k + 1, m + 9 - 1, -1873784752);
-                        textRenderer.draw(stack, string, 2.0F, (float) m, 14737632);
+                        context.fill(1, m - 1,  2 + k + 1, m + 9 - 1, -1873784752);
+                        context.drawText(textRenderer, string, 2, m, 14737632, false);
                     }
                 }
             }
