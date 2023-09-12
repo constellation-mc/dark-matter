@@ -1,8 +1,12 @@
 package me.melontini.dark_matter.impl.minecraft.debug;
 
-import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
+import com.google.common.base.Strings;
+import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawableHelper;
+import net.minecraft.client.util.math.MatrixStack;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
@@ -38,7 +42,7 @@ public class ValueTrackerImpl {
 
     public static void addFieldTracker(String s, Field f, Object o) {
         MakeSure.notNulls(s, f, o);
-        ReflectionUtil.setAccessible(f);
+        Reflect.setAccessible(f);
         TRACKERS.put(s, () -> {
             try {
                 return f.get(o);
@@ -50,7 +54,7 @@ public class ValueTrackerImpl {
 
     public static void addFieldTracker(String s, Field f, Object o, Duration duration) {
         MakeSure.notNulls(s, f, o, duration);
-        ReflectionUtil.setAccessible(f);
+        Reflect.setAccessible(f);
         TRACKERS.put(s, () -> {
             try {
                 return f.get(o);
@@ -63,7 +67,7 @@ public class ValueTrackerImpl {
 
     public static void addStaticFieldTracker(String s, Field f) {
         MakeSure.notNulls(s, f);
-        ReflectionUtil.setAccessible(f);
+        Reflect.setAccessible(f);
         TRACKERS.putIfAbsent(s, () -> {
             try {
                 return f.get(null);
@@ -75,7 +79,7 @@ public class ValueTrackerImpl {
 
     public static void addStaticFieldTracker(String s, Field f, Duration duration) {
         MakeSure.notNulls(s, f, duration);
-        ReflectionUtil.setAccessible(f);
+        Reflect.setAccessible(f);
         TRACKERS.putIfAbsent(s, () -> {
             try {
                 return f.get(null);
@@ -106,4 +110,29 @@ public class ValueTrackerImpl {
         return VIEW;
     }
 
+    public static void tick() {
+        Renderer.DARK_MATTER$VALUES_TO_RENDER.clear();
+
+        ValueTrackerImpl.checkTimers();
+        ValueTrackerImpl.getView().forEach((id, supplier) -> Renderer.DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
+    }
+
+    public static class Renderer {
+        static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
+
+        public static void render(MatrixStack stack) {
+            if (!DARK_MATTER$VALUES_TO_RENDER.isEmpty()) {
+                var textRenderer = MinecraftClient.getInstance().textRenderer;
+                for (int i = 0; i < DARK_MATTER$VALUES_TO_RENDER.size(); ++i) {
+                    String string = DARK_MATTER$VALUES_TO_RENDER.get(i);
+                    if (!Strings.isNullOrEmpty(string)) {
+                        int k = textRenderer.getWidth(string);
+                        int m = 2 + 9 * i;
+                        DrawableHelper.fill(stack, 1, m - 1, 2 + k + 1, m + 9 - 1, -1873784752);
+                        textRenderer.draw(stack, string, 2.0F, (float) m, 14737632);
+                    }
+                }
+            }
+        }
+    }
 }
