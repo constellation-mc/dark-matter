@@ -6,6 +6,7 @@ import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
 import me.melontini.dark_matter.api.config.interfaces.OptionManager;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import net.fabricmc.loader.api.FabricLoader;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -18,8 +19,21 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     final Map<Field, Set<String>> modifiedFields = new HashMap<>();
     final Map<Field, String> fieldToOption = new HashMap<>();
 
+    final ModJsonProcessor modJsonProcessor;
+
     OptionManagerImpl(ConfigManager<T> manager) {
         this.manager = manager;
+        this.modJsonProcessor = new ModJsonProcessor(manager);
+
+        register(manager.getMod().getMetadata().getId() + ":mod_json", manager1 -> {
+            if (!this.modJsonProcessor.done) {
+                FabricLoader.getInstance().getAllMods().stream()
+                        .filter(container -> container.getMetadata().containsCustomValue(this.modJsonProcessor.getKey()))
+                        .forEach(this.modJsonProcessor::parseMetadata);
+                this.modJsonProcessor.done = true;
+            }
+            return this.modJsonProcessor.modJson;
+        });
     }
 
     @Override
@@ -71,6 +85,17 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     public Set<String> blameProcessors(String option) throws NoSuchFieldException {
         return modifiedFields.getOrDefault(manager.getField(option), Collections.emptySet());
     }
+
+    @Override
+    public Tuple<String, Set<String>> blameMods(Field f) {
+        return Tuple.of(fieldToOption.get(f), modJsonProcessor.blameMods(f));
+    }
+
+    @Override
+    public Set<String> blameMods(String option) throws NoSuchFieldException {
+        return modJsonProcessor.blameMods(option);
+    }
+
 
     @Override
     public void register(String id, Processor<T> processor) {

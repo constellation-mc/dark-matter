@@ -14,4 +14,6 @@ public interface OptionManager<T> {
 
     Tuple<String, Set<String>> blameProcessors(Field f);
     Set<String> blameProcessors(String option) throws NoSuchFieldException;
+    Tuple<String, Set<String>> blameMods(Field f);
+    Set<String> blameMods(String option) throws NoSuchFieldException;
 }
