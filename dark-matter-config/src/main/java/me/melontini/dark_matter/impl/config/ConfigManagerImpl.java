@@ -122,6 +122,16 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
+    public ModContainer getMod() {
+        return this.mod;
+    }
+
+    @Override
+    public String getName() {
+        return this.name;
+    }
+
+    @Override
     public void set(String option, Object value) throws NoSuchFieldException {
         try {
             option = this.redirectFunc.apply(option);
