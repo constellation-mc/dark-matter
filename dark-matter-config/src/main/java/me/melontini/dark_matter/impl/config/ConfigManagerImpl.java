@@ -19,6 +19,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.*;
 import java.util.function.Function;
 
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
@@ -38,6 +39,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final ConfigBuilder.Setter<T> setter;
 
     private final OptionManagerImpl<T> optionManager;
+
+    private final Map<Field, String> fieldToOption = new HashMap<>();
+    private final Map<String, Field> optionToField = new HashMap<>();
 
     @SneakyThrows
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson, @Nullable Fixups fixups, @Nullable Redirects redirects, ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
@@ -61,12 +65,28 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @SneakyThrows
+    private void iterate(Class<?> cls, Object parent, String parentString, Set<Class<?>> recursive) {
+        for (Field declaredField : cls.getDeclaredFields()) {
+            optionToField.putIfAbsent(parentString + declaredField.getName(), declaredField);
+            fieldToOption.putIfAbsent(declaredField, parentString + declaredField.getName());
+
+            if (recursive.contains(declaredField.getType())) {
+                declaredField.setAccessible(true);
+                recursive.addAll(Arrays.asList(declaredField.getType().getClasses()));
+                iterate(declaredField.getType(), declaredField.get(parent), parentString + declaredField.getName() + ".", recursive);
+            }
+        }
+    }
+
+    @SneakyThrows
     private void load(Constructor<T> ctx) {
         if (Files.exists(this.configPath)) {
             try (var reader = Files.newBufferedReader(this.configPath)) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
                 this.config = this.gson.fromJson(object, ctx.getDeclaringClass());
+                Set<Class<?>> recursive = new HashSet<>(Arrays.asList(ctx.getDeclaringClass().getClasses()));
+                iterate(ctx.getDeclaringClass(), this.config, "", recursive);
                 this.save();
                 return;
             } catch (Exception e) {
@@ -74,6 +94,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
             }
         }
         this.config = ctx.newInstance();
+        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(ctx.getDeclaringClass().getClasses()));
+        iterate(ctx.getDeclaringClass(), this.config, "", recursive);
         this.save();
     }
 
@@ -99,21 +121,16 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public Field getField(String option) throws NoSuchFieldException {
-        try {
-            option = this.redirectFunc.apply(option);
-            Object obj = this.getConfig();
-            String[] split = option.split("\\.");
-            for (int i = 0; i < split.length - 1; i++) {
-                Field field = obj.getClass().getDeclaredField(split[i]);
-                field.setAccessible(true);
-                obj = field.get(obj);
-            }
-            Field f = obj.getClass().getDeclaredField(split[split.length - 1]);
-            f.setAccessible(true);
-            return f;
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        }
+        option = this.redirectFunc.apply(option);
+        Field f = this.optionToField.get(option);
+        if (f == null) throw new NoSuchFieldException(option);
+        f.setAccessible(true);
+        return f;
+    }
+
+    @Override
+    public String getOption(Field field) {
+        return this.fieldToOption.get(field);
     }
 
     @Override

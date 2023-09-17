@@ -17,7 +17,6 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     private final ConfigManager<T> manager;
 
     final Map<Field, Set<String>> modifiedFields = new HashMap<>();
-    final Map<Field, String> fieldToOption = new HashMap<>();
 
     final ModJsonProcessor modJsonProcessor;
 
@@ -54,7 +53,6 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
                 manager.set(s, o);
                 Field f = manager.getField(s);
                 modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(s);
-                fieldToOption.put(f, s);
             } catch (NoSuchFieldException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, id), e);
             }
@@ -78,7 +76,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
     @Override
     public Tuple<String, Set<String>> blameProcessors(Field f) {
-        return Tuple.of(fieldToOption.get(f), modifiedFields.getOrDefault(f, Collections.emptySet()));
+        return Tuple.of(manager.getOption(f), modifiedFields.getOrDefault(f, Collections.emptySet()));
     }
 
     @Override
@@ -88,7 +86,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
     @Override
     public Tuple<String, Set<String>> blameMods(Field f) {
-        return Tuple.of(fieldToOption.get(f), modJsonProcessor.blameMods(f));
+        return Tuple.of(manager.getOption(f), modJsonProcessor.blameMods(f));
     }
 
     @Override

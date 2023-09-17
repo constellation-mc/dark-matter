@@ -14,6 +14,7 @@ public interface ConfigManager<T> {
     <V> V get(String option) throws NoSuchFieldException;
     void set(String option, Object value) throws NoSuchFieldException;
     Field getField(String option) throws NoSuchFieldException;
+    String getOption(Field field);
 
     OptionManager<T> getOptionManager();
 
