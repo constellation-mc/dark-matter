@@ -7,14 +7,11 @@ import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 
 import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRegistry<T> {
 
-    private final Map<String, OptionEntry<T>> options = new HashMap<>();
+    private final Map<String, OptionProcessorEntry<T>> optionProcessors = new LinkedHashMap<>();
     private final ConfigManager<T> manager;
 
     final Map<Field, Set<String>> modifiedFields = new HashMap<>();
@@ -25,7 +22,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     void processFeatures() {
-        options.forEach((s, entry) -> {
+        optionProcessors.forEach((s, entry) -> {
             var config = entry.processor().process(this.manager);
             if (config != null && !config.isEmpty()) {
                 configure(s, config);
@@ -66,11 +63,11 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     @Override
     public void register(String id, Processor<T> processor) {
         validateId(id);
-        var last = options.put(id, new OptionEntry<>(id, processor));
+        var last = optionProcessors.put(id, new OptionProcessorEntry<>(id, processor));
         if (last != null) throw new IllegalStateException();
     }
 
-    private record OptionEntry<T>(String id, Processor<T> processor) {
+    private record OptionProcessorEntry<T>(String id, Processor<T> processor) {
 
     }
 }
