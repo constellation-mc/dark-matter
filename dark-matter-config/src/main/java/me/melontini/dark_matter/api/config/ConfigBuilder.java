@@ -1,8 +1,6 @@
 package me.melontini.dark_matter.api.config;
 
 import com.google.gson.Gson;
-import me.melontini.dark_matter.api.config.interfaces.Fixups;
-import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.impl.config.ConfigBuilderImpl;
 import net.fabricmc.loader.api.ModContainer;
 
@@ -14,9 +12,9 @@ public interface ConfigBuilder<T> {
         return new ConfigBuilderImpl<>(cls, mod, name);
     }
 
-    ConfigBuilder<T> fixups(Fixups fixups);
+    ConfigBuilder<T> fixups(FixupsBuilder fixups);
 
-    ConfigBuilder<T> redirects(Redirects redirects);
+    ConfigBuilder<T> redirects(RedirectsBuilder redirects);
 
     ConfigBuilder<T> getter(Getter<T> getter);
 

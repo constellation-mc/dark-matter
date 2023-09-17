@@ -55,7 +55,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.setter = setter;
 
         this.optionManager = new OptionManagerImpl<>(this);
-        FabricLoader.getInstance().getObjectShare().put(mod.getMetadata().getId() + ":config-" + name, this.optionManager);
+        FabricLoader.getInstance().getObjectShare().put(mod.getMetadata().getId() + ":config-processors-" + name, this.optionManager);
         this.load(ctx);
         this.defaultConfig = ctx.newInstance();
     }

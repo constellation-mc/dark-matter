@@ -3,9 +3,7 @@ package me.melontini.dark_matter.impl.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.config.ConfigBuilder;
-import me.melontini.dark_matter.api.config.ConfigManager;
-import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
+import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import net.fabricmc.loader.api.FabricLoader;
@@ -56,14 +54,16 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilderImpl<T> fixups(Fixups fixups) {
-        this.fixups = fixups;
+    public ConfigBuilderImpl<T> fixups(FixupsBuilder fixups) {
+        FabricLoader.getInstance().getObjectShare().put(getShareId("fixups"), fixups);
+        this.fixups = fixups.build();
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> redirects(Redirects redirects) {
-        this.redirects = redirects;
+    public ConfigBuilderImpl<T> redirects(RedirectsBuilder redirects) {
+        FabricLoader.getInstance().getObjectShare().put(getShareId("redirects"), redirects);
+        this.redirects = redirects.build();
         return this;
     }
 
@@ -86,9 +86,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     @Override
     public ConfigBuilder<T> processors(Consumer<OptionProcessorRegistry<T>> consumer) {
-        FabricLoader.getInstance().getObjectShare().whenAvailable(this.mod.getMetadata().getId() + ":config-" + this.name, (s, o) -> {
-            if (o instanceof OptionProcessorRegistry<?> omr) {
-                consumer.accept(Utilities.cast(omr));
+        FabricLoader.getInstance().getObjectShare().whenAvailable(getShareId("processors"), (s, o) -> {
+            if (o instanceof OptionProcessorRegistry<?> registry) {
+                consumer.accept(Utilities.cast(registry));
             }
         });
         return this;
@@ -98,5 +98,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     public ConfigManager<T> build() {
         return new ConfigManagerImpl<>(this.cls, this.mod, this.name, this.gson,
                 this.fixups, this.redirects, this.getter, this.setter);
+    }
+
+    private String getShareId(String key) {
+        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
     }
 }
