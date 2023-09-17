@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.api.config;
 
-import me.melontini.dark_matter.api.config.interfaces.OptionManager;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;

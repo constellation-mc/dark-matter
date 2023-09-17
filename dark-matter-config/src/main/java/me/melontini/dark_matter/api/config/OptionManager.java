@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.api.config.interfaces;
+package me.melontini.dark_matter.api.config;
 
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 
@@ -10,7 +10,7 @@ public interface OptionManager<T> {
     boolean isModified(Field f);
     boolean isModified(String option) throws NoSuchFieldException;
 
-    void processFeatures();
+    void processOptions();
 
     Tuple<String, Set<String>> blameProcessors(Field f);
     Set<String> blameProcessors(String option) throws NoSuchFieldException;

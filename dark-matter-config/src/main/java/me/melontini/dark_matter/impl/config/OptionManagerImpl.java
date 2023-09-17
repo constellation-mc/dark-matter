@@ -2,8 +2,8 @@ package me.melontini.dark_matter.impl.config;
 
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import me.melontini.dark_matter.api.config.ConfigManager;
+import me.melontini.dark_matter.api.config.OptionManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
-import me.melontini.dark_matter.api.config.interfaces.OptionManager;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
@@ -36,7 +36,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public void processFeatures() {
+    public void processOptions() {
         optionProcessors.forEach((s, entry) -> {
             var config = entry.processor().process(this.manager);
             if (config != null && !config.isEmpty()) {

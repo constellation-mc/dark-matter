@@ -7,8 +7,8 @@ import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.config.ConfigBuilder;
 import me.melontini.dark_matter.api.config.ConfigManager;
+import me.melontini.dark_matter.api.config.OptionManager;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
-import me.melontini.dark_matter.api.config.interfaces.OptionManager;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
@@ -166,7 +166,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void save() {
         try {
-            this.optionManager.processFeatures();
+            this.optionManager.processOptions();
             Files.write(this.configPath, this.gson.toJson(this.config).getBytes());
         } catch (Exception e) {
             DarkMatterLog.error("Failed to save {}", this.configPath, e);
