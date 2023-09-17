@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.config;
 
+import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
 import me.melontini.dark_matter.api.config.interfaces.OptionManager;
@@ -21,7 +22,8 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
         this.manager = manager;
     }
 
-    void processFeatures() {
+    @Override
+    public void processFeatures() {
         optionProcessors.forEach((s, entry) -> {
             var config = entry.processor().process(this.manager);
             if (config != null && !config.isEmpty()) {
@@ -61,10 +63,20 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
+    public Tuple<String, Set<String>> blameProcessors(Field f) {
+        return Tuple.of(fieldToOption.get(f), modifiedFields.getOrDefault(f, Collections.emptySet()));
+    }
+
+    @Override
+    public Set<String> blameProcessors(String option) throws NoSuchFieldException {
+        return modifiedFields.getOrDefault(manager.getField(option), Collections.emptySet());
+    }
+
+    @Override
     public void register(String id, Processor<T> processor) {
         validateId(id);
         var last = optionProcessors.put(id, new OptionProcessorEntry<>(id, processor));
-        if (last != null) throw new IllegalStateException();
+        if (last != null) throw new IllegalStateException("Tried to register an option processor with the same id (%s) twice!".formatted(id));
     }
 
     private record OptionProcessorEntry<T>(String id, Processor<T> processor) {
