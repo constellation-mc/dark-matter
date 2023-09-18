@@ -45,6 +45,16 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
         });
     }
 
+    @Override
+    public Set<String> getAllProcessors() {
+        return Collections.unmodifiableSet(optionProcessors.keySet());
+    }
+
+    @Override
+    public Processor<T> getProcessor(String id) {
+        return optionProcessors.get(id).processor();
+    }
+
     private void configure(String id, Map<String, Object> config) {
         validateId(id);
 
