@@ -2,11 +2,8 @@ package me.melontini.dark_matter.impl.config;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import me.melontini.dark_matter.api.base.util.EntrypointRunner;
-import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.config.*;
-import me.melontini.dark_matter.api.config.interfaces.Fixups;
-import me.melontini.dark_matter.api.config.interfaces.Redirects;
+import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
@@ -23,10 +20,11 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Supplier<T> ctx = null;
     private Consumer<OptionProcessorRegistry<T>> registrar = null;
+    private ConfigClassScanner scanner = null;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
-    private Fixups fixups = null;
-    private Redirects redirects = null;
+    private final FixupsBuilder fixups = FixupsBuilder.create();
+    private final RedirectsBuilder redirects = RedirectsBuilder.create();
 
     private Getter<T> getter = (manager, option) -> {
         Object obj = manager.getConfig();
@@ -63,16 +61,14 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilderImpl<T> fixups(FixupsBuilder fixups) {
-        EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(fixups, Utilities.cast(consumer)));
-        this.fixups = fixups.build();
+    public ConfigBuilderImpl<T> fixups(Consumer<FixupsBuilder> fixups) {
+        fixups.accept(this.fixups);
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> redirects(RedirectsBuilder redirects) {
-        EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(redirects, Utilities.cast(consumer)));
-        this.redirects = redirects.build();
+    public ConfigBuilderImpl<T> redirects(Consumer<RedirectsBuilder> redirects) {
+        redirects.accept(this.redirects);
         return this;
     }
 
@@ -100,16 +96,19 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
+    public ConfigBuilder<T> scanner(ConfigClassScanner scanner) {
+        this.scanner = scanner;
+        return this;
+    }
+
+    @Override
     public ConfigManager<T> build() {
         ConfigManagerImpl<T> configManager = new ConfigManagerImpl<>(this.cls, this.mod, this.name, this.gson, this.registrar);
         configManager.setAccessors(this.getter, this.setter);
         configManager.setFixups(this.fixups);
         configManager.setRedirects(this.redirects);
+        configManager.setScanner(this.scanner);
         configManager.afterBuild(this.ctx);
         return configManager;
-    }
-
-    private String getShareId(String key) {
-        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
     }
 }

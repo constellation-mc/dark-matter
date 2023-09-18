@@ -18,6 +18,10 @@ public class FixupsImpl implements Fixups {
         fixups.computeIfAbsent(key, k -> new HashSet<>()).add(fixup);
     }
 
+    public boolean isEmpty() {
+        return fixups.isEmpty();
+    }
+
     @Override
     public JsonObject fixup(JsonObject config) {
         for (Map.Entry<String, Set<Fixup>> entry : fixups.entrySet()) {

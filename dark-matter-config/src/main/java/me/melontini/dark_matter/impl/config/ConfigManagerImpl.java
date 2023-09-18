@@ -3,13 +3,10 @@ package me.melontini.dark_matter.impl.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.base.util.EntrypointRunner;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.config.ConfigBuilder;
-import me.melontini.dark_matter.api.config.ConfigManager;
-import me.melontini.dark_matter.api.config.OptionManager;
-import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
+import me.melontini.dark_matter.api.config.*;
+import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -20,6 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -49,6 +47,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final Map<Field, String> fieldToOption = new HashMap<>();
     private final Map<String, Field> optionToField = new HashMap<>();
 
+    private ConfigClassScanner scanner = null;
+
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson, @Nullable Consumer<OptionProcessorRegistry<T>> registrar) {
         this.configClass = cls;
         this.name = name;
@@ -58,20 +58,35 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
         this.optionManager = new OptionManagerImpl<>(this);
         if (registrar != null) registrar.accept(this.optionManager);
-        EntrypointRunner.runEntrypoint(mod.getMetadata().getId() + ":config-processors-" + name, Consumer.class, consumer -> ((Consumer<OptionManager>)consumer).accept(this.optionManager));
+        EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, Utilities.cast(consumer)));
     }
 
-    void setFixups(Fixups fixups) {
-        this.fixupFunc = fixups != null ? fixups::fixup : Function.identity();
+    void setFixups(FixupsBuilder builder) {
+        EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(builder, Utilities.cast(consumer)));
+
+        Fixups fixups = builder.build();
+        this.fixupFunc = fixups.isEmpty() ? Function.identity() : fixups::fixup;
     }
 
-    void setRedirects(Redirects redirects) {
-        this.redirectFunc = redirects != null ? redirects::redirect : Function.identity();
+    void setRedirects(RedirectsBuilder builder) {
+        EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(builder, Utilities.cast(consumer)));
+
+        Redirects redirects = builder.build();
+        this.redirectFunc = redirects.isEmpty() ? Function.identity() : redirects::redirect;
+    }
+
+    private String getShareId(String key) {
+        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
     }
 
     void setAccessors(ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
         this.getter = getter;
         this.setter = setter;
+    }
+
+    void setScanner(ConfigClassScanner scanner) {
+        this.scanner = scanner;
+        startScan();
     }
 
     void afterBuild(@Nullable Supplier<T> supplier) {
@@ -90,17 +105,20 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.defaultConfig = supplier.get();
     }
 
-    @SneakyThrows
-    private void iterate(Class<?> cls, Object parent, String parentString, Set<Class<?>> recursive) {
+    private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, Set<Class<?>> recursiveView, List<Field> fieldRef, List<Field> fieldRefView) {
         for (Field declaredField : cls.getDeclaredFields()) {
+            if (Modifier.isStatic(declaredField.getModifiers())) continue;
+
             optionToField.putIfAbsent(parentString + declaredField.getName(), declaredField);
             fieldToOption.putIfAbsent(declaredField, parentString + declaredField.getName());
 
-            if (recursive.contains(declaredField.getType())) {
-                declaredField.setAccessible(true);
+            fieldRef.add(declaredField);
+            if (scanner != null) scanner.scan(cls, declaredField, parentString, recursiveView, fieldRefView);
+            if (recursiveView.contains(declaredField.getType())) {
                 recursive.addAll(Arrays.asList(declaredField.getType().getClasses()));
-                iterate(declaredField.getType(), declaredField.get(parent), parentString + declaredField.getName() + ".", recursive);
+                iterate(declaredField.getType(), parentString + declaredField.getName() + ".", recursive, recursiveView, fieldRef, fieldRefView);
             }
+            fieldRef.remove(declaredField);
         }
     }
 
@@ -110,8 +128,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
                 this.config = this.gson.fromJson(object, this.configClass);
-                Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
-                iterate(this.configClass, this.config, "", recursive);
                 this.save();
                 return;
             } catch (IOException e) {
@@ -119,9 +135,13 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
             }
         }
         this.config = ctx.get();
-        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
-        iterate(this.configClass, this.config, "", recursive);
         this.save();
+    }
+
+    private void startScan() {
+        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
+        List<Field> fieldsRef = new ArrayList<>();
+        iterate(this.configClass, "", recursive, Collections.unmodifiableSet(recursive), fieldsRef, Collections.unmodifiableList(fieldsRef));
     }
 
     @Override
@@ -189,6 +209,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     public void save() {
         try {
             this.optionManager.processOptions();
+            Files.createDirectories(this.configPath.getParent());
             Files.write(this.configPath, this.gson.toJson(this.config).getBytes());
         } catch (Exception e) {
             DarkMatterLog.error("Failed to save {}", this.configPath, e);

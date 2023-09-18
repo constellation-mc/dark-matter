@@ -13,6 +13,10 @@ public class RedirectsImpl implements Redirects {
         redirects.put(from, to);
     }
 
+    public boolean isEmpty() {
+        return redirects.isEmpty();
+    }
+
     @Override
     public String redirect(String from) {
         return redirects.getOrDefault(from, from);

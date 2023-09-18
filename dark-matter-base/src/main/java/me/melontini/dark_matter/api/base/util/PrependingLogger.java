@@ -48,7 +48,7 @@ public class PrependingLogger {
 
     private static final Function<Logger, String> DEFAULT = logger -> "";
     private final Logger backing;
-    protected Function<Logger, String> prefixGetter = DEFAULT;
+    protected volatile Function<Logger, String> prefixGetter = DEFAULT;
 
     public PrependingLogger(Logger backing, Function<Logger, String> prefixGetter) {
         this.backing = backing;
