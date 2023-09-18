@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import lombok.SneakyThrows;
+import me.melontini.dark_matter.api.base.util.EntrypointRunner;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.config.ConfigBuilder;
 import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.OptionManager;
+import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -15,53 +17,77 @@ import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
+    final Class<T> configClass;
     T config;
-    final T defaultConfig;
+    T defaultConfig;
 
     final Path configPath;
     final Gson gson;
     final ModContainer mod;
     final String name;
 
-    private final Function<JsonObject, JsonObject> fixupFunc;
-    private final Function<String, String> redirectFunc;
+    private Function<JsonObject, JsonObject> fixupFunc;
+    private Function<String, String> redirectFunc;
 
-    private final ConfigBuilder.Getter<T> getter;
-    private final ConfigBuilder.Setter<T> setter;
+    private ConfigBuilder.Getter<T> getter;
+    private ConfigBuilder.Setter<T> setter;
 
     private final OptionManagerImpl<T> optionManager;
 
     private final Map<Field, String> fieldToOption = new HashMap<>();
     private final Map<String, Field> optionToField = new HashMap<>();
 
-    @SneakyThrows
-    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson, @Nullable Fixups fixups, @Nullable Redirects redirects, ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
-        Constructor<T> ctx = cls.getDeclaredConstructor();
-        ctx.setAccessible(true);
+    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson, @Nullable Consumer<OptionProcessorRegistry<T>> registrar) {
+        this.configClass = cls;
         this.name = name;
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(name + ".json");
         this.gson = gson;
         this.mod = mod;
 
-        this.fixupFunc = fixups != null ? fixups::fixup : Function.identity();
-        this.redirectFunc = redirects != null ? redirects::redirect : Function.identity();
+        this.optionManager = new OptionManagerImpl<>(this);
+        if (registrar != null) registrar.accept(this.optionManager);
+        EntrypointRunner.runEntrypoint(mod.getMetadata().getId() + ":config-processors-" + name, Consumer.class, consumer -> ((Consumer<OptionManager>)consumer).accept(this.optionManager));
+    }
 
+    void setFixups(Fixups fixups) {
+        this.fixupFunc = fixups != null ? fixups::fixup : Function.identity();
+    }
+
+    void setRedirects(Redirects redirects) {
+        this.redirectFunc = redirects != null ? redirects::redirect : Function.identity();
+    }
+
+    void setAccessors(ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
         this.getter = getter;
         this.setter = setter;
+    }
 
-        this.optionManager = new OptionManagerImpl<>(this);
-        FabricLoader.getInstance().getObjectShare().put(mod.getMetadata().getId() + ":config-processors-" + name, this.optionManager);
-        this.load(ctx);
-        this.defaultConfig = ctx.newInstance();
+    void afterBuild(@Nullable Supplier<T> supplier) {
+        if (supplier == null) supplier = () -> {
+            try {
+                Constructor<T> ctx = this.configClass.getDeclaredConstructor();
+                ctx.setAccessible(true);
+                return ctx.newInstance();
+            } catch (Throwable t) {
+                DarkMatterLog.error("Failed to construct config class", t);
+                return null;
+            }
+        };
+
+        this.load(supplier);
+        this.defaultConfig = supplier.get();
     }
 
     @SneakyThrows
@@ -78,24 +104,23 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         }
     }
 
-    @SneakyThrows
-    private void load(Constructor<T> ctx) {
+    private void load(Supplier<T> ctx) {
         if (Files.exists(this.configPath)) {
             try (var reader = Files.newBufferedReader(this.configPath)) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
-                this.config = this.gson.fromJson(object, ctx.getDeclaringClass());
-                Set<Class<?>> recursive = new HashSet<>(Arrays.asList(ctx.getDeclaringClass().getClasses()));
-                iterate(ctx.getDeclaringClass(), this.config, "", recursive);
+                this.config = this.gson.fromJson(object, this.configClass);
+                Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
+                iterate(this.configClass, this.config, "", recursive);
                 this.save();
                 return;
-            } catch (Exception e) {
+            } catch (IOException e) {
                 DarkMatterLog.error("Failed to load {}, using defaults", this.configPath);
             }
         }
-        this.config = ctx.newInstance();
-        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(ctx.getDeclaringClass().getClasses()));
-        iterate(ctx.getDeclaringClass(), this.config, "", recursive);
+        this.config = ctx.get();
+        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
+        iterate(this.configClass, this.config, "", recursive);
         this.save();
     }
 
@@ -112,8 +137,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public <V> V get(String option) throws NoSuchFieldException {
         try {
-            option = this.redirectFunc.apply(option);
-            return Utilities.cast(this.getter.get(this, option));
+            return Utilities.cast(this.getter.get(this, this.redirectFunc.apply(option)));
         } catch (IllegalAccessException t) {
             throw new RuntimeException(t);
         }
@@ -121,8 +145,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public Field getField(String option) throws NoSuchFieldException {
-        option = this.redirectFunc.apply(option);
-        Field f = this.optionToField.get(option);
+        Field f = this.optionToField.get(option = this.redirectFunc.apply(option));
         if (f == null) throw new NoSuchFieldException(option);
         f.setAccessible(true);
         return f;
@@ -151,8 +174,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void set(String option, Object value) throws NoSuchFieldException {
         try {
-            option = this.redirectFunc.apply(option);
-            this.setter.set(this, option, value);
+            this.setter.set(this, this.redirectFunc.apply(option), value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }

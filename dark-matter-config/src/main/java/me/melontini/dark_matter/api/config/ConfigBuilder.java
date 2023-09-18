@@ -5,12 +5,15 @@ import me.melontini.dark_matter.impl.config.ConfigBuilderImpl;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 public interface ConfigBuilder<T> {
 
     static <T> ConfigBuilder<T> create(Class<T> cls, ModContainer mod, String name) {
         return new ConfigBuilderImpl<>(cls, mod, name);
     }
+
+    ConfigBuilder<T> constructor(Supplier<T> ctx);
 
     ConfigBuilder<T> fixups(FixupsBuilder fixups);
 
