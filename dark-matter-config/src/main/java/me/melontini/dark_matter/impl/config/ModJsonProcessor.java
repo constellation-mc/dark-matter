@@ -15,20 +15,27 @@ import java.util.function.Function;
 
 public class ModJsonProcessor {
 
-    private static final Map<Class<?>, Function<Number, ?>> TYPES = Utilities.consume(new HashMap<>(), map -> {
-        map.put(Byte.class, Number::byteValue);
-        map.put(Short.class, Number::shortValue);
-        map.put(Integer.class, Number::intValue);
-        map.put(Long.class, Number::longValue);
-        map.put(Float.class, Number::floatValue);
-        map.put(Double.class, Number::doubleValue);
+    private static final Map<Class<?>, Function<CustomValue, ?>> TYPES = Utilities.consume(new HashMap<>(), map -> {
+        map.put(Byte.class, element -> element.getAsNumber().byteValue());
+        map.put(Short.class, element -> element.getAsNumber().shortValue());
+        map.put(Integer.class, element -> element.getAsNumber().intValue());
+        map.put(Long.class, element -> element.getAsNumber().longValue());
+        map.put(Float.class, element -> element.getAsNumber().floatValue());
+        map.put(Double.class, element -> element.getAsNumber().doubleValue());
 
-        map.put(byte.class, Number::byteValue);
-        map.put(short.class, Number::shortValue);
-        map.put(int.class, Number::intValue);
-        map.put(long.class, Number::longValue);
-        map.put(float.class, Number::floatValue);
-        map.put(double.class, Number::doubleValue);
+        map.put(byte.class, element -> element.getAsNumber().byteValue());
+        map.put(short.class, element -> element.getAsNumber().shortValue());
+        map.put(int.class, element -> element.getAsNumber().intValue());
+        map.put(long.class, element -> element.getAsNumber().longValue());
+        map.put(float.class, element -> element.getAsNumber().floatValue());
+        map.put(double.class, element -> element.getAsNumber().doubleValue());
+
+        map.put(boolean.class, CustomValue::getAsBoolean);
+        map.put(Boolean.class, CustomValue::getAsBoolean);
+
+        map.put(String.class, CustomValue::getAsString);
+        map.put(Character.class, element -> element.getAsString().charAt(0));
+        map.put(char.class, element -> element.getAsString().charAt(0));
     });
 
     final Map<String, Object> modJson = new LinkedHashMap<>();
@@ -74,17 +81,15 @@ public class ModJsonProcessor {
                 f = manager.getField(feature.getKey());
             } catch (NoSuchFieldException e) {
                 DarkMatterLog.error("Couldn't find option {}. Mod: {}", feature.getKey(), mod.getMetadata().getId());
-                return;
+                continue;
             }
 
-            switch (feature.getValue().getType()) {
-                case BOOLEAN -> addModJson(mod, f, feature.getKey(), feature.getValue().getAsBoolean());
-                case STRING -> addModJson(mod, f, feature.getKey(), feature.getValue().getAsString());
-                case NULL -> addModJson(mod, f, feature.getKey(), null);
-                case NUMBER -> addModJson(mod, f, feature.getKey(), TYPES.get(f.getType()).apply(feature.getValue().getAsNumber()));
-                default ->
-                        DarkMatterLog.error("Unsupported {} type. Mod: {}, Type: {}", this.json_key, mod.getMetadata().getId(), feature.getValue().getType());
+            var converter = TYPES.get(f.getType());
+            if (converter == null) {
+                DarkMatterLog.error("Unsupported {} type. Mod: {}, Type: {}", this.json_key, mod.getMetadata().getId(), f.getType());
+                continue;
             }
+            addModJson(mod, f, feature.getKey(), converter.apply(feature.getValue()));
         }
     }
 
