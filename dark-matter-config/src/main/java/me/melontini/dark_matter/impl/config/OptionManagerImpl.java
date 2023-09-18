@@ -24,7 +24,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
         this.manager = manager;
         this.modJsonProcessor = new ModJsonProcessor(manager);
 
-        register(manager.getMod().getMetadata().getId() + ":mod_json", manager1 -> {
+        register(manager.getMod().getMetadata().getId() + ":custom_values", manager1 -> {
             if (!this.modJsonProcessor.done) {
                 FabricLoader.getInstance().getAllMods().stream()
                         .filter(container -> container.getMetadata().containsCustomValue(this.modJsonProcessor.getKey()))
