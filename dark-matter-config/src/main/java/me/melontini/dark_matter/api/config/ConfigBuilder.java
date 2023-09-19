@@ -2,10 +2,12 @@ package me.melontini.dark_matter.api.config;
 
 import com.google.gson.Gson;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
+import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.impl.config.ConfigBuilderImpl;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public interface ConfigBuilder<T> {
@@ -29,6 +31,8 @@ public interface ConfigBuilder<T> {
     ConfigBuilder<T> processors(Consumer<OptionProcessorRegistry<T>> consumer);
 
     ConfigBuilder<T> scanner(ConfigClassScanner scanner);
+
+    ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason);
 
     ConfigManager<T> build();
 

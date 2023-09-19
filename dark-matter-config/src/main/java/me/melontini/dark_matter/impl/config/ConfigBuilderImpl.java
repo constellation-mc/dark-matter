@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
+import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
@@ -23,6 +25,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     private Consumer<OptionProcessorRegistry<T>> registrar = null;
     private ConfigClassScanner scanner = null;
     private Gson gson = new GsonBuilder().setPrettyPrinting().create();
+    private Function<TextEntry.InfoHolder<T>, TextEntry> reasonFactory = (holder) -> TextEntry.translatable(holder.manager().getMod().getMetadata().getId() + ".config.option_manager.reason." + holder.processor());
 
     private final FixupsBuilder fixups = FixupsBuilder.create();
     private final RedirectsBuilder redirects = RedirectsBuilder.create();
@@ -103,8 +106,15 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
+    public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+        this.reasonFactory = reason;
+        return this;
+    }
+
+    @Override
     public ConfigManager<T> build() {
-        ConfigManagerImpl<T> configManager = new ConfigManagerImpl<>(this.cls, this.mod, this.name, this.gson, this.registrar);
+        ConfigManagerImpl<T> configManager = new ConfigManagerImpl<>(this.cls, this.mod, this.name, this.gson);
+        configManager.setupOptionManager(this.registrar, this.reasonFactory);
         configManager.setAccessors(this.getter, this.setter);
         configManager.setFixups(this.fixups);
         configManager.setRedirects(this.redirects);

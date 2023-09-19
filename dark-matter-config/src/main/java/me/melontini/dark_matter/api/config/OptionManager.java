@@ -2,6 +2,7 @@ package me.melontini.dark_matter.api.config;
 
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
+import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 
 import java.lang.reflect.Field;
 import java.util.Set;
@@ -21,4 +22,6 @@ public interface OptionManager<T> {
 
     Tuple<String, Set<String>> blameMods(Field f);
     Set<String> blameMods(String option) throws NoSuchFieldException;
+
+    TextEntry getReason(String processor, String option);
 }

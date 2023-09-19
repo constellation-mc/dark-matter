@@ -22,6 +22,7 @@ public interface ConfigManager<T> {
         return fields.get(fields.size() - 1);
     }
     String getOption(Field field);
+    List<String> getOptions();
 
     OptionManager<T> getOptionManager();
 

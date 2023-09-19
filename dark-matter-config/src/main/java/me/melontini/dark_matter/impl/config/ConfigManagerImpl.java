@@ -11,6 +11,7 @@ import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
+import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
@@ -44,21 +45,23 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private ConfigBuilder.Getter<T> getter;
     private ConfigBuilder.Setter<T> setter;
 
-    private final OptionManagerImpl<T> optionManager;
+    private OptionManagerImpl<T> optionManager;
 
     private final Map<Field, String> fieldToOption = new HashMap<>();
-    private final Map<String, List<Field>> optionToFields = new HashMap<>();
+    private final Map<String, List<Field>> optionToFields = new LinkedHashMap<>();
 
     private ConfigClassScanner scanner = null;
 
-    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson, @Nullable Consumer<OptionProcessorRegistry<T>> registrar) {
+    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson) {
         this.configClass = cls;
         this.name = name;
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(name + ".json");
         this.gson = gson;
         this.mod = mod;
+    }
 
-        this.optionManager = new OptionManagerImpl<>(this);
+    void setupOptionManager(@Nullable Consumer<OptionProcessorRegistry<T>> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
+        this.optionManager = new OptionManagerImpl<>(this, defaultReason);
         if (registrar != null) registrar.accept(this.optionManager);
         EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, Utilities.cast(consumer)));
     }
@@ -169,6 +172,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public String getOption(Field field) {
         return this.fieldToOption.get(field);
+    }
+
+    @Override
+    public List<String> getOptions() {
+        return this.optionToFields.keySet().stream().toList();
     }
 
     @Override
