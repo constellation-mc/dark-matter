@@ -12,6 +12,9 @@ public interface ConfigManager<T> {
     T getDefaultConfig();
 
     <V> V get(String option) throws NoSuchFieldException;
+    default <V> V get(@SuppressWarnings("unused") Class<V> type, String option) throws NoSuchFieldException {
+        return get(option);
+    }
     void set(String option, Object value) throws NoSuchFieldException;
     List<Field> getFields(String option) throws NoSuchFieldException;
     default Field getField(String option) throws NoSuchFieldException {
