@@ -62,7 +62,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
             try {
                 manager.set(s, o);
                 Field f = manager.getField(s);
-                modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(s);
+                modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(id);
             } catch (NoSuchFieldException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, id), e);
             }
