@@ -1,5 +1,7 @@
 package me.melontini.dark_matter.impl.config;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableSet;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -45,7 +47,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final OptionManagerImpl<T> optionManager;
 
     private final Map<Field, String> fieldToOption = new HashMap<>();
-    private final Map<String, Field> optionToField = new HashMap<>();
+    private final Map<String, List<Field>> optionToFields = new HashMap<>();
 
     private ConfigClassScanner scanner = null;
 
@@ -75,10 +77,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.redirectFunc = redirects.isEmpty() ? Function.identity() : redirects::redirect;
     }
 
-    private String getShareId(String key) {
-        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
-    }
-
     void setAccessors(ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
         this.getter = getter;
         this.setter = setter;
@@ -96,8 +94,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
                 ctx.setAccessible(true);
                 return ctx.newInstance();
             } catch (Throwable t) {
-                DarkMatterLog.error("Failed to construct config class", t);
-                return null;
+                throw new RuntimeException("Failed to construct config class", t);
             }
         };
 
@@ -105,18 +102,19 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.defaultConfig = supplier.get();
     }
 
-    private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, Set<Class<?>> recursiveView, List<Field> fieldRef, List<Field> fieldRefView) {
+    private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, List<Field> fieldRef) {
         for (Field declaredField : cls.getDeclaredFields()) {
             if (Modifier.isStatic(declaredField.getModifiers())) continue;
 
-            optionToField.putIfAbsent(parentString + declaredField.getName(), declaredField);
+            fieldRef.add(declaredField);
+            ImmutableList<Field> fieldRefView = ImmutableList.copyOf(fieldRef);
+            optionToFields.putIfAbsent(parentString + declaredField.getName(), fieldRefView);
             fieldToOption.putIfAbsent(declaredField, parentString + declaredField.getName());
 
-            fieldRef.add(declaredField);
-            if (scanner != null) scanner.scan(cls, declaredField, parentString, recursiveView, fieldRefView);
-            if (recursiveView.contains(declaredField.getType())) {
+            if (scanner != null) scanner.scan(cls, declaredField, parentString, ImmutableSet.copyOf(recursive), fieldRefView);
+            if (recursive.contains(declaredField.getType())) {
                 recursive.addAll(Arrays.asList(declaredField.getType().getClasses()));
-                iterate(declaredField.getType(), parentString + declaredField.getName() + ".", recursive, recursiveView, fieldRef, fieldRefView);
+                iterate(declaredField.getType(), parentString + declaredField.getName() + ".", recursive, fieldRef);
             }
             fieldRef.remove(declaredField);
         }
@@ -139,9 +137,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     private void startScan() {
-        Set<Class<?>> recursive = new HashSet<>(Arrays.asList(this.configClass.getClasses()));
-        List<Field> fieldsRef = new ArrayList<>();
-        iterate(this.configClass, "", recursive, Collections.unmodifiableSet(recursive), fieldsRef, Collections.unmodifiableList(fieldsRef));
+        iterate(this.configClass, "", new HashSet<>(Arrays.asList(this.configClass.getClasses())), new ArrayList<>());
     }
 
     @Override
@@ -164,10 +160,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public Field getField(String option) throws NoSuchFieldException {
-        Field f = this.optionToField.get(option = this.redirectFunc.apply(option));
+    public List<Field> getFields(String option) throws NoSuchFieldException {
+        List<Field> f = this.optionToFields.get(option = this.redirectFunc.apply(option));
         if (f == null) throw new NoSuchFieldException(option);
-        f.setAccessible(true);
         return f;
     }
 
@@ -214,5 +209,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         } catch (Exception e) {
             DarkMatterLog.error("Failed to save {}", this.configPath, e);
         }
+    }
+
+    private String getShareId(String key) {
+        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
     }
 }

@@ -7,6 +7,7 @@ import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,23 +28,23 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     private final RedirectsBuilder redirects = RedirectsBuilder.create();
 
     private Getter<T> getter = (manager, option) -> {
+        List<Field> fields = manager.getFields(option);
         Object obj = manager.getConfig();
-        for (String s : option.split("\\.")) {
-            Field field = obj.getClass().getDeclaredField(s);
+        for (Field field : fields) {
             field.setAccessible(true);
             obj = field.get(obj);
         }
         return cast(obj);
     };
     private Setter<T> setter = (manager, option, value) -> {
+        List<Field> fields = manager.getFields(option);
         Object obj = manager.getConfig();
-        String[] split = option.split("\\.");
-        for (int i = 0; i < split.length - 1; i++) {
-            Field field = obj.getClass().getDeclaredField(split[i]);
+        for (int i = 0; i < fields.size() - 1; i++) {
+            Field field = fields.get(i);
             field.setAccessible(true);
             obj = field.get(obj);
         }
-        Field f = obj.getClass().getDeclaredField(split[split.length - 1]);
+        Field f = fields.get(fields.size() - 1);
         f.setAccessible(true);
         f.set(obj, value);
     };
