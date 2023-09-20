@@ -24,6 +24,7 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     final Class<T> configClass;
-    T config;
+    final AtomicReference<T> config = new AtomicReference<>();
     T defaultConfig;
     Supplier<T> constructor;
 
@@ -132,21 +133,20 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public T load() {
+    public void load() {
         if (Files.exists(this.configPath)) {
             try (var reader = Files.newBufferedReader(this.configPath)) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
-                this.config = this.gson.fromJson(object, this.configClass);
+                this.config.set(this.gson.fromJson(object, this.configClass));
                 this.save();
-                return this.config;
+                return;
             } catch (IOException e) {
                 DarkMatterLog.error("Failed to load {}, using defaults", this.configPath);
             }
         }
-        this.config = this.constructor.get();
+        this.config.set(this.constructor.get());
         this.save();
-        return this.config;
     }
 
     private void startScan() {
@@ -155,6 +155,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public T getConfig() {
+        return this.config.get();
+    }
+
+    @Override
+    public AtomicReference<T> getConfigRef() {
         return this.config;
     }
 
