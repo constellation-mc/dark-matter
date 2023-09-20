@@ -90,6 +90,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     void setScanner(ConfigClassScanner scanner) {
         this.scanners.add(scanner);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
+        this.scanners.removeIf(Objects::isNull);
         startScan();
     }
 
