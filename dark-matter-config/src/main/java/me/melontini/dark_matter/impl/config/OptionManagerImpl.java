@@ -9,6 +9,7 @@ import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -40,7 +41,9 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
                 this.modJsonProcessor.done = true;
             }
             return this.modJsonProcessor.modJson;
-        });
+        }, holder -> TextEntry.translatable("dark-matter.config.option_manager.reason.custom_values",
+                Arrays.toString(holder.manager().getOptionManager().blameModJson(holder.field()).right().stream()
+                        .map(container -> container.getMetadata().getName()).toArray())));
     }
 
     @Override
@@ -65,8 +68,8 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Processor<T> getProcessor(String id) {
-        return this.optionProcessors.get(id).processor();
+    public Optional<Processor<T>> getProcessor(String id) {
+        return Optional.ofNullable(this.optionProcessors.get(id).processor());
     }
 
     private void configure(String id, Map<String, Object> config) {
@@ -109,18 +112,22 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Tuple<String, Set<String>> blameMods(Field f) {
+    public Tuple<String, Set<ModContainer>> blameModJson(Field f) {
         return Tuple.of(this.manager.getOption(f), this.modJsonProcessor.blameMods(f));
     }
 
     @Override
-    public Set<String> blameMods(String option) throws NoSuchFieldException {
+    public Set<ModContainer> blameModJson(String option) throws NoSuchFieldException {
         return this.modJsonProcessor.blameMods(option);
     }
 
     @Override
-    public TextEntry getReason(String processor, String option) {
-        return this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.manager, processor, option));
+    public Optional<TextEntry> getReason(String processor, String option) {
+        try {
+            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.manager, processor, option, this.manager.getField(option))));
+        } catch (NoSuchFieldException e) {
+            return Optional.empty();
+        }
     }
 
     @Override

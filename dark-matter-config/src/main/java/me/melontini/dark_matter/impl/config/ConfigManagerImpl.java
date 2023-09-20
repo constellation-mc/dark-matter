@@ -28,6 +28,8 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import static me.melontini.dark_matter.api.base.util.Utilities.cast;
+
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     final Class<T> configClass;
@@ -50,7 +52,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final Map<Field, String> fieldToOption = new HashMap<>();
     private final Map<String, List<Field>> optionToFields = new LinkedHashMap<>();
 
-    private ConfigClassScanner scanner = null;
+    private final Set<ConfigClassScanner> scanners = new LinkedHashSet<>();
 
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson) {
         this.configClass = cls;
@@ -63,18 +65,18 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     void setupOptionManager(@Nullable Consumer<OptionProcessorRegistry<T>> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
         this.optionManager = new OptionManagerImpl<>(this, defaultReason);
         if (registrar != null) registrar.accept(this.optionManager);
-        EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, Utilities.cast(consumer)));
+        EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, cast(consumer)));
     }
 
     void setFixups(FixupsBuilder builder) {
-        EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(builder, Utilities.cast(consumer)));
+        EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
 
         Fixups fixups = builder.build();
         this.fixupFunc = fixups.isEmpty() ? Function.identity() : fixups::fixup;
     }
 
     void setRedirects(RedirectsBuilder builder) {
-        EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(builder, Utilities.cast(consumer)));
+        EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
 
         Redirects redirects = builder.build();
         this.redirectFunc = redirects.isEmpty() ? Function.identity() : redirects::redirect;
@@ -86,7 +88,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     void setScanner(ConfigClassScanner scanner) {
-        this.scanner = scanner;
+        this.scanners.add(scanner);
+        EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         startScan();
     }
 
@@ -114,7 +117,10 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
             optionToFields.putIfAbsent(parentString + declaredField.getName(), fieldRefView);
             fieldToOption.putIfAbsent(declaredField, parentString + declaredField.getName());
 
-            if (scanner != null) scanner.scan(cls, declaredField, parentString, ImmutableSet.copyOf(recursive), fieldRefView);
+            if (!this.scanners.isEmpty()) {
+                ImmutableSet<Class<?>> classes = ImmutableSet.copyOf(recursive);
+                scanners.forEach(scanner -> scanner.scan(cls, declaredField, parentString, classes, fieldRefView));
+            }
             if (recursive.contains(declaredField.getType())) {
                 recursive.addAll(Arrays.asList(declaredField.getType().getClasses()));
                 iterate(declaredField.getType(), parentString + declaredField.getName() + ".", recursive, fieldRef);
@@ -156,7 +162,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public <V> V get(String option) throws NoSuchFieldException {
         try {
-            return Utilities.cast(this.getter.get(this, this.redirectFunc.apply(option)));
+            return cast(this.getter.get(this, this.redirectFunc.apply(option)));
         } catch (IllegalAccessException t) {
             throw new RuntimeException(t);
         }

@@ -1,13 +1,13 @@
 package me.melontini.dark_matter.api.config;
 
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
-import me.melontini.dark_matter.impl.config.RedirectsBuilderImpl;
+import me.melontini.dark_matter.impl.config.RedirectsImpl;
 
 
 public interface RedirectsBuilder {
 
     static RedirectsBuilder create() {
-        return new RedirectsBuilderImpl();
+        return new RedirectsImpl();
     }
 
     RedirectsBuilder add(String from, String to);

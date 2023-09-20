@@ -39,13 +39,13 @@ public class ModJsonProcessor {
     });
 
     final Map<String, Object> modJson = new LinkedHashMap<>();
-    final Map<Field, Set<String>> modBlame = new HashMap<>();
+    final Map<Field, Set<ModContainer>> modBlame = new HashMap<>();
     final String json_key;
     final ConfigManager<?> manager;
     boolean done = false;
 
     ModJsonProcessor(ConfigManager<?> manager) {
-        this.json_key = manager.getMod().getMetadata().getId() + ":config-" + manager.getName();
+        this.json_key = manager.getMod().getMetadata().getId() + ":" + manager.getName() + "-config";
         this.manager = manager;
     }
 
@@ -93,11 +93,11 @@ public class ModJsonProcessor {
         }
     }
 
-    Set<String> blameMods(String feature) throws NoSuchFieldException {
+    Set<ModContainer> blameMods(String feature) throws NoSuchFieldException {
         return modBlame.getOrDefault(manager.getField(feature), Collections.emptySet());
     }
 
-    Set<String> blameMods(Field field) {
+    Set<ModContainer> blameMods(Field field) {
         return modBlame.getOrDefault(field, Collections.emptySet());
     }
 
@@ -107,7 +107,7 @@ public class ModJsonProcessor {
 
     private void addModJson(ModContainer mod, Field field, String feature, Object value) {
         modJson.put(feature, value);
-        modBlame.computeIfAbsent(field, k -> new LinkedHashSet<>()).add(mod.getMetadata().getId());
+        modBlame.computeIfAbsent(field, k -> new LinkedHashSet<>()).add(mod);
     }
 
     static boolean testModVersion(String modId, String predicate, String modBlame) {
