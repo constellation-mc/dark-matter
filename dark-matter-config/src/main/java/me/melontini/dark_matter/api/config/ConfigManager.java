@@ -1,11 +1,13 @@
 package me.melontini.dark_matter.api.config;
 
 import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
 import java.nio.file.Path;
 import java.util.List;
 
+@ApiStatus.NonExtendable
 public interface ConfigManager<T> {
 
     T getConfig();

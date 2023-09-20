@@ -4,11 +4,13 @@ import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
 import java.util.Optional;
 import java.util.Set;
 
+@ApiStatus.NonExtendable
 public interface OptionManager<T> {
 
     boolean isModified(Field f);

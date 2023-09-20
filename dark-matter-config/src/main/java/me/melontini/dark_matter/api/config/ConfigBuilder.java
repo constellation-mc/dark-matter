@@ -5,11 +5,13 @@ import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.impl.config.ConfigBuilderImpl;
 import net.fabricmc.loader.api.ModContainer;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+@ApiStatus.NonExtendable
 public interface ConfigBuilder<T> {
 
     static <T> ConfigBuilder<T> create(Class<T> cls, ModContainer mod, String name) {
