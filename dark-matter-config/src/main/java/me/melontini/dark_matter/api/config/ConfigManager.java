@@ -30,5 +30,6 @@ public interface ConfigManager<T> {
     String getName();
     Path getPath();
 
+    T load();
     void save();
 }

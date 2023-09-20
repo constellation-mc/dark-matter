@@ -35,6 +35,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     final Class<T> configClass;
     T config;
     T defaultConfig;
+    Supplier<T> constructor;
 
     final Path configPath;
     final Gson gson;
@@ -95,7 +96,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     void afterBuild(@Nullable Supplier<T> supplier) {
-        if (supplier == null) supplier = () -> {
+        if ((this.constructor = supplier) == null) this.constructor = () -> {
             try {
                 Constructor<T> ctx = this.configClass.getDeclaredConstructor();
                 ctx.setAccessible(true);
@@ -105,8 +106,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
             }
         };
 
-        this.load(supplier);
-        this.defaultConfig = supplier.get();
+        this.load();
+        this.defaultConfig = this.constructor.get();
     }
 
     private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, List<Field> fieldRef) {
@@ -130,20 +131,22 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         }
     }
 
-    private void load(Supplier<T> ctx) {
+    @Override
+    public T load() {
         if (Files.exists(this.configPath)) {
             try (var reader = Files.newBufferedReader(this.configPath)) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
                 this.config = this.gson.fromJson(object, this.configClass);
                 this.save();
-                return;
+                return this.config;
             } catch (IOException e) {
                 DarkMatterLog.error("Failed to load {}, using defaults", this.configPath);
             }
         }
-        this.config = ctx.get();
+        this.config = this.constructor.get();
         this.save();
+        return this.config;
     }
 
     private void startScan() {
