@@ -5,5 +5,5 @@ import com.google.gson.JsonObject;
 
 @FunctionalInterface
 public interface Fixup {
-    boolean fixup(JsonObject config, JsonElement value, String key);
+    boolean fixup(JsonObject config, JsonElement value, String[] key);
 }
