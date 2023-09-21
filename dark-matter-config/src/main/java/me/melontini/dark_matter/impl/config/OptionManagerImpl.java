@@ -23,9 +23,9 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     private final Map<String, Function<TextEntry.InfoHolder<T>, TextEntry>> customReasons = new HashMap<>();
     private final PrependingLogger logger;
 
-    final Map<Field, Set<String>> modifiedFields = new HashMap<>();
+    private final Map<Field, Set<String>> modifiedFields = new HashMap<>();
 
-    final ModJsonProcessor modJsonProcessor;
+    private final ModJsonProcessor modJsonProcessor;
 
     OptionManagerImpl(ConfigManager<T> manager, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
         this.manager = manager;
