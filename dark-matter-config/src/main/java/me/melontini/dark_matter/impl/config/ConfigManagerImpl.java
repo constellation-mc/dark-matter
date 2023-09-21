@@ -134,15 +134,15 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public void load() {
-        if (Files.exists(this.configPath)) {
-            try (var reader = Files.newBufferedReader(this.configPath)) {
+        if (Files.exists(this.getPath())) {
+            try (var reader = Files.newBufferedReader(this.getPath())) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
                 this.config.set(this.gson.fromJson(object, this.configClass));
                 this.save();
                 return;
             } catch (IOException e) {
-                DarkMatterLog.error("Failed to load {}, using defaults", this.configPath);
+                DarkMatterLog.error("Failed to load {}, using defaults", this.getPath());
             }
         }
         this.config.set(this.constructor.get());
@@ -226,15 +226,15 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void save() {
         try {
-            this.optionManager.processOptions();
-            Files.createDirectories(this.configPath.getParent());
-            Files.write(this.configPath, this.gson.toJson(this.config).getBytes());
+            this.getOptionManager().processOptions();
+            Files.createDirectories(this.getPath().getParent());
+            Files.write(this.getPath(), this.gson.toJson(this.getConfig()).getBytes());
         } catch (Exception e) {
-            DarkMatterLog.error("Failed to save {}", this.configPath, e);
+            DarkMatterLog.error("Failed to save {}", this.getPath(), e);
         }
     }
 
     private String getShareId(String key) {
-        return this.mod.getMetadata().getId() + ":config-" + key + "-" + this.name;
+        return this.getMod().getMetadata().getId() + ":config-" + key + "-" + this.getName();
     }
 }
