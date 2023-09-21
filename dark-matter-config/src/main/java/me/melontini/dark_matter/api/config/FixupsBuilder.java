@@ -12,5 +12,19 @@ public interface FixupsBuilder {
 
     FixupsBuilder add(String key, Fixup fixup);
 
+    default FixupsBuilder add(Fixup fixup, String... keys) {
+        for (String key : keys) {
+            add(key, fixup);
+        }
+        return this;
+    }
+
+    default FixupsBuilder add(String key, Fixup... fixups) {
+        for (Fixup fixup : fixups) {
+            add(key, fixup);
+        }
+        return this;
+    }
+
     Fixups build();
 }

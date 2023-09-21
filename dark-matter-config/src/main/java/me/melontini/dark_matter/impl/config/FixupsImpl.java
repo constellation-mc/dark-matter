@@ -26,13 +26,17 @@ public class FixupsImpl implements Fixups, FixupsBuilder {
     public JsonObject fixup(JsonObject config) {
         for (Map.Entry<String[], Set<Fixup>> entry : fixups.entrySet()) {
             JsonElement e = config;
+            JsonObject parent = null;
             for (String key : entry.getKey())
-                if (e instanceof JsonObject o) e = o.get(key);
+                if (e instanceof JsonObject o) {
+                    parent = o;
+                    e = o.get(key);
+                }
             if (e == null || e.isJsonNull()) continue;
 
-            final JsonElement element = e;
+            Fixup.InfoHolder holder = new Fixup.InfoHolder(config, parent, e, entry.getKey());
             entry.getValue().forEach(fixup -> {
-                if (fixup.fixup(config, element, entry.getKey()))
+                if (fixup.fixup(holder))
                     DarkMatterLog.debug("Fixed-up config entry {}", StringUtils.join(".", entry.getKey()));
             });
         }
