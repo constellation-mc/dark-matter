@@ -39,9 +39,9 @@ public class ModJsonProcessor {
     });
 
     final Map<String, Object> modJson = new LinkedHashMap<>();
-    final Map<Field, Set<ModContainer>> modBlame = new HashMap<>();
-    final String json_key;
-    final ConfigManager<?> manager;
+    private final Map<Field, Set<ModContainer>> modBlame = new HashMap<>();
+    private final String json_key;
+    private final ConfigManager<?> manager;
     boolean done = false;
 
     ModJsonProcessor(ConfigManager<?> manager) {

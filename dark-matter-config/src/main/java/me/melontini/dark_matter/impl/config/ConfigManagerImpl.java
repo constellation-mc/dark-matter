@@ -24,7 +24,6 @@ import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -33,15 +32,15 @@ import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
-    final Class<T> configClass;
-    final AtomicReference<T> config = new AtomicReference<>();
-    T defaultConfig;
-    Supplier<T> constructor;
+    private final Class<T> configClass;
+    private final ConfigRef<T> config = new ConfigRef<>();
+    private T defaultConfig;
+    private Supplier<T> constructor;
 
-    final Path configPath;
-    final Gson gson;
-    final ModContainer mod;
-    final String name;
+    private final Path configPath;
+    private final Gson gson;
+    private final ModContainer mod;
+    private final String name;
 
     private Function<JsonObject, JsonObject> fixupFunc;
     private Function<String, String> redirectFunc;
@@ -159,7 +158,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public AtomicReference<T> getConfigRef() {
+    public Reference<T> getConfigRef() {
         return this.config;
     }
 
