@@ -37,7 +37,7 @@ public class FixupsImpl implements Fixups, FixupsBuilder {
             Fixup.InfoHolder holder = new Fixup.InfoHolder(config, parent, e, entry.getKey());
             entry.getValue().forEach(fixup -> {
                 if (fixup.fixup(holder))
-                    DarkMatterLog.debug("Fixed-up config entry {}", StringUtils.join(".", entry.getKey()));
+                    DarkMatterLog.debug("Fixed-up config entry %s".formatted(StringUtils.joinWith(".", (Object[]) entry.getKey())));
             });
         }
         return config;
