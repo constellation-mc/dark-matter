@@ -28,6 +28,7 @@ public class FixupsImpl implements Fixups, FixupsBuilder {
             JsonElement e = config;
             for (String key : entry.getKey())
                 if (e instanceof JsonObject o) e = o.get(key);
+            if (e == null || e.isJsonNull()) continue;
 
             final JsonElement element = e;
             entry.getValue().forEach(fixup -> {
