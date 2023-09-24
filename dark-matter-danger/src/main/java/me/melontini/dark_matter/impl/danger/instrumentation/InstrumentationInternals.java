@@ -6,7 +6,6 @@
 
 package me.melontini.dark_matter.impl.danger.instrumentation;
 
-import me.melontini.dark_matter.api.base.reflect.ReflectionUtil;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -53,11 +52,7 @@ public class InstrumentationInternals {
                 try {
                     return Class.forName(s);
                 } catch (ClassNotFoundException e) {
-                    try {
-                        return ReflectionUtil.accessRestrictedClass(s);
-                    } catch (Exception e1) {
-                        throw new RuntimeException(String.format("Couldn't access %s class!", s), e1);
-                    }
+                    throw new RuntimeException("Couldn't access %s class!".formatted(s), e);
                 }
             }).toArray(Class[]::new);
             retransform(transformer, export, classes);

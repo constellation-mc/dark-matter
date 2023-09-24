@@ -1,6 +1,9 @@
 package me.melontini.dark_matter.api.base.reflect;
 
 import me.melontini.dark_matter.impl.base.reflect.MiscReflectionInternals;
+import me.melontini.dark_matter.impl.base.reflect.ReflectionInternals;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
@@ -25,5 +28,25 @@ public class MiscReflection {
 
     public static Consumer<Object> createStaticSetter(Field field, MethodHandles.Lookup lookup) {
         return MiscReflectionInternals.createStaticSetter(field, lookup);
+    }
+
+    //
+    // no
+    //
+
+    public static Field tryRemoveFinal(Field field) {
+        return ReflectionInternals.tryRemoveFinal(field);
+    }
+
+    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) {
+        return ReflectionInternals.mockLookupClass(clazz);
+    }
+
+    public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) {
+        return ReflectionInternals.accessRestrictedClass(name, loader);
+    }
+
+    public static Class<?> accessRestrictedClass(String name) {
+        return ReflectionInternals.accessRestrictedClass(name, null);
     }
 }
