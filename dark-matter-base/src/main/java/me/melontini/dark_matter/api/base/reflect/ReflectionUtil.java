@@ -1,5 +1,7 @@
 package me.melontini.dark_matter.api.base.reflect;
 
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.impl.base.reflect.MiscReflectionInternals;
 import me.melontini.dark_matter.impl.base.reflect.ReflectionInternals;
 import me.melontini.dark_matter.impl.base.reflect.UnsafeInternals;
 import org.jetbrains.annotations.NotNull;
@@ -80,12 +82,21 @@ public class ReflectionUtil {
      */
     @Deprecated(forRemoval = true)
     public static void addOpensOrExports(Module module, String pn, Module other, boolean open, boolean syncVM) {
-        ReflectionInternals.addOpensOrExports(module, pn, other, open, syncVM);
+        try {
+            MiscReflectionInternals.addOpensOrExports(module, pn, other, open, syncVM);
+        } catch (Throwable e) {
+            DarkMatterLog.error("Couldn't add new {}. Expect errors", open ? "opens" : "exports");
+        }
     }
 
     @Deprecated(forRemoval = true)
     public static Field tryRemoveFinal(Field field) {
-        return ReflectionInternals.tryRemoveFinal(field);
+        try {
+            MiscReflectionInternals.tryRemoveFinal(field);
+        } catch (Throwable e) {
+            DarkMatterLog.error("Couldn't remove final from field " + field.getName(), e);
+        }
+        return field;
     }
 
     //https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass
@@ -96,17 +107,29 @@ public class ReflectionUtil {
 
     @Deprecated(forRemoval = true)
     public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) {
-        return ReflectionInternals.mockLookupClass(clazz);
+        try {
+            return MiscReflectionInternals.mockLookupClass(clazz);
+        } catch (Throwable e) {
+            throw new RuntimeException("Couldn't mock lookup class", e);
+        }
     }
 
     @Deprecated(forRemoval = true)
     public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) {
-        return ReflectionInternals.accessRestrictedClass(name, loader);
+        try {
+            return MiscReflectionInternals.accessRestrictedClass(name, loader);
+        } catch (Throwable e) {
+            throw new RuntimeException("Couldn't access restricted class", e);
+        }
     }
 
     @Deprecated(forRemoval = true)
     public static Class<?> accessRestrictedClass(String name) {
-        return ReflectionInternals.accessRestrictedClass(name, null);
+        try {
+            return MiscReflectionInternals.accessRestrictedClass(name, null);
+        } catch (Throwable e) {
+            throw new RuntimeException("Couldn't access restricted class", e);
+        }
     }
 
     @Deprecated(forRemoval = true)

@@ -3,17 +3,17 @@ package me.melontini.dark_matter.impl.base.reflect;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeAccess;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ClassUtils;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.invoke.VarHandle;
-import java.lang.reflect.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.List;
 
 /**
@@ -129,81 +129,14 @@ public class ReflectionInternals {
         return member;
     }
 
-    private static VarHandle modifiers;
-    private static MethodHandle setFieldAccessor;
-
-    public static Field tryRemoveFinal(Field f) {
-        MakeSure.notNull(f, "Tried to remove final from a null field");
-
-        if (Modifier.isFinal(f.getModifiers())) {
-            try {
-                if (modifiers == null) {
-                    modifiers = stealTrustedLookup().findVarHandle(Field.class, "modifiers", int.class);
-                }
-                modifiers.set(f, ((int) modifiers.get(f)) & ~Modifier.FINAL);
-                if (setFieldAccessor == null) {
-                    Class<?> cls = Class.forName("jdk.internal.reflect.FieldAccessor");
-                    setFieldAccessor = stealTrustedLookup().findVirtual(Field.class, "setFieldAccessor", MethodType.methodType(void.class, cls, boolean.class));
-                }
-                setFieldAccessor.invokeWithArguments(f, null, false);
-                setFieldAccessor.invokeWithArguments(f, null, true);
-            } catch (Throwable e) {
-                DarkMatterLog.error("Couldn't remove final from field " + f.getName(), e);
-            }
-        }
-        return f;
-    }
-
-    private static MethodHandle addOpensOrExports;
-
-    @Deprecated
-    public static void addOpensOrExports(Module module, String pn, Module other, boolean open, boolean syncVM) {
-        if (addOpensOrExports == null) {
-            try {
-                MethodHandles.Lookup lookup = stealTrustedLookup();
-                addOpensOrExports = lookup.findVirtual(Module.class, "implAddExportsOrOpens", MethodType.methodType(void.class, String.class, Module.class, boolean.class, boolean.class));
-            } catch (IllegalAccessException | NoSuchMethodException e) {
-                DarkMatterLog.error("Couldn't add new {}. Expect errors", open ? "opens" : "exports");
-                return;
-            }
-        }
-        try {
-            addOpensOrExports.invokeWithArguments(module, pn, other, open, syncVM);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private static MethodHandles.Lookup trustedLookup;
 
-    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) {
-        return stealTrustedLookup().in(clazz);
-    }
-
-    public static MethodHandles.Lookup stealTrustedLookup() {
-        try {
-            if (trustedLookup == null) {
-                Field f = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
-                trustedLookup = (MethodHandles.Lookup) UnsafeAccess.getReference(f, null);
-            }
-            return trustedLookup;
-        } catch (NoSuchFieldException e) {
-            throw new RuntimeException(e);
+    public static MethodHandles.Lookup stealTrustedLookup() throws NoSuchFieldException {
+        if (trustedLookup == null) {
+            Field f = MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP");
+            trustedLookup = (MethodHandles.Lookup) UnsafeAccess.getReference(f, null);
         }
-    }
-
-    private static MethodHandle forName0;
-
-    public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) {
-        try {
-            if (forName0 == null) {
-                forName0 = stealTrustedLookup()
-                        .findStatic(Class.class, "forName0", MethodType.methodType(Class.class, String.class, boolean.class, ClassLoader.class, Class.class));
-            }
-            return (Class<?>) forName0.invokeWithArguments(null, name, false, loader, Class.class);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
+        return trustedLookup;
     }
 
     public static Field getField(Class<?> clazz, String name, boolean accessible) {
@@ -225,8 +158,8 @@ public class ReflectionInternals {
 
     public static void setField(Field field, Object o, Object value) {
         try {
-            ReflectionInternals.tryRemoveFinal(setAccessible(field, true)).set(o, value);
-        } catch (IllegalAccessException e) {
+            MiscReflectionInternals.tryRemoveFinal(setAccessible(field, true)).set(o, value);
+        } catch (Throwable e) {
             UnsafeAccess.putReference(field, o, value);
         }
     }
