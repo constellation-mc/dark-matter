@@ -16,7 +16,7 @@ public final class Utilities {
 
     public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-    public static final Random RANDOM = new Random();
+    public static final Random RANDOM = MathStuff.random();
 
     private static final BooleanSupplier TRUTH = () -> true;
     private static final BooleanSupplier FALSE = () -> false;
