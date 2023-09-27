@@ -75,7 +75,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
 
     @Unique
     private void dark_matter$renderPageText(MatrixStack matrices) {
-        int x = (this.parentWidth - (dm$horizontalOffset() + 12)) / 2 - this.leftOffset - 30;
+        int x = (this.parentWidth - (dm$horizontalOffset() - 12)) / 2 - this.leftOffset - 30;
         int y = (this.parentHeight + (dm$verticalOffset() + 3)) / 2 + 3;
         if (this.pages > 1) {
             String string = this.page + 1 + "/" + this.pages;
