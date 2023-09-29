@@ -20,6 +20,7 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
@@ -107,6 +108,13 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @ModifyExpressionValue(at = @At(value = "FIELD", target = "Lnet/minecraft/client/recipebook/RecipeBookGroup;CRAFTING_SEARCH:Lnet/minecraft/client/recipebook/RecipeBookGroup;"), method = "refreshTabButtons", require = 0)
     private RecipeBookGroup dark_matter$refresh$correctGroup(RecipeBookGroup group, @Local RecipeGroupButtonWidget widget) {
         return RecipeBookHelper.isSearchGroup(widget.getCategory()) ? widget.getCategory() : group;
+    }
+
+    @ModifyArg(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/recipebook/RecipeGroupButtonWidget;setPos(II)V"), method = "refreshTabButtons", index = 1)
+    private int dark_matter$refresh$setPos(int y, @Local RecipeGroupButtonWidget widget, @Local(ordinal = 1) int j, @Share("index") LocalIntRef index) {
+        y = j + widget.getHeight() * index.get();
+        index.set(index.get() + 1);
+        return y;
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/recipebook/RecipeGroupButtonWidget;setPos(II)V", shift = At.Shift.AFTER), method = "refreshTabButtons")
