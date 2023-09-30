@@ -60,28 +60,28 @@ public class InstrumentationInternals {
         AtomicReference<Throwable> throwable = new AtomicReference<>();
         InstrumentationAccess.AbstractFileTransformer fileTransformer = (loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
             if (classes.contains(classBeingRedefined)) {
-                ClassReader reader = new ClassReader(classfileBuffer);
-                ClassNode node = new ClassNode();
-                reader.accept(node, ClassReader.EXPAND_FRAMES);
-                node = transformer.transform(node);
-                ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                 try {
+                    ClassReader reader = new ClassReader(classfileBuffer);
+                    ClassNode node = new ClassNode();
+                    reader.accept(node, ClassReader.EXPAND_FRAMES);
+                    node = transformer.transform(node);
+                    ClassWriter writer = new ClassWriter(ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
                     node.accept(writer);
+                    byte[] clsFile = writer.toByteArray();
+                    if (export) {
+                        try {
+                            Path path = EXPORT_DIR.resolve(className.replace(".", "/") + ".class");
+                            Files.createDirectories(path.getParent());
+                            Files.write(path, clsFile);
+                        } catch (IOException e) {
+                            DarkMatterLog.error(String.format("Couldn't export %s", className), e);
+                        }
+                    }
+                    return clsFile;
                 } catch (Throwable t) {
                     throwable.set(t);
                     return classfileBuffer;
                 }
-                byte[] clsFile = writer.toByteArray();
-                if (export) {
-                    try {
-                        Path path = EXPORT_DIR.resolve(className.replace(".", "/") + ".class");
-                        Files.createDirectories(path.getParent());
-                        Files.write(path, clsFile);
-                    } catch (IOException e) {
-                        DarkMatterLog.error(String.format("Couldn't export %s", className), e);
-                    }
-                }
-                return clsFile;
             }
 
             return classfileBuffer;
