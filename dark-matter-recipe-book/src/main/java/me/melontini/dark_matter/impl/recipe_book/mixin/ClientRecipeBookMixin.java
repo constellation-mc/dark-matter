@@ -26,5 +26,4 @@ public class ClientRecipeBookMixin {
             return null;
         }).ifPresent(cir::setReturnValue);
     }
-
 }
