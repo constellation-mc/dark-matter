@@ -18,7 +18,6 @@ import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -63,51 +62,49 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.mod = mod;
     }
 
-    void setupOptionManager(@Nullable Consumer<OptionProcessorRegistry<T>> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
+    ConfigManagerImpl<T> setupOptionManager(@Nullable Consumer<OptionProcessorRegistry<T>> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
         this.optionManager = new OptionManagerImpl<>(this, defaultReason);
         if (registrar != null) registrar.accept(this.optionManager);
         EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, cast(consumer)));
+        return this;
     }
 
-    void setFixups(FixupsBuilder builder) {
+    ConfigManagerImpl<T> setFixups(FixupsBuilder builder) {
         EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
 
         Fixups fixups = builder.build();
         this.fixupFunc = fixups.isEmpty() ? Function.identity() : fixups::fixup;
+        return this;
     }
 
-    void setRedirects(RedirectsBuilder builder) {
+    ConfigManagerImpl<T> setRedirects(RedirectsBuilder builder) {
         EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
 
         Redirects redirects = builder.build();
         this.redirectFunc = redirects.isEmpty() ? Function.identity() : redirects::redirect;
+        return this;
     }
 
-    void setAccessors(ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
+    ConfigManagerImpl<T> setAccessors(ConfigBuilder.Getter<T> getter, ConfigBuilder.Setter<T> setter) {
         this.getter = getter;
         this.setter = setter;
+        return this;
     }
 
-    void setScanner(ConfigClassScanner scanner) {
+    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner) {
         this.scanners.add(scanner);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
         startScan();
+        return this;
     }
 
-    void afterBuild(@Nullable Supplier<T> supplier) {
-        if ((this.constructor = supplier) == null) this.constructor = () -> {
-            try {
-                Constructor<T> ctx = this.configClass.getDeclaredConstructor();
-                ctx.setAccessible(true);
-                return ctx.newInstance();
-            } catch (Throwable t) {
-                throw new RuntimeException("Failed to construct config class", t);
-            }
-        };
+    ConfigManagerImpl<T> afterBuild(@Nullable Supplier<T> supplier) {
+        this.constructor = supplier;
 
         this.load();
         this.defaultConfig = this.constructor.get();
+        return this;
     }
 
     private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, List<Field> fieldRef) {
