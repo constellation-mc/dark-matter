@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.minecraft.client.util;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
+import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -27,17 +28,21 @@ import java.util.Optional;
 @ApiStatus.Internal
 public class DrawInternals {
 
-    public static final FakeScreen FAKE_SCREEN = new FakeScreen();
+    public static final Lazy<FakeScreen> FAKE_SCREEN = Lazy.of(() -> FakeScreen::new);
 
     private DrawInternals() {
         throw new UnsupportedOperationException();
+    }
+
+    public static FakeScreen getFakeScreen() {
+        return FAKE_SCREEN.get();
     }
 
     public static void renderTooltip(MatrixStack matrices, ItemStack stack, float x, float y) {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, FAKE_SCREEN.getTooltipFromItem(stack), stack.getTooltipData(), (int) x, (int) y);
+        getFakeScreen().renderTooltip(matrices, getFakeScreen().getTooltipFromItem(stack), stack.getTooltipData(), (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -46,7 +51,7 @@ public class DrawInternals {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, text, (int) x, (int) y);
+        getFakeScreen().renderTooltip(matrices, text, (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -55,7 +60,7 @@ public class DrawInternals {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, lines, (int) x, (int) y);
+        getFakeScreen().renderTooltip(matrices, lines, (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -64,7 +69,7 @@ public class DrawInternals {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltip(matrices, lines, data, (int) x, (int) y);
+        getFakeScreen().renderTooltip(matrices, lines, data, (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -73,7 +78,7 @@ public class DrawInternals {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderOrderedTooltip(matrices, lines, (int) x, (int) y);
+        getFakeScreen().renderOrderedTooltip(matrices, lines, (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }
@@ -82,7 +87,7 @@ public class DrawInternals {
         RenderSystem.getModelViewStack().push();
         RenderSystem.getModelViewStack().translate(x - (int) x, y - (int) y, 0);
         RenderSystem.applyModelViewMatrix();
-        FAKE_SCREEN.renderTooltipFromComponents(matrices, components, (int) x, (int) y);
+        getFakeScreen().renderTooltipFromComponents(matrices, components, (int) x, (int) y);
         RenderSystem.getModelViewStack().pop();
         RenderSystem.applyModelViewMatrix();
     }

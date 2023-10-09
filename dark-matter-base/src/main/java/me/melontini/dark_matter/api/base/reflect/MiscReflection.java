@@ -38,7 +38,7 @@ public class MiscReflection {
         return MiscReflectionInternals.tryRemoveFinal(field);
     }
 
-    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) throws ReflectiveOperationException {
+    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) throws Exception {
         return MiscReflectionInternals.mockLookupClass(clazz);
     }
 

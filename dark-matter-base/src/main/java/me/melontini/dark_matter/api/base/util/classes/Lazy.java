@@ -25,6 +25,10 @@ public class Lazy<T> {
 
     @SneakyThrows
     public T get() {
+        return getExc();
+    }
+
+    public T getExc() throws Exception {
         if (value == null && supplier != null) {
             value = supplier.get().call();
             supplier = null;
