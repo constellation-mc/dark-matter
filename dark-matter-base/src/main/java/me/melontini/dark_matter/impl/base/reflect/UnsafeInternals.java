@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -56,6 +57,10 @@ public class UnsafeInternals {
         } else {
             return getUnsafe().getObject(o, l);
         }
+    }
+
+    public static <T> T allocateInstance(Class<T> cls) throws InstantiationException {
+        return Utilities.cast(getUnsafe().allocateInstance(cls));
     }
 
     public static Unsafe getUnsafe() {
