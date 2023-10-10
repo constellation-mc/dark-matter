@@ -118,4 +118,24 @@ public class MiscReflectionInternals {
     public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) throws Throwable {
         return (Class<?>) forName0.getExc().invokeWithArguments(null, name, false, loader, Class.class);
     }
+
+    private static final Lazy<MethodHandle> makeFieldHandle = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findStatic(Class.forName("java.lang.invoke.VarHandles"), "makeFieldHandle", MethodType.methodType(VarHandle.class, Class.forName("java.lang.invoke.MemberName"), Class.class, Class.class, boolean.class)));
+    private static final Lazy<MethodHandle> memberNameCtx = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findConstructor(Class.forName("java.lang.invoke.MemberName"), MethodType.methodType(void.class, Field.class, boolean.class)));
+
+    public static VarHandle unreflectVarHandle(Field f) throws Throwable {
+        Object m = memberNameCtx.getExc().invoke(f, false);
+        return (VarHandle) makeFieldHandle.getExc().invoke(m, f.getDeclaringClass(), f.getType(), true);
+    }
+
+    private static final Lazy<MethodHandle> resolveOrFail = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(MethodHandles.Lookup.class, "resolveOrFail", MethodType.methodType(Class.forName("java.lang.invoke.MemberName"), byte.class, Class.class, String.class, Class.class)));
+
+    public static VarHandle findVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
+        Object m = resolveOrFail.getExc().invokeWithArguments(ReflectionInternals.trustedLookup(), (byte) 1, cls, name, type);
+        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, false);
+    }
+
+    public static VarHandle findStaticVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
+        Object m = resolveOrFail.getExc().invokeWithArguments(ReflectionInternals.trustedLookup(), (byte) 2, cls, name, type);
+        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, false);
+    }
 }

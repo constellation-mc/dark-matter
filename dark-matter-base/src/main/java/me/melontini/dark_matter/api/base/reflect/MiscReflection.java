@@ -5,6 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Field;
 import java.security.ProtectionDomain;
 import java.util.function.BiConsumer;
@@ -52,5 +53,20 @@ public class MiscReflection {
 
     public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, @Nullable ProtectionDomain domain) throws Throwable {
         return MiscReflectionInternals.defineClass(loader, name, bytes, domain);
+    }
+
+    /**
+     * Creates a VarHandle which has the ability to write both final and static final addresses
+     */
+    public static VarHandle unreflectVarHandle(Field f) throws Throwable {
+        return MiscReflectionInternals.unreflectVarHandle(f);
+    }
+
+    public static VarHandle findVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
+        return MiscReflectionInternals.findVarHandle(cls, name, type);
+    }
+
+    public static VarHandle findStaticVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
+        return MiscReflectionInternals.findStaticVarHandle(cls, name, type);
     }
 }
