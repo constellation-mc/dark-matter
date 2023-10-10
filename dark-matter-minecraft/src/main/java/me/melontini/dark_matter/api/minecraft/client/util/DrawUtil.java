@@ -28,6 +28,9 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class DrawUtil {
 
+    @Deprecated
+    public static final Screen FAKE_SCREEN = getFakeScreen();
+
     private DrawUtil() {
         throw new UnsupportedOperationException();
     }

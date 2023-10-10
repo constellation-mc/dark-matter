@@ -12,10 +12,13 @@ public final class Utilities {
         throw new UnsupportedOperationException();
     }
 
+    @Deprecated
     public static boolean IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
 
+    @Deprecated
     public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
+    @Deprecated
     public static final Random RANDOM = MathStuff.random();
 
     private static final BooleanSupplier TRUTH = () -> true;
