@@ -24,6 +24,8 @@ public class FakeWorld {
 
     public static final Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
         try {
+            DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
+
             return new ClientWorld(
                     orNull(() -> new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null)),
                     orNull(() -> new ClientWorld.Properties(Difficulty.EASY, false, false)),
