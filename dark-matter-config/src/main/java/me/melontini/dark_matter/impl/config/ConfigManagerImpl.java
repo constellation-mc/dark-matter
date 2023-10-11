@@ -7,6 +7,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.melontini.dark_matter.api.base.util.EntrypointRunner;
 import me.melontini.dark_matter.api.base.util.Utilities;
+import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
 import me.melontini.dark_matter.api.config.interfaces.Fixups;
@@ -33,7 +34,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     private final Class<T> configClass;
     private final ConfigRef<T> config = new ConfigRef<>();
-    private T defaultConfig;
+    private Lazy<T> defaultConfig;
     private Supplier<T> constructor;
 
     private final Path configPath;
@@ -103,7 +104,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.constructor = supplier;
 
         this.load();
-        this.defaultConfig = this.constructor.get();
+        this.defaultConfig = Lazy.of(() -> () -> this.constructor.get());
         return this;
     }
 
@@ -161,7 +162,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public T getDefaultConfig() {
-        return this.defaultConfig;
+        return this.defaultConfig.get();
     }
 
     @Override
