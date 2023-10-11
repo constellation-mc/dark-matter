@@ -13,6 +13,7 @@ import java.util.function.Supplier;
 
 /**
  * All parameters outside {@link ConfigBuilder#create(Class, ModContainer, String)} are optional.
+ *
  * @param <T> your desired config class
  */
 @ApiStatus.NonExtendable
@@ -72,6 +73,11 @@ public interface ConfigBuilder<T> {
     ConfigBuilder<T> scanner(ConfigClassScanner scanner);
 
     ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason);
+
+    default ConfigBuilder<T> attach(Consumer<ConfigBuilder<T>> attacher) {
+        attacher.accept(this);
+        return this;
+    }
 
     ConfigManager<T> build();
 

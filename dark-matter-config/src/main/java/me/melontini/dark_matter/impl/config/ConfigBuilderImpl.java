@@ -77,19 +77,19 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> processors(Consumer<OptionProcessorRegistry<T>> consumer) {
+    public ConfigBuilderImpl<T> processors(Consumer<OptionProcessorRegistry<T>> consumer) {
         this.registrar = consumer;
         return this;
     }
 
     @Override
-    public ConfigBuilder<T> scanner(ConfigClassScanner scanner) {
+    public ConfigBuilderImpl<T> scanner(ConfigClassScanner scanner) {
         this.scanner = scanner;
         return this;
     }
 
     @Override
-    public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+    public ConfigBuilderImpl<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
         this.reasonFactory = reason;
         return this;
     }
