@@ -9,6 +9,7 @@ package me.melontini.dark_matter.impl.danger.instrumentation;
 import lombok.Getter;
 import me.melontini.dark_matter.api.base.reflect.MiscReflection;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
 import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.danger.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -64,7 +65,7 @@ public class InstrumentationInternals {
 
     public static void retransform(InstrumentationAccess.AsmTransformer transformer, boolean export, Class<?>... cls) throws TransformationException {
         HashSet<Class<?>> classes = Arrays.stream(cls).collect(Collectors.toCollection(HashSet::new));
-        AtomicReference<Throwable> throwable = new AtomicReference<>();
+        ThrowableStorage<Throwable> throwable = ThrowableStorage.of();
         InstrumentationAccess.AbstractFileTransformer fileTransformer = (loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
             if (classes.contains(classBeingRedefined)) {
                 try {
@@ -98,7 +99,7 @@ public class InstrumentationInternals {
             instrumentation.addTransformer(fileTransformer, true);
             instrumentation.retransformClasses(cls);
             instrumentation.removeTransformer(fileTransformer);
-            if (throwable.get() != null) throw throwable.get();
+            throwable.tryThrow();
         } catch (Throwable t) {
             throw new TransformationException("Failed to retransform classes %s".formatted(Arrays.toString(cls)), t);
         }
