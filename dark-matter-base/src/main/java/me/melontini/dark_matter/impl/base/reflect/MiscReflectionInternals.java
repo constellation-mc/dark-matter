@@ -109,7 +109,7 @@ public class MiscReflectionInternals {
         addOpensOrExports.getExc().invokeWithArguments(module, pn, other, open, syncVM);
     }
 
-    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) throws Exception {
+    public static @NotNull MethodHandles.Lookup lookupIn(Class<?> clazz) throws Exception {
         return ReflectionInternals.trustedLookup().in(clazz);
     }
 

@@ -39,8 +39,8 @@ public class MiscReflection {
         return MiscReflectionInternals.tryRemoveFinal(field);
     }
 
-    public static @NotNull MethodHandles.Lookup mockLookupClass(Class<?> clazz) throws Exception {
-        return MiscReflectionInternals.mockLookupClass(clazz);
+    public static @NotNull MethodHandles.Lookup lookupIn(Class<?> clazz) throws Exception {
+        return MiscReflectionInternals.lookupIn(clazz);
     }
 
     public static Class<?> accessRestrictedClass(String name, @Nullable ClassLoader loader) throws Throwable {

@@ -169,7 +169,7 @@ public class InstrumentationInternals {
         ModuleLayer.boot().findModule("java.instrument").ifPresent(module -> {
             try {
                 Class<?> cls = Class.forName("sun.instrument.InstrumentationImpl");
-                MethodHandles.Lookup lookup = MiscReflection.mockLookupClass(cls);
+                MethodHandles.Lookup lookup = MiscReflection.lookupIn(cls);
                 lookup.findStatic(cls, "loadAgent", MethodType.methodType(void.class, String.class))
                         .invokeWithArguments(self.toString());
             } catch (Throwable e) {
