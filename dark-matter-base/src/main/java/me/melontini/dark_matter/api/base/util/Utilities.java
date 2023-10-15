@@ -1,5 +1,10 @@
 package me.melontini.dark_matter.api.base.util;
 
+import lombok.SneakyThrows;
+import me.melontini.dark_matter.api.base.util.classes.ThrowingConsumer;
+import me.melontini.dark_matter.api.base.util.classes.ThrowingFunction;
+import me.melontini.dark_matter.api.base.util.classes.ThrowingRunnable;
+import me.melontini.dark_matter.api.base.util.classes.ThrowingSupplier;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -44,6 +49,27 @@ public final class Utilities {
 
     public static <F, U> U cast(F o) {
         return (U) o;
+    }
+
+    @SneakyThrows
+    public static <E extends Throwable> void runUnchecked(ThrowingRunnable<E> runnable) {
+        runnable.run();
+    }
+
+    @SneakyThrows
+    public static <T, E extends Throwable> T supplyUnchecked(ThrowingSupplier<T, E> supplier) {
+        return supplier.get();
+    }
+
+    @SneakyThrows
+    public static <T, E extends Throwable> T consumeUnchecked(T obj, ThrowingConsumer<T, E> consumer) {
+        consumer.accept(obj);
+        return obj;
+    }
+
+    @SneakyThrows
+    public static <T, R, E extends Throwable> R processUnchecked(T obj, ThrowingFunction<T, R, E> function) {
+        return function.apply(obj);
     }
 
     public static void run(Runnable runnable) {
