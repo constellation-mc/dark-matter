@@ -132,6 +132,11 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
+    public ConfigManager<T> getConfigManager() {
+        return this.manager;
+    }
+
+    @Override
     public void register(String id, Processor<T> processor) {
         validateId(id);
         var last = this.optionProcessors.put(id, new OptionProcessorEntry<>(id, processor));

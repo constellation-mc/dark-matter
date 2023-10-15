@@ -2,27 +2,19 @@ package me.melontini.dark_matter.impl.config;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableSet;
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import me.melontini.dark_matter.api.base.util.EntrypointRunner;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
-import me.melontini.dark_matter.api.config.interfaces.Fixups;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
-import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import net.fabricmc.loader.api.FabricLoader;
+import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -35,31 +27,26 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final Class<T> configClass;
     private final ConfigRef<T> config = new ConfigRef<>();
     private Lazy<T> defaultConfig;
-    private Supplier<T> constructor;
 
-    private final Path configPath;
-    private final Gson gson;
     private final ModContainer mod;
     private final String name;
 
-    private Function<JsonObject, JsonObject> fixupFunc;
     private Function<String, String> redirectFunc;
 
     private ConfigBuilder.Getter<T> getter;
     private ConfigBuilder.Setter<T> setter;
 
     private OptionManagerImpl<T> optionManager;
+    private ConfigSerializer<T> serializer;
 
     private final Map<Field, String> fieldToOption = new HashMap<>();
     private final Map<String, List<Field>> optionToFields = new LinkedHashMap<>();
 
     private final Set<ConfigClassScanner> scanners = new LinkedHashSet<>();
 
-    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name, Gson gson) {
+    public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name) {
         this.configClass = cls;
         this.name = name;
-        this.configPath = FabricLoader.getInstance().getConfigDir().resolve(name + ".json");
-        this.gson = gson;
         this.mod = mod;
     }
 
@@ -67,14 +54,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.optionManager = new OptionManagerImpl<>(this, defaultReason);
         if (registrar != null) registrar.accept(this.optionManager);
         EntrypointRunner.runEntrypoint(getShareId("processors"), Consumer.class, consumer -> Utilities.consume(this.optionManager, cast(consumer)));
-        return this;
-    }
-
-    ConfigManagerImpl<T> setFixups(FixupsBuilder builder) {
-        EntrypointRunner.run(getShareId("fixups"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
-
-        Fixups fixups = builder.build();
-        this.fixupFunc = fixups.isEmpty() ? Function.identity() : fixups::fixup;
         return this;
     }
 
@@ -100,11 +79,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> afterBuild(@Nullable Supplier<T> supplier) {
-        this.constructor = supplier;
+    ConfigManagerImpl<T> afterBuild(Function<ConfigManager<T>, ConfigSerializer<T>> serializer) {
+        this.serializer = serializer.apply(this);
 
         this.load();
-        this.defaultConfig = Lazy.of(() -> () -> this.constructor.get());
+        this.defaultConfig = Lazy.of(() -> () -> this.serializer.createDefault());
         return this;
     }
 
@@ -131,18 +110,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public void load() {
-        if (Files.exists(this.getPath())) {
-            try (var reader = Files.newBufferedReader(this.getPath())) {
-                JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
-
-                this.config.set(this.gson.fromJson(object, this.configClass));
-                this.save();
-                return;
-            } catch (IOException e) {
-                DarkMatterLog.error("Failed to load {}, using defaults", this.getPath());
-            }
-        }
-        this.config.set(this.constructor.get());
+        this.config.set(this.serializer.load());
         this.save();
     }
 
@@ -197,6 +165,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
+    public ConfigSerializer<T> getSerializer() {
+        return this.serializer;
+    }
+
+    @Override
     public ModContainer getMod() {
         return this.mod;
     }
@@ -216,19 +189,14 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public Path getPath() {
-        return this.configPath;
+    public Class<T> getType() {
+        return this.configClass;
     }
 
     @Override
     public void save() {
-        try {
-            this.getOptionManager().processOptions();
-            Files.createDirectories(this.getPath().getParent());
-            Files.write(this.getPath(), this.gson.toJson(this.getConfig()).getBytes());
-        } catch (Exception e) {
-            DarkMatterLog.error("Failed to save {}", this.getPath(), e);
-        }
+        this.getOptionManager().processOptions();
+        this.getSerializer().save();
     }
 
     private String getShareId(String key) {
