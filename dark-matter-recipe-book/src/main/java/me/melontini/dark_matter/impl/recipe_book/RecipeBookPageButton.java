@@ -3,10 +3,10 @@ package me.melontini.dark_matter.impl.recipe_book;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.melontini.dark_matter.api.minecraft.util.TextUtil;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
@@ -24,7 +24,7 @@ public class RecipeBookPageButton extends ButtonWidget {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
         this.hovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
         if (this.visible) {
@@ -34,9 +34,9 @@ public class RecipeBookPageButton extends ButtonWidget {
             int v = this.active ? 0 : 13;
 
             RenderSystem.enableDepthTest();
-            this.drawTexture(matrices, this.getX(), this.getY(), u + (next ? 14 : 0), v, this.width, this.height);
+            this.drawTexture(context, TEXTURE, this.getX(), this.getY(), u + (next ? 14 : 0), v, 0, this.width, this.height, 256, 256);
             if (this.hovered && MinecraftClient.getInstance().currentScreen != null) {
-                MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, TextUtil.literal(widget.dm$getPage() + 1 + "/" + widget.dm$getPageCount()), mouseX, mouseY);
+                context.drawTooltip(MinecraftClient.getInstance().textRenderer, TextUtil.literal(widget.dm$getPage() + 1 + "/" + widget.dm$getPageCount()), mouseX, mouseY);
             }
         }
     }

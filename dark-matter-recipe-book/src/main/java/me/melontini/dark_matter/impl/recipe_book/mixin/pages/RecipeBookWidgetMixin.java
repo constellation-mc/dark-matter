@@ -11,11 +11,9 @@ import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWi
 import me.melontini.dark_matter.impl.recipe_book.RecipeBookPageButton;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
 import net.minecraft.client.recipebook.RecipeBookGroup;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
