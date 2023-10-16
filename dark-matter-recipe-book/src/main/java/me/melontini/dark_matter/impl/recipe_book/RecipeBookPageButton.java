@@ -7,7 +7,6 @@ import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class RecipeBookPageButton extends ButtonWidget {
@@ -18,7 +17,7 @@ public class RecipeBookPageButton extends ButtonWidget {
     private final RecipeBookWidget widget;
 
     public RecipeBookPageButton(int x, int y, RecipeBookWidget widget, boolean next) {
-        super(x, y, 14, 13, next ? TextUtil.literal(">") : Text.literal("<"), button -> {});
+        super(x, y, 14, 13, next ? TextUtil.literal(">") : TextUtil.literal("<"), button -> {});
         this.widget = widget;
         this.next = next;
     }
