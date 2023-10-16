@@ -65,11 +65,11 @@ public class MiscReflectionInternals {
 
     public static VarHandle findVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
         Object m = resolveOrFail.getExc().invokeWithArguments(ReflectionInternals.trustedLookup(), (byte) 1, cls, name, type);
-        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, false);
+        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, true);
     }
 
     public static VarHandle findStaticVarHandle(Class<?> cls, String name, Class<?> type) throws Throwable {
         Object m = resolveOrFail.getExc().invokeWithArguments(ReflectionInternals.trustedLookup(), (byte) 2, cls, name, type);
-        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, false);
+        return (VarHandle) makeFieldHandle.getExc().invoke(m, cls, type, true);
     }
 }
