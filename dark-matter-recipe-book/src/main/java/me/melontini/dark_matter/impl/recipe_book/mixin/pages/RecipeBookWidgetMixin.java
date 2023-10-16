@@ -5,13 +5,15 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
 import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
+import me.melontini.dark_matter.impl.recipe_book.RecipeBookPageButton;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.recipebook.RecipeBookWidget;
 import net.minecraft.client.gui.screen.recipebook.RecipeGroupButtonWidget;
-import net.minecraft.client.gui.widget.ToggleButtonWidget;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Final;
@@ -28,7 +30,7 @@ import java.util.List;
 
 @Mixin(value = RecipeBookWidget.class, priority = 999)
 public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget {
-    @Shadow @Final protected static Identifier TEXTURE;
+
     @Shadow protected MinecraftClient client;
     @Shadow private int parentWidth;
     @Shadow private int parentHeight;
@@ -43,37 +45,22 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @Unique
     private int dm$pages;
     @Unique
-    private ToggleButtonWidget dm$nextPageButton;
+    private RecipeBookPageButton dm$nextPageButton;
     @Unique
-    private ToggleButtonWidget dm$prevPageButton;
+    private RecipeBookPageButton dm$prevPageButton;
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/recipebook/RecipeGroupButtonWidget;setToggled(Z)V", shift = At.Shift.BEFORE), method = "reset")
     private void dark_matter$reset(CallbackInfo ci) {
         int a = (this.parentWidth - dm$horizontalOffset()) / 2 - this.leftOffset;
-        int s = (this.parentHeight + dm$verticalOffset()) / 2;
-        this.dm$nextPageButton = new ToggleButtonWidget(a + 14, s + 2, 12, 17, false);
-        this.dm$nextPageButton.setTextureUV(1, 208, 13, 18, TEXTURE);
-        this.dm$prevPageButton = new ToggleButtonWidget(a - 35, s + 2, 12, 17, true);
-        this.dm$prevPageButton.setTextureUV(1, 208, 13, 18, TEXTURE);
+        int s = (this.parentHeight - dm$verticalOffset()) / 2;
+        this.dm$nextPageButton = new RecipeBookPageButton(a + 18, s - 13, Utilities.cast(this), true);
+        this.dm$prevPageButton = new RecipeBookPageButton(a + 3, s - 13, Utilities.cast(this), false);
     }
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/math/MatrixStack;pop()V", shift = At.Shift.BEFORE), method = "render")
     private void dark_matter$render(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        dark_matter$renderPageText(context);
         this.dm$prevPageButton.render(context, mouseX, mouseY, delta);
         this.dm$nextPageButton.render(context, mouseX, mouseY, delta);
-    }
-
-    @Unique
-    private void dark_matter$renderPageText(DrawContext context) {
-        if (this.dm$pages > 1) {
-            int x = (this.parentWidth - (dm$horizontalOffset() - 12)) / 2 - this.leftOffset - 10;
-            int y = (this.parentHeight + (dm$verticalOffset() + 3)) / 2 + 5;
-
-            String string = this.dm$page + 1 + "/" + this.dm$pages;
-            int textLength = this.client.textRenderer.getWidth(string);
-            context.drawText(this.client.textRenderer, string, (int) (x - textLength / 2F), y, -1, false);
-        }
     }
 
     @Inject(at = @At("HEAD"), method = "mouseClicked", cancellable = true)
@@ -136,8 +123,14 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @Unique
     @Override
     public void dm$updatePageSwitchButtons() {
-        if (this.dm$nextPageButton != null) this.dm$nextPageButton.visible = this.dm$pages > 1 && this.dm$page < (this.dm$pages - 1);
-        if (this.dm$prevPageButton != null) this.dm$prevPageButton.visible = this.dm$pages > 1 && this.dm$page != 0;
+        if (this.dm$nextPageButton != null) {
+            this.dm$nextPageButton.visible = this.dm$getPageCount() > 1;
+            this.dm$nextPageButton.active = this.dm$getPage() < (this.dm$getPageCount() - 1);
+        }
+        if (this.dm$prevPageButton != null) {
+            this.dm$prevPageButton.visible = this.dm$getPageCount() > 1;
+            this.dm$prevPageButton.active = this.dm$getPage() > 0;
+        }
     }
 
     @Unique
