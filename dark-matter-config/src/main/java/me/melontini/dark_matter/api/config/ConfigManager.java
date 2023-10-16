@@ -14,6 +14,7 @@ public interface ConfigManager<T> {
     T getConfig();
     Reference<T> getConfigRef();
     T getDefaultConfig();
+    T createDefault();
 
     <V> V get(String option) throws NoSuchFieldException;
     default <V> V get(Class<V> type, String option) throws NoSuchFieldException {

@@ -38,6 +38,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     private OptionManagerImpl<T> optionManager;
     private ConfigSerializer<T> serializer;
+    private Supplier<T> ctx;
 
     private final Map<Field, String> fieldToOption = new HashMap<>();
     private final Map<String, List<Field>> optionToFields = new LinkedHashMap<>();
@@ -79,11 +80,12 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> afterBuild(Function<ConfigManager<T>, ConfigSerializer<T>> serializer) {
+    ConfigManagerImpl<T> afterBuild(Function<ConfigManager<T>, ConfigSerializer<T>> serializer, Supplier<T> ctx) {
+        this.ctx = ctx;
         this.serializer = serializer.apply(this);
 
         this.load();
-        this.defaultConfig = Lazy.of(() -> () -> this.serializer.createDefault());
+        this.defaultConfig = Lazy.of(() -> () -> this.ctx.get());
         return this;
     }
 
@@ -131,6 +133,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public T getDefaultConfig() {
         return this.defaultConfig.get();
+    }
+
+    @Override
+    public T createDefault() {
+        return this.ctx.get();
     }
 
     @Override

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 /**
  * All parameters outside {@link ConfigBuilder#create(Class, ModContainer, String)} are optional.
@@ -24,7 +25,12 @@ public interface ConfigBuilder<T> {
     }
 
     /**
-     * The serializer used to create load and save your config. Defaults to GSON with no fixups and with a reflective constructor.
+     * Allows to build the config directly, instead of using reflection. Will fall back to reflection if not provided.
+     */
+    ConfigBuilder<T> constructor(Supplier<T> ctx);
+
+    /**
+     * The serializer used to create load and save your config. Defaults to GSON with no fixups.
      * <p>
      * Just a note, the function is called before the config is set.
      * <p>

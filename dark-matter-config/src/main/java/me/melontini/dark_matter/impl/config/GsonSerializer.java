@@ -14,25 +14,22 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
 public class GsonSerializer<T> implements ConfigSerializer<T> {
 
     private final ConfigManager<T> manager;
     private final Path configPath;
-    private final Supplier<T> ctx;
     private final Gson gson;
     private Function<JsonObject, JsonObject> fixupFunc = Function.identity();
 
-    public GsonSerializer(ConfigManager<T> manager, Supplier<T> ctx, Gson gson) {
+    public GsonSerializer(ConfigManager<T> manager, Gson gson) {
         this.manager = manager;
-        this.ctx = ctx;
         this.configPath = FabricLoader.getInstance().getConfigDir().resolve(manager.getName() + ".json");
         this.gson = gson;
     }
 
-    public GsonSerializer(ConfigManager<T> manager, Supplier<T> ctx) {
-        this(manager, ctx, new GsonBuilder().setPrettyPrinting().create());
+    public GsonSerializer(ConfigManager<T> manager) {
+        this(manager, new GsonBuilder().setPrettyPrinting().create());
     }
 
     public GsonSerializer<T> setFixups(Fixups fixups) {
@@ -51,7 +48,7 @@ public class GsonSerializer<T> implements ConfigSerializer<T> {
                 DarkMatterLog.error("Failed to load {}, using defaults", this.getPath());
             }
         }
-        return this.createDefault();
+        return this.manager.createDefault();
     }
 
     @Override
@@ -62,11 +59,6 @@ public class GsonSerializer<T> implements ConfigSerializer<T> {
         } catch (Exception e) {
             DarkMatterLog.error("Failed to save {}", this.getPath(), e);
         }
-    }
-
-    @Override
-    public T createDefault() {
-        return this.ctx.get();
     }
 
     @Override

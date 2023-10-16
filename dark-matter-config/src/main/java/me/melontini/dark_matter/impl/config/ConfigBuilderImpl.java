@@ -1,5 +1,7 @@
 package me.melontini.dark_matter.impl.config;
 
+import me.melontini.dark_matter.api.base.reflect.Reflect;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.config.ConfigBuilder;
 import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
@@ -14,6 +16,7 @@ import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static me.melontini.dark_matter.api.base.util.MakeSure.notNull;
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
@@ -25,6 +28,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     private final ModContainer mod;
 
     private Function<ConfigManager<T>, ConfigSerializer<T>> serializer;
+    private Supplier<T> ctx;
     private Consumer<OptionProcessorRegistry<T>> registrar;
     private ConfigClassScanner scanner;
     private Function<TextEntry.InfoHolder<T>, TextEntry> reasonFactory;
@@ -38,6 +42,12 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
         this.name = name;
         this.cls = cls;
         this.mod = mod;
+    }
+
+    @Override
+    public ConfigBuilder<T> constructor(Supplier<T> ctx) {
+        this.ctx = ctx;
+        return this;
     }
 
     @Override
@@ -89,7 +99,11 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
         .setAccessors(notNull(this.getter, this::defaultGetter), notNull(this.setter, this::defaultSetter))
         .setRedirects(this.redirects)
         .setScanner(this.scanner)
-        .afterBuild(notNull(this.serializer, () -> GsonSerializers::create));
+        .afterBuild(notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
+    }
+
+    private static <T> Supplier<T> defaultCtx(Class<T> cls) {
+        return () -> Utilities.supplyUnchecked(() -> Reflect.setAccessible(cls.getDeclaredConstructor()).newInstance());
     }
 
     private Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason() {

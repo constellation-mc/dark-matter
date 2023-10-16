@@ -11,8 +11,6 @@ public interface ConfigSerializer<T> {
     T load();
     @ApiStatus.OverrideOnly
     void save();
-    @ApiStatus.OverrideOnly
-    T createDefault();
 
     Path getPath();
     ConfigManager<T> getConfigManager();
