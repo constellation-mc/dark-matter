@@ -18,23 +18,23 @@ public class RecipeBookPageButton extends ButtonWidget {
     private final RecipeBookWidget widget;
 
     public RecipeBookPageButton(int x, int y, RecipeBookWidget widget, boolean next) {
-        super(x, y, 14, 13, next ? TextUtil.literal(">") : Text.literal("<"), button -> {});
+        super(x, y, 14, 13, next ? TextUtil.literal(">") : Text.literal("<"), button -> {}, DEFAULT_NARRATION_SUPPLIER);
         this.widget = widget;
         this.next = next;
     }
 
     @Override
     public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        this.hovered = mouseX >= this.x && mouseY >= this.y && mouseX < this.x + this.width && mouseY < this.y + this.height;
+        this.hovered = mouseX >= this.getX() && mouseY >= this.getY() && mouseX < this.getX() + this.width && mouseY < this.getY() + this.height;
 
         if (this.visible) {
-            RenderSystem.setShader(GameRenderer::getPositionTexShader);
+            RenderSystem.setShader(GameRenderer::getPositionTexProgram);
             RenderSystem.setShaderTexture(0, TEXTURE);
             int u = this.active && this.isHovered() ? 28 : 0;
             int v = this.active ? 0 : 13;
 
             RenderSystem.enableDepthTest();
-            this.drawTexture(matrices, this.x, this.y, u + (next ? 14 : 0), v, this.width, this.height);
+            this.drawTexture(matrices, this.getX(), this.getY(), u + (next ? 14 : 0), v, this.width, this.height);
             if (this.hovered && MinecraftClient.getInstance().currentScreen != null) {
                 MinecraftClient.getInstance().currentScreen.renderTooltip(matrices, TextUtil.literal(widget.dm$getPage() + 1 + "/" + widget.dm$getPageCount()), mouseX, mouseY);
             }
