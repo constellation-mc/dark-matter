@@ -167,7 +167,7 @@ public class InstrumentationInternals {
 
 
         AtomicReference<Throwable> t = new AtomicReference<>();
-        ModuleLayer.boot().findModule("java.instrument").ifPresent(module -> {
+        ModuleLayer.boot().findModule("java.instrument").map(module -> {
             try {
                 Class<?> cls = Class.forName("sun.instrument.InstrumentationImpl");
                 MethodHandles.Lookup lookup = MiscReflection.lookupIn(cls);
@@ -178,7 +178,8 @@ public class InstrumentationInternals {
                 if (throwable instanceof InvocationTargetException) throwable = throwable.getCause();
                 t.set(throwable);
             }
-        });
+            return self;
+        }).orElseThrow(() -> new IllegalStateException("'java.instrument' module is not available!"));
         if (t.get() != null) throw t.get();
 
         return ByteBuddyAgent.getInstrumentation();
