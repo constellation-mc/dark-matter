@@ -86,7 +86,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.serializer = serializer.apply(this);
 
         this.load();
-        this.defaultConfig = Lazy.of(() -> () -> this.ctx.get());
+        this.defaultConfig = Lazy.of(() -> this::createDefault);
         return this;
     }
 
@@ -113,12 +113,12 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public void load() {
-        this.config.set(this.serializer.load());
+        this.config.set(this.getSerializer().load());
         this.save();
     }
 
     private void startScan() {
-        iterate(this.configClass, "", new HashSet<>(Arrays.asList(this.configClass.getClasses())), new ArrayList<>());
+        iterate(this.getType(), "", new HashSet<>(Arrays.asList(this.getType().getClasses())), new ArrayList<>());
     }
 
     @Override

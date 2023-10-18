@@ -51,11 +51,11 @@ class ModJsonProcessor {
     }
 
     void parseMetadata(ModContainer mod) {
-        if (!mod.getMetadata().containsCustomValue(this.json_key)) return;
+        if (!mod.getMetadata().containsCustomValue(this.getKey())) return;
 
-        CustomValue customValue = mod.getMetadata().getCustomValue(this.json_key);
+        CustomValue customValue = mod.getMetadata().getCustomValue(this.getKey());
         if (customValue.getType() != CustomValue.CvType.ARRAY)
-            DarkMatterLog.error("{} must be an array. Mod: {} Type: {}", this.json_key, mod.getMetadata().getId(), customValue.getType());
+            DarkMatterLog.error("{} must be an array. Mod: {} Type: {}", this.getKey(), mod.getMetadata().getId(), customValue.getType());
         else {
             CustomValue.CvArray array = customValue.getAsArray();
 
@@ -87,7 +87,7 @@ class ModJsonProcessor {
 
             var converter = TYPES.get().get(f.getType());
             if (converter == null) {
-                DarkMatterLog.error("Unsupported {} type. Mod: {}, Type: {}", this.json_key, mod.getMetadata().getId(), f.getType());
+                DarkMatterLog.error("Unsupported {} type. Mod: {}, Type: {}", this.getKey(), mod.getMetadata().getId(), f.getType());
                 continue;
             }
             addModJson(mod, f, feature.getKey(), converter.apply(feature.getValue()));

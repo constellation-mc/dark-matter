@@ -50,7 +50,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     @Override
     public void processOptions() {
         this.optionProcessors.forEach((key, entry) -> {
-            var config = entry.processor().process(this.manager);
+            var config = entry.processor().process(this.getConfigManager());
             if (config != null && !config.isEmpty()) {
 
                 this.logger.get().info("Processor: {}", key);
@@ -78,8 +78,8 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
         config.forEach((s, o) -> {
             try {
-                this.manager.set(s, o);
-                Field f = this.manager.getField(s);
+                this.getConfigManager().set(s, o);
+                Field f = this.getConfigManager().getField(s);
                 this.modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(entry);
             } catch (NoSuchFieldException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, entry.id()), e);
@@ -99,22 +99,22 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
     @Override
     public boolean isModified(String option) throws NoSuchFieldException {
-        return isModified(this.manager.getField(option));
+        return isModified(this.getConfigManager().getField(option));
     }
 
     @Override
     public Tuple<String, Set<ProcessorEntry<T>>> blameProcessors(Field f) {
-        return Tuple.of(this.manager.getOption(f), Collections.unmodifiableSet(this.modifiedFields.getOrDefault(f, Collections.emptySet())));
+        return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modifiedFields.getOrDefault(f, Collections.emptySet())));
     }
 
     @Override
     public Set<ProcessorEntry<T>> blameProcessors(String option) throws NoSuchFieldException {
-        return Collections.unmodifiableSet(this.modifiedFields.getOrDefault(this.manager.getField(option), Collections.emptySet()));
+        return Collections.unmodifiableSet(this.modifiedFields.getOrDefault(this.getConfigManager().getField(option), Collections.emptySet()));
     }
 
     @Override
     public Tuple<String, Set<ModContainer>> blameModJson(Field f) {
-        return Tuple.of(this.manager.getOption(f), Collections.unmodifiableSet(this.modJsonProcessor.blameMods(f)));
+        return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modJsonProcessor.blameMods(f)));
     }
 
     @Override
@@ -125,7 +125,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     @Override
     public Optional<TextEntry> getReason(String processor, String option) {
         try {
-            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.manager, processor, option, this.manager.getField(option))));
+            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.getConfigManager(), processor, option, this.getConfigManager().getField(option))));
         } catch (NoSuchFieldException e) {
             return Optional.empty();
         }
