@@ -8,7 +8,7 @@ import org.jetbrains.annotations.ApiStatus;
 public interface FixupsBuilder {
 
     static FixupsBuilder create() {
-        return new FixupsImpl();
+        return new FixupsImpl().builder();
     }
 
     FixupsBuilder add(String key, Fixup fixup);
