@@ -127,11 +127,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public Reference<T> getConfigRef() {
-        return this.config;
-    }
-
-    @Override
     public T getDefaultConfig() {
         return this.defaultConfig.get();
     }
@@ -154,7 +149,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     public List<Field> getFields(String option) throws NoSuchFieldException {
         List<Field> f = this.optionToFields.get(option = this.redirectFunc.apply(option));
         if (f == null) throw new NoSuchFieldException(option);
-        return f;
+        return Collections.unmodifiableList(f);
     }
 
     @Override
@@ -211,11 +206,10 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this.getMod().getMetadata().getId() + ":config/" + this.getName() + "/" + key;
     }
 
-    static class ConfigRef<T> implements Reference<T> {
+    static class ConfigRef<T> {
 
         volatile T value;
 
-        @Override
         public T get() {
             return this.value;
         }
