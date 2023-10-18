@@ -37,10 +37,17 @@ public class MiscReflectionInternals {
     }
 
     private static final Lazy<MethodHandle> addOpensOrExports = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(Module.class, "implAddExportsOrOpens", MethodType.methodType(void.class, String.class, Module.class, boolean.class, boolean.class)));
+    private static final Lazy<MethodHandle> addUses = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(Module.class, "implAddUses", MethodType.methodType(void.class, Class.class)));
+    private static final Lazy<MethodHandle> addReads = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(Module.class, "implAddReads", MethodType.methodType(void.class, Module.class, boolean.class)));
 
-    @Deprecated
     public static void addOpensOrExports(Module module, String pn, Module other, boolean open, boolean syncVM) throws Throwable {
         addOpensOrExports.getExc().invokeWithArguments(module, pn, other, open, syncVM);
+    }
+    public static void addUses(Module module, Class<?> clazz) throws Throwable {
+        addUses.getExc().invokeWithArguments(module, clazz);
+    }
+    public static void addReads(Module module, Module other, boolean syncVM) throws Throwable {
+        addReads.getExc().invokeWithArguments(module, other, syncVM);
     }
 
     public static @NotNull MethodHandles.Lookup lookupIn(Class<?> clazz) throws Exception {
