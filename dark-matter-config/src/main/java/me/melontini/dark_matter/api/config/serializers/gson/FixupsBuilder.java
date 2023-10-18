@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.config.serializers.gson;
 
-import me.melontini.dark_matter.impl.config.FixupsImpl;
+import me.melontini.dark_matter.impl.config.serializers.gson.FixupsImpl;
 import org.jetbrains.annotations.ApiStatus;
 
 @ApiStatus.NonExtendable

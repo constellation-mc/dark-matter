@@ -14,7 +14,7 @@ import java.lang.reflect.Field;
 import java.util.*;
 import java.util.function.Function;
 
-public class ModJsonProcessor {
+class ModJsonProcessor {
 
     private static final Lazy<Map<Class<?>, Function<CustomValue, ?>>> TYPES = Lazy.of(() -> () -> Utilities.consume(new HashMap<>(), map -> {
         map.put(Byte.class, element -> element.getAsNumber().byteValue());

@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.impl.config;
+package me.melontini.dark_matter.impl.config.serializers.gson;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

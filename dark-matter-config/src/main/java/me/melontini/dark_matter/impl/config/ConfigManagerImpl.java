@@ -209,4 +209,23 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private String getShareId(String key) {
         return this.getMod().getMetadata().getId() + ":config/" + this.getName() + "/" + key;
     }
+
+    static class ConfigRef<T> implements Reference<T> {
+
+        volatile T value;
+
+        @Override
+        public T get() {
+            return this.value;
+        }
+
+        void set(T value) {
+            this.value = value;
+        }
+
+        @Override
+        public String toString() {
+            return String.valueOf(this.value);
+        }
+    }
 }
