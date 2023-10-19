@@ -125,7 +125,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     @Override
     public Optional<TextEntry> getReason(String processor, String option) {
         try {
-            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.getConfigManager(), processor, option, this.getConfigManager().getField(option))));
+            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.getConfigManager(), this.getProcessor(processor).orElseThrow(() -> new NoSuchFieldException("processor: " + processor)), option, this.getConfigManager().getField(option))));
         } catch (NoSuchFieldException e) {
             return Optional.empty();
         }
