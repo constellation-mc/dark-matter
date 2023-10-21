@@ -1,9 +1,11 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
+import me.melontini.dark_matter.api.base.util.mixin.annotations.AsmTransformers;
 import me.melontini.dark_matter.api.base.util.mixin.annotations.Publicize;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
+import me.melontini.dark_matter.impl.enums.EnchantmentTargetTransformer;
 import me.melontini.dark_matter.impl.enums.interfaces.EnchantmentTargetHack;
 import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.item.Item;
@@ -16,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.function.Predicate;
 
+@AsmTransformers(EnchantmentTargetTransformer.class)
 @Mixin(value = EnchantmentTarget.class, priority = 1001)
 public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget>, EnchantmentTargetHack {
     @Shadow
