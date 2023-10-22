@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.impl.enums;
+package me.melontini.dark_matter.impl.enums.transformers;
 
 import me.melontini.dark_matter.api.base.util.Mapper;
 import me.melontini.dark_matter.api.base.util.mixin.AsmUtil;
