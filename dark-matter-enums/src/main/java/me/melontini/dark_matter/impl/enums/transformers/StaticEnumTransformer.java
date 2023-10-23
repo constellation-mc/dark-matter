@@ -18,8 +18,12 @@ public class StaticEnumTransformer implements IAsmTransformer {
 
     private static final Type ITF = Type.getObjectType("me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum");
     private static final Type OBJECT = Type.getType(Object.class);
+    private static final Type OBJECT_ARRAY = Type.getType(Object[].class);
+    private static final Type STRING = Type.getType(String.class);
+
     private static final String METHOD_NAME = "dark_matter$extendEnum";
-    private static final String INIT_METHOD = "dark_matter$init";
+    private static final String INIT_NAME = "dark_matter$init";
+    private static final String INIT_DESC = "(" + OBJECT_ARRAY.getDescriptor() + ")V";
 
     private static boolean loadsArray(InsnList insnList) {
         for (AbstractInsnNode ins : insnList) {
@@ -32,37 +36,26 @@ public class StaticEnumTransformer implements IAsmTransformer {
 
     @Override
     public void afterApply(ClassNode targetClass, IMixinInfo mixinInfo) {
-        if ((targetClass.access & Opcodes.ACC_ENUM) == 0) return;
+        if ((targetClass.access & Opcodes.ACC_ENUM) == 0 || (targetClass.access & Opcodes.ACC_ABSTRACT) == Opcodes.ACC_ABSTRACT) return;
 
         for (MethodNode method : targetClass.methods) {
             if (METHOD_NAME.equals(method.name)) return;
         }
 
-        MethodNode init = targetClass.methods.stream().filter(methodNode -> methodNode.name.equals(INIT_METHOD)).findFirst().orElse(null);
+        MethodNode init = targetClass.methods.stream().filter(method -> INIT_NAME.equals(method.name) && INIT_DESC.equals(method.desc)).findFirst().orElse(null);
         boolean passArgs = init != null && loadsArray(init.instructions);
 
         int mod = Modifier.PRIVATE | Modifier.STATIC | Opcodes.ACC_SYNTHETIC;
         String desc = "[L" + targetClass.name + ";";
-        FieldNode tempValues = null;
-        for (FieldNode field : targetClass.fields) {
-            if (desc.equals(field.desc) && (field.access & mod) == mod) {
-                tempValues = field;
-                break;
-            }
-        }
-        if (tempValues == null) return;
-        FieldNode values = tempValues;
+        FieldNode values = targetClass.fields.stream().filter(field -> desc.equals(field.desc) && (field.access & mod) == mod).findFirst().orElse(null);
+        if (values == null) return;
         values.access = values.access & ~Opcodes.ACC_FINAL;
 
-        List<MethodNode> ctxs = new ArrayList<>();
-        for (MethodNode method : targetClass.methods) {
-            if (method.name.equals("<init>")) ctxs.add(method);
-        }
+        List<MethodNode> ctxs = targetClass.methods.stream().filter(method -> "<init>".equals(method.name)).toList();
         if (ctxs.isEmpty()) return;
 
         if (targetClass.interfaces == null) targetClass.interfaces = new ArrayList<>();
-        if (!targetClass.interfaces.contains(ITF.getInternalName()))
-            targetClass.interfaces.add(ITF.getInternalName());
+        if (!targetClass.interfaces.contains(ITF.getInternalName())) targetClass.interfaces.add(ITF.getInternalName());
 
         Type target = Type.getObjectType(targetClass.name);
         for (MethodNode ctx : ctxs) {
@@ -93,9 +86,9 @@ public class StaticEnumTransformer implements IAsmTransformer {
                 Label l3 = new Label();
                 ia.mark(l3);
                 ia.load(a + 3, OBJECT);
-                ia.invokevirtual(target.getInternalName(), "name", "()Ljava/lang/String;", false);
+                ia.invokevirtual(target.getInternalName(), "name", "()" + STRING.getDescriptor(), false);
                 ia.load(0, OBJECT);
-                ia.invokevirtual("java/lang/String", "equalsIgnoreCase", "(Ljava/lang/String;)Z", false);
+                ia.invokevirtual(STRING.getInternalName(), "equalsIgnoreCase", "(" + STRING.getDescriptor() + ")Z", false);
 
                 Label l4 = new Label();
                 ia.ifeq(l4);
@@ -130,7 +123,7 @@ public class StaticEnumTransformer implements IAsmTransformer {
 
                 ia.getstatic(target.getInternalName(), values.name, values.desc);
                 ia.load(a + 1, OBJECT);
-                ia.invokestatic("org/apache/commons/lang3/ArrayUtils", "add", "([Ljava/lang/Object;Ljava/lang/Object;)[Ljava/lang/Object;", false);
+                ia.invokestatic("org/apache/commons/lang3/ArrayUtils", "add", "(" + OBJECT_ARRAY.getDescriptor() + OBJECT.getDescriptor() + ")" + OBJECT_ARRAY.getDescriptor(), false);
                 ia.checkcast(Type.getObjectType(desc));
                 ia.putstatic(target.getInternalName(), values.name, values.desc);
 
@@ -155,8 +148,8 @@ public class StaticEnumTransformer implements IAsmTransformer {
                     } else {
                         ia.aconst(null);
                     }
-                    ia.checkcast(Type.getObjectType("[Ljava/lang/Object;"));
-                    ia.invokevirtual(target.getInternalName(), INIT_METHOD, "([Ljava/lang/Object;)V", false);
+                    ia.checkcast(OBJECT_ARRAY);
+                    ia.invokevirtual(target.getInternalName(), INIT_NAME, INIT_DESC, false);
                 }
 
                 ia.aconst("Extended enum {}");
@@ -166,7 +159,7 @@ public class StaticEnumTransformer implements IAsmTransformer {
                 ia.iconst(0);
                 ia.load(a + 1, OBJECT);
                 ia.astore(OBJECT);
-                ia.invokestatic("me/melontini/dark_matter/impl/base/DarkMatterLog", "debug", "(Ljava/lang/String;[Ljava/lang/Object;)V", false);
+                ia.invokestatic("me/melontini/dark_matter/impl/base/DarkMatterLog", "debug", "(" + STRING.getDescriptor() + OBJECT_ARRAY.getDescriptor() + ")V", false);
 
                 ia.load(a + 1, OBJECT);
                 ia.areturn(OBJECT);
