@@ -2,7 +2,6 @@ package me.melontini.dark_matter.impl.mirage;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.datafixers.util.Pair;
-import me.melontini.dark_matter.api.base.reflect.UnsafeAccess;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -33,7 +32,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.UUID;
-import java.util.concurrent.Callable;
 
 @ApiStatus.Internal
 public class FakeWorld {
@@ -41,22 +39,17 @@ public class FakeWorld {
     public static Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
         DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
 
-        try {
-            var regs = FakeWorld.getRegistries();
+        var regs = FakeWorld.getRegistries();
 
-            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
-            networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+        ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
+        networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
 
-            return new ClientWorld(networkHandler,
-                    orNull(() -> new ClientWorld.Properties(Difficulty.EASY, false, false)),
-                    World.OVERWORLD,
-                    regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
-                    0, 0, null,
-                    MinecraftClient.getInstance().worldRenderer, true, 0);
-        } catch (Throwable e) {
-            DarkMatterLog.error("Failed to create fake world, falling back to unsafe", e);
-            return UnsafeAccess.allocateInstance(ClientWorld.class);
-        }
+        return new ClientWorld(networkHandler,
+                new ClientWorld.Properties(Difficulty.EASY, false, false),
+                World.OVERWORLD,
+                regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
+                0, 0, null,
+                MinecraftClient.getInstance().worldRenderer, true, 0);
     });
 
     private static CombinedDynamicRegistries<ServerDynamicRegistryType> getRegistries() throws IOException {
@@ -91,14 +84,6 @@ public class FakeWorld {
         }
 
         return combinedDynamicRegistries2.with(ServerDynamicRegistryType.DIMENSIONS, dimensionsConfig.toDynamicRegistryManager());
-    }
-
-    private static <T> T orNull(Callable<T> c) {
-        try {
-            return c.call();
-        } catch (Throwable e) {
-            return null;
-        }
     }
 
     public static void init() {
