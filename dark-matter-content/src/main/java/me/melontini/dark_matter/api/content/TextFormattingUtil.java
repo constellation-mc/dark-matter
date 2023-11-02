@@ -26,5 +26,4 @@ public class TextFormattingUtil {
     public static @NotNull TextColor addTextColor(@NotNull Formatting formatting) {
         return TextFormattingInternals.addTextColor(formatting);
     }
-
 }

@@ -173,5 +173,4 @@ public class RegistryUtil {
     public static <T extends ScreenHandler> ScreenHandlerType<T> createScreenHandler(BooleanSupplier register, Identifier id, Supplier<ScreenHandlerType.Factory<T>> factory) {
         return RegistryInternals.createScreenHandler(register, id, factory);
     }
-
 }
