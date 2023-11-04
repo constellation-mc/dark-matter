@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util;
 
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.classes.ThrowingRunnable;
 import me.melontini.dark_matter.api.base.util.classes.ThrowingSupplier;
 import net.fabricmc.api.EnvType;
@@ -8,6 +9,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+@UtilityClass
 public class Support {
 
     public static void run(String modId, Supplier<Runnable> runnable) {

@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.content;
 
 import com.mojang.datafixers.types.Type;
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
@@ -26,12 +27,9 @@ import java.util.function.Supplier;
 /**
  * Most things don't work without Fabric API.
  */
+@UtilityClass
 @SuppressWarnings("unused")
 public class ContentBuilder {
-
-    private ContentBuilder() {
-        throw new UnsupportedOperationException();
-    }
 
     public interface CommonBuilder<T> {
 

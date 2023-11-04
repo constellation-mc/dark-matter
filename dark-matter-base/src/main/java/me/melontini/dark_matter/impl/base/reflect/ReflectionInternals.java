@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeAccess;
 import me.melontini.dark_matter.api.base.util.MakeSure;
@@ -20,11 +21,8 @@ import java.util.List;
 /**
  * @author <a href="https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass">source</a>
  */
-@ApiStatus.Internal
+@UtilityClass
 public class ReflectionInternals {
-    private ReflectionInternals() {
-        throw new UnsupportedOperationException();
-    }
 
     public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, List<Object> args) {
         Constructor<T> c = null;

@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.recipe_book;
 
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.impl.recipe_book.ClientRecipeBookUtils;
 import me.melontini.dark_matter.impl.recipe_book.RecipeBookUtils;
 import net.fabricmc.api.EnvType;
@@ -17,11 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.Function;
 
+@UtilityClass
 public final class RecipeBookHelper {
-
-    private RecipeBookHelper() {
-        throw new UnsupportedOperationException();
-    }
 
     /**
      * Allows you to map a recipe to a group.
