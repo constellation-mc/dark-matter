@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.recipe_book;
 
-import me.melontini.dark_matter.impl.recipe_book.RecipeBookInternals;
+import me.melontini.dark_matter.impl.recipe_book.ClientRecipeBookUtils;
+import me.melontini.dark_matter.impl.recipe_book.RecipeBookUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;
@@ -32,7 +33,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
-        RecipeBookInternals.registerGroupLookup(type, lookup);
+        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
     }
 
     //
@@ -72,7 +73,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroups(@NotNull RecipeBookCategory category, List<RecipeBookGroup> groups) {
-        RecipeBookInternals.registerGroups(category, groups);
+        ClientRecipeBookUtils.registerGroups(category, groups);
     }
 
     /**
@@ -84,7 +85,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroups(@NotNull RecipeBookCategory category, int index, @NotNull List<RecipeBookGroup> groups) {
-        RecipeBookInternals.registerGroups(category, index, groups);
+        ClientRecipeBookUtils.registerGroups(category, index, groups);
     }
 
     //
@@ -118,7 +119,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, @NotNull List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToSearchGroup(searchGroup, groups);
+        ClientRecipeBookUtils.addToSearchGroup(searchGroup, groups);
     }
 
     /**
@@ -128,7 +129,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void addToSearchGroup(@NotNull RecipeBookGroup searchGroup, int index, @NotNull List<RecipeBookGroup> groups) {
-        RecipeBookInternals.addToSearchGroup(searchGroup, index, groups);
+        ClientRecipeBookUtils.addToSearchGroup(searchGroup, index, groups);
     }
 
     //
@@ -156,9 +157,9 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, @NotNull List<RecipeBookGroup> groups) {
-        RecipeBookInternals.registerGroups(category, groups);
+        ClientRecipeBookUtils.registerGroups(category, groups);
         groups.remove(searchGroup);
-        RecipeBookInternals.addToSearchGroup(searchGroup, groups);
+        ClientRecipeBookUtils.addToSearchGroup(searchGroup, groups);
     }
 
     /**
@@ -166,9 +167,9 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerAndAddToSearch(@NotNull RecipeBookCategory category, @NotNull RecipeBookGroup searchGroup, int index, @NotNull List<RecipeBookGroup> groups) {
-        RecipeBookInternals.registerGroups(category, index, groups);
+        ClientRecipeBookUtils.registerGroups(category, index, groups);
         groups.remove(searchGroup);
-        RecipeBookInternals.addToSearchGroup(searchGroup, Math.max(index - 1, 0), groups);
+        ClientRecipeBookUtils.addToSearchGroup(searchGroup, Math.max(index - 1, 0), groups);
     }
 
     //
@@ -179,7 +180,7 @@ public final class RecipeBookHelper {
      * Creates a {@link RecipeBookCategory}. This is meant to be used in the main init of your mod.
      */
     public static RecipeBookCategory createCategory(@NotNull Identifier id) {
-        return RecipeBookInternals.createCategory(id.toString().replace('/', '_').replace(':', '_'));
+        return RecipeBookUtils.createCategory(id.toString().replace('/', '_').replace(':', '_'));
     }
 
     /**
@@ -188,7 +189,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static RecipeBookGroup createGroup(@NotNull Identifier id, ItemStack... stacks) {
-        return RecipeBookInternals.createGroup(id.toString().replace('/', '_').replace(':', '_'), stacks);
+        return ClientRecipeBookUtils.createGroup(id.toString().replace('/', '_').replace(':', '_'), stacks);
     }
 
     @Environment(EnvType.CLIENT)
