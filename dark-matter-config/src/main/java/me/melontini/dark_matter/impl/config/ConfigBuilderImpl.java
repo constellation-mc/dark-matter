@@ -58,37 +58,37 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilderImpl<T> redirects(Consumer<RedirectsBuilder> redirects) {
+    public ConfigBuilder<T> redirects(Consumer<RedirectsBuilder> redirects) {
         redirects.accept(this.redirects);
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> getter(Getter<T> getter) {
+    public ConfigBuilder<T> getter(Getter<T> getter) {
         this.getter = getter;
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> setter(Setter<T> setter) {
+    public ConfigBuilder<T> setter(Setter<T> setter) {
         this.setter = setter;
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer) {
+    public ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer) {
         this.registrar = consumer;
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> scanner(ConfigClassScanner scanner) {
+    public ConfigBuilder<T> scanner(ConfigClassScanner scanner) {
         this.scanner = scanner;
         return this;
     }
 
     @Override
-    public ConfigBuilderImpl<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+    public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
         this.reasonFactory = reason;
         return this;
     }

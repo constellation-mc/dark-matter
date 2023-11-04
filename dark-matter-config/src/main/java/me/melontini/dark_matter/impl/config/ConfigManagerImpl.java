@@ -17,7 +17,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -32,7 +31,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final ModContainer mod;
     private final String name;
 
-    private Function<String, String> redirectFunc;
+    private Function<String, String> redirects;
 
     private ConfigBuilder.Getter<T> getter;
     private ConfigBuilder.Setter<T> setter;
@@ -60,10 +59,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     ConfigManagerImpl<T> setRedirects(RedirectsBuilder builder) {
-        EntrypointRunner.run(getShareId("redirects"), Consumer.class, consumer -> Utilities.consume(builder, cast(consumer)));
-
         Redirects redirects = builder.build();
-        this.redirectFunc = redirects.isEmpty() ? Function.identity() : redirects::redirect;
+        this.redirects = redirects.isEmpty() ? Function.identity() : redirects::redirect;
         return this;
     }
 
@@ -77,7 +74,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.scanners.add(scanner);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
-        startScan();
+
+        iterate(this.getType(), "", new HashSet<>(Arrays.asList(this.getType().getClasses())), new ArrayList<>());
         return this;
     }
 
@@ -117,10 +115,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.save();
     }
 
-    private void startScan() {
-        iterate(this.getType(), "", new HashSet<>(Arrays.asList(this.getType().getClasses())), new ArrayList<>());
-    }
-
     @Override
     public T getConfig() {
         return this.config.get();
@@ -139,7 +133,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public <V> V get(String option) throws NoSuchFieldException {
         try {
-            return cast(this.getter.get(this, this.redirectFunc.apply(option)));
+            return cast(this.getter.get(this, this.redirects.apply(option)));
         } catch (IllegalAccessException t) {
             throw new RuntimeException(t);
         }
@@ -147,7 +141,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public List<Field> getFields(String option) throws NoSuchFieldException {
-        List<Field> f = this.optionToFields.get(option = this.redirectFunc.apply(option));
+        List<Field> f = this.optionToFields.get(option = this.redirects.apply(option));
         if (f == null) throw new NoSuchFieldException(option);
         return Collections.unmodifiableList(f);
     }
@@ -185,7 +179,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void set(String option, Object value) throws NoSuchFieldException {
         try {
-            this.setter.set(this, this.redirectFunc.apply(option), value);
+            this.setter.set(this, this.redirects.apply(option), value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
@@ -206,15 +200,15 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this.getMod().getMetadata().getId() + ":config/" + this.getName() + "/" + key;
     }
 
-    static class ConfigRef<T> {
+    private static class ConfigRef<T> {
 
-        volatile T value;
+        private volatile T value;
 
-        public T get() {
+        private T get() {
             return this.value;
         }
 
-        void set(T value) {
+        private void set(T value) {
             this.value = value;
         }
 
