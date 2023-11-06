@@ -77,10 +77,12 @@ public interface ConfigBuilder<T> {
     ConfigManager<T> build();
 
     interface Getter<T> {
-        Object get(ConfigManager<T> configManager, String option) throws NoSuchFieldException, IllegalAccessException;
+        Object get(AccessorContext<T> context, String option) throws NoSuchFieldException, IllegalAccessException;
     }
 
     interface Setter<T> {
-        void set(ConfigManager<T> manager, String option, Object value) throws NoSuchFieldException, IllegalAccessException;
+        void set(AccessorContext<T> context, String option, Object value) throws NoSuchFieldException, IllegalAccessException;
     }
+
+    record AccessorContext<T>(ConfigManager<T> manager, T config) {}
 }

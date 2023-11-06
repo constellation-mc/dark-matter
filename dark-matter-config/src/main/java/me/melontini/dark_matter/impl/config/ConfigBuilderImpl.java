@@ -112,9 +112,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     private Getter<T> defaultGetter() {
-        return (manager, option) -> {
-            List<Field> fields = manager.getFields(option);
-            Object obj = manager.getConfig();
+        return (context, option) -> {
+            List<Field> fields = context.manager().getFields(option);
+            Object obj = context.config();
             for (Field field : fields) {
                 field.setAccessible(true);
                 obj = field.get(obj);
@@ -124,9 +124,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     private Setter<T> defaultSetter() {
-        return (manager, option, value) -> {
-            List<Field> fields = manager.getFields(option);
-            Object obj = manager.getConfig();
+        return (context, option, value) -> {
+            List<Field> fields = context.manager().getFields(option);
+            Object obj = context.config();
             for (int i = 0; i < fields.size() - 1; i++) {
                 Field field = fields.get(i);
                 field.setAccessible(true);

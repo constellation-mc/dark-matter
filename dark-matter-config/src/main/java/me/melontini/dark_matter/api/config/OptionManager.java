@@ -33,7 +33,5 @@ public interface OptionManager<T> {
 
     ConfigManager<T> getConfigManager();
 
-    record ProcessorEntry<T>(String id, Processor<T> processor, ModContainer mod) {
-
-    }
+    record ProcessorEntry<T>(String id, Processor<T> processor, ModContainer mod) { }
 }

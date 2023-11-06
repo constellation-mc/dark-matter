@@ -133,7 +133,16 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public <V> V get(String option) throws NoSuchFieldException {
         try {
-            return cast(this.getter.get(this, this.redirects.apply(option)));
+            return cast(this.getter.get(new ConfigBuilder.AccessorContext<>(this, getConfig()), this.redirects.apply(option)));
+        } catch (IllegalAccessException t) {
+            throw new RuntimeException(t);
+        }
+    }
+
+    @Override
+    public <V> V getDefault(String option) throws NoSuchFieldException {
+        try {
+            return cast(this.getter.get(new ConfigBuilder.AccessorContext<>(this, getDefaultConfig()), this.redirects.apply(option)));
         } catch (IllegalAccessException t) {
             throw new RuntimeException(t);
         }
@@ -179,7 +188,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void set(String option, Object value) throws NoSuchFieldException {
         try {
-            this.setter.set(this, this.redirects.apply(option), value);
+            this.setter.set(new ConfigBuilder.AccessorContext<>(this, getConfig()), this.redirects.apply(option), value);
         } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
