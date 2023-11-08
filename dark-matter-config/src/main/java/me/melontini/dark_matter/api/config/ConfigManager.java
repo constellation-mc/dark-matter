@@ -20,6 +20,11 @@ public interface ConfigManager<T> {
     <V> V getDefault(String option) throws NoSuchFieldException;
     default <V> V getDefault(Class<V> type, String option) throws NoSuchFieldException {return get(option);}
     void set(String option, Object value) throws NoSuchFieldException;
+    default void resetToDefault(String... options) throws NoSuchFieldException {
+        for (String option : options) {
+            set(option, getDefault(option));
+        }
+    }
 
     List<Field> getFields(String option) throws NoSuchFieldException;
     default Field getField(String option) throws NoSuchFieldException {
