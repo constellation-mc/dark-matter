@@ -4,6 +4,7 @@ import me.melontini.dark_matter.api.base.util.PrependingLogger;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import me.melontini.dark_matter.api.config.ConfigManager;
+import me.melontini.dark_matter.api.config.NoSuchOptionException;
 import me.melontini.dark_matter.api.config.OptionManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
@@ -81,7 +82,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
                 this.getConfigManager().set(s, o);
                 Field f = this.getConfigManager().getField(s);
                 this.modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(entry);
-            } catch (NoSuchFieldException e) {
+            } catch (NoSuchOptionException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, entry.id()), e);
             }
         });
@@ -98,7 +99,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public boolean isModified(String option) throws NoSuchFieldException {
+    public boolean isModified(String option) {
         return isModified(this.getConfigManager().getField(option));
     }
 
@@ -108,7 +109,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Set<ProcessorEntry<T>> blameProcessors(String option) throws NoSuchFieldException {
+    public Set<ProcessorEntry<T>> blameProcessors(String option) {
         return Collections.unmodifiableSet(this.modifiedFields.getOrDefault(this.getConfigManager().getField(option), Collections.emptySet()));
     }
 
@@ -118,7 +119,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Set<ModContainer> blameModJson(String option) throws NoSuchFieldException {
+    public Set<ModContainer> blameModJson(String option) {
         return Collections.unmodifiableSet(this.modJsonProcessor.blameMods(option));
     }
 

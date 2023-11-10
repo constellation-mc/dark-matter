@@ -16,7 +16,7 @@ import java.util.Set;
 public interface OptionManager<T> {
 
     boolean isModified(Field f);
-    boolean isModified(String option) throws NoSuchFieldException;
+    boolean isModified(String option);
 
     void processOptions();
 
@@ -24,10 +24,10 @@ public interface OptionManager<T> {
     Optional<ProcessorEntry<T>> getProcessor(String id);
 
     Tuple<String, Set<ProcessorEntry<T>>> blameProcessors(Field f);
-    Set<ProcessorEntry<T>> blameProcessors(String option) throws NoSuchFieldException;
+    Set<ProcessorEntry<T>> blameProcessors(String option);
 
     Tuple<String, Set<ModContainer>> blameModJson(Field f);
-    Set<ModContainer> blameModJson(String option) throws NoSuchFieldException;
+    Set<ModContainer> blameModJson(String option);
 
     Optional<TextEntry> getReason(String processor, String option);
 

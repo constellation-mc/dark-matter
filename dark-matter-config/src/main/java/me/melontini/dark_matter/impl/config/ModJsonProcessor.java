@@ -77,13 +77,7 @@ class ModJsonProcessor {
 
     private void processValues(CustomValue.CvObject values, ModContainer mod) {
         for (Map.Entry<String, CustomValue> feature : values) {
-            Field f;
-            try {
-                f = manager.getField(feature.getKey());
-            } catch (NoSuchFieldException e) {
-                DarkMatterLog.error("Couldn't find option {}. Mod: {}", feature.getKey(), mod.getMetadata().getId());
-                continue;
-            }
+            Field f = manager.getField(feature.getKey());
 
             var converter = TYPES.get().get(f.getType());
             if (converter == null) {
@@ -94,7 +88,7 @@ class ModJsonProcessor {
         }
     }
 
-    Set<ModContainer> blameMods(String feature) throws NoSuchFieldException {
+    Set<ModContainer> blameMods(String feature) {
         return modBlame.getOrDefault(manager.getField(feature), Collections.emptySet());
     }
 

@@ -112,7 +112,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     private Getter<T> defaultGetter() {
-        return (context, option) -> {
+        return (context, option) -> Utilities.supplyUnchecked(() -> {
             List<Field> fields = context.manager().getFields(option);
             Object obj = context.config();
             for (Field field : fields) {
@@ -120,11 +120,11 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
                 obj = field.get(obj);
             }
             return cast(obj);
-        };
+        });
     }
 
     private Setter<T> defaultSetter() {
-        return (context, option, value) -> {
+        return (context, option, value) -> Utilities.runUnchecked(() -> {
             List<Field> fields = context.manager().getFields(option);
             Object obj = context.config();
             for (int i = 0; i < fields.size() - 1; i++) {
@@ -135,6 +135,6 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
             Field f = fields.get(fields.size() - 1);
             f.setAccessible(true);
             f.set(obj, value);
-        };
+        });
     }
 }

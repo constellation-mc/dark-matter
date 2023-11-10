@@ -15,19 +15,22 @@ public interface ConfigManager<T> {
     T getDefaultConfig();
     T createDefault();
 
-    <V> V get(String option) throws NoSuchFieldException;
-    default <V> V get(Class<V> type, String option) throws NoSuchFieldException {return get(option);}
-    <V> V getDefault(String option) throws NoSuchFieldException;
-    default <V> V getDefault(Class<V> type, String option) throws NoSuchFieldException {return get(option);}
-    void set(String option, Object value) throws NoSuchFieldException;
-    default void resetToDefault(String... options) throws NoSuchFieldException {
+    /**
+     * @throws NoSuchOptionException if the option is not found
+     */
+    <V> V get(String option);
+    default <V> V get(Class<V> type, String option) {return get(option);}
+    <V> V getDefault(String option);
+    default <V> V getDefault(Class<V> type, String option) {return get(option);}
+    void set(String option, Object value);
+    default void resetToDefault(String... options) {
         for (String option : options) {
             set(option, getDefault(option));
         }
     }
 
-    List<Field> getFields(String option) throws NoSuchFieldException;
-    default Field getField(String option) throws NoSuchFieldException {
+    List<Field> getFields(String option);
+    default Field getField(String option) {
         List<Field> fields = getFields(option);
         return fields.get(fields.size() - 1);
     }
