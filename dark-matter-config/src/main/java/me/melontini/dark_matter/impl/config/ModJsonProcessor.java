@@ -12,6 +12,7 @@ import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 class ModJsonProcessor {
@@ -39,8 +40,8 @@ class ModJsonProcessor {
         map.put(char.class, element -> element.getAsString().charAt(0));
     }));
 
-    final Map<String, Object> modJson = new LinkedHashMap<>();
-    private final Map<Field, Set<ModContainer>> modBlame = new HashMap<>();
+    final Map<String, Object> modJson = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<Field, Set<ModContainer>> modBlame = new ConcurrentHashMap<>();
     private final String json_key;
     private final ConfigManager<?> manager;
     boolean done = false;

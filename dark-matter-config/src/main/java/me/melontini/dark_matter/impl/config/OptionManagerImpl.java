@@ -15,17 +15,18 @@ import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
 public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRegistry<T> {
 
-    private final Map<String, ProcessorEntry<T>> optionProcessors = new LinkedHashMap<>();
+    private final Map<String, ProcessorEntry<T>> optionProcessors = Collections.synchronizedMap(new LinkedHashMap<>());
     private final ConfigManager<T> manager;
     private final Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason;
-    private final Map<String, Function<TextEntry.InfoHolder<T>, TextEntry>> customReasons = new HashMap<>();
+    private final Map<String, Function<TextEntry.InfoHolder<T>, TextEntry>> customReasons = new ConcurrentHashMap<>();
     private final Lazy<PrependingLogger> logger;
 
-    private final Map<Field, Set<ProcessorEntry<T>>> modifiedFields = new HashMap<>();
+    private final Map<Field, Set<ProcessorEntry<T>>> modifiedFields = new ConcurrentHashMap<>();
 
     private final ModJsonProcessor modJsonProcessor;
 

@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -40,10 +41,10 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private ConfigSerializer<T> serializer;
     private Supplier<T> ctx;
 
-    private final Map<Field, String> fieldToOption = new HashMap<>();
-    private final Map<String, List<Field>> optionToFields = new LinkedHashMap<>();
+    private final Map<Field, String> fieldToOption = new ConcurrentHashMap<>();
+    private final Map<String, List<Field>> optionToFields = Collections.synchronizedMap(new LinkedHashMap<>());
 
-    private final Set<ConfigClassScanner> scanners = new LinkedHashSet<>();
+    private final Set<ConfigClassScanner> scanners = Collections.synchronizedSet(new LinkedHashSet<>());
 
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name) {
         this.configClass = cls;
