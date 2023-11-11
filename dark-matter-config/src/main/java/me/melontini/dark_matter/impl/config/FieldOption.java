@@ -1,10 +1,13 @@
 package me.melontini.dark_matter.impl.config;
 
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import me.melontini.dark_matter.api.config.interfaces.Option;
 
 import java.lang.reflect.Field;
 
+@ToString @EqualsAndHashCode
 public class FieldOption implements Option {
 
     private final Field delegate;
