@@ -7,12 +7,12 @@ import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
 import me.melontini.dark_matter.api.config.RedirectsBuilder;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
+import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import me.melontini.dark_matter.api.config.serializers.gson.GsonSerializers;
 import net.fabricmc.loader.api.ModContainer;
 
-import java.lang.reflect.Field;
 import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -113,10 +113,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Getter<T> defaultGetter() {
         return (context, option) -> Utilities.supplyUnchecked(() -> {
-            List<Field> fields = context.manager().getFields(option);
+            List<Option> fields = context.manager().getFields(option);
             Object obj = context.config();
-            for (Field field : fields) {
-                field.setAccessible(true);
+            for (Option field : fields) {
                 obj = field.get(obj);
             }
             return cast(obj);
@@ -125,15 +124,13 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Setter<T> defaultSetter() {
         return (context, option, value) -> Utilities.runUnchecked(() -> {
-            List<Field> fields = context.manager().getFields(option);
+            List<Option> fields = context.manager().getFields(option);
             Object obj = context.config();
             for (int i = 0; i < fields.size() - 1; i++) {
-                Field field = fields.get(i);
-                field.setAccessible(true);
+                Option field = fields.get(i);
                 obj = field.get(obj);
             }
-            Field f = fields.get(fields.size() - 1);
-            f.setAccessible(true);
+            Option f = fields.get(fields.size() - 1);
             f.set(obj, value);
         });
     }

@@ -1,10 +1,10 @@
 package me.melontini.dark_matter.api.config;
 
+import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.lang.reflect.Field;
 import java.util.List;
 
 @ApiStatus.NonExtendable
@@ -29,12 +29,12 @@ public interface ConfigManager<T> {
         }
     }
 
-    List<Field> getFields(String option);
-    default Field getField(String option) {
-        List<Field> fields = getFields(option);
+    List<Option> getFields(String option);
+    default Option getField(String option) {
+        List<Option> fields = getFields(option);
         return fields.get(fields.size() - 1);
     }
-    String getOption(Field field);
+    String getOption(Option field);
     List<String> getOptions();
 
     OptionManager<T> getOptionManager();

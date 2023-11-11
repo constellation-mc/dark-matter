@@ -7,6 +7,7 @@ import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.ConfigClassScanner;
+import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
@@ -41,8 +42,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private ConfigSerializer<T> serializer;
     private Supplier<T> ctx;
 
-    private final Map<Field, String> fieldToOption = new ConcurrentHashMap<>();
-    private final Map<String, List<Field>> optionToFields = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<Option, String> fieldToOption = new ConcurrentHashMap<>();
+    private final Map<String, List<FieldOption>> optionToFields = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private final Set<ConfigClassScanner> scanners = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -95,8 +96,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
             fieldRef.add(declaredField);
             ImmutableList<Field> fieldRefView = ImmutableList.copyOf(fieldRef);
-            optionToFields.putIfAbsent(parentString + declaredField.getName(), fieldRefView);
-            fieldToOption.putIfAbsent(declaredField, parentString + declaredField.getName());
+            optionToFields.putIfAbsent(parentString + declaredField.getName(), fieldRefView.stream().map(FieldOption::new).toList());
+            fieldToOption.putIfAbsent(new FieldOption(declaredField), parentString + declaredField.getName());
 
             if (!this.scanners.isEmpty()) {
                 ImmutableSet<Class<?>> classes = ImmutableSet.copyOf(recursive);
@@ -142,14 +143,14 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public List<Field> getFields(String option) {
-        List<Field> f = this.optionToFields.get(option = this.redirects.apply(option));
+    public List<Option> getFields(String option) {
+        List<FieldOption> f = this.optionToFields.get(option = this.redirects.apply(option));
         if (f == null) throw new NoSuchOptionException(option);
         return Collections.unmodifiableList(f);
     }
 
     @Override
-    public String getOption(Field field) {
+    public String getOption(Option field) {
         return this.fieldToOption.get(field);
     }
 

@@ -7,13 +7,13 @@ import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.NoSuchOptionException;
 import me.melontini.dark_matter.api.config.OptionManager;
 import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
+import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
-import java.lang.reflect.Field;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
@@ -26,7 +26,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     private final Map<String, Function<TextEntry.InfoHolder<T>, TextEntry>> customReasons = new ConcurrentHashMap<>();
     private final Lazy<PrependingLogger> logger;
 
-    private final Map<Field, Set<ProcessorEntry<T>>> modifiedFields = new ConcurrentHashMap<>();
+    private final Map<Option, Set<ProcessorEntry<T>>> modifiedFields = new ConcurrentHashMap<>();
 
     private final ModJsonProcessor modJsonProcessor;
 
@@ -81,7 +81,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
         config.forEach((s, o) -> {
             try {
                 this.getConfigManager().set(s, o);
-                Field f = this.getConfigManager().getField(s);
+                Option f = this.getConfigManager().getField(s);
                 this.modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(entry);
             } catch (NoSuchOptionException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, entry.id()), e);
@@ -95,7 +95,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public boolean isModified(Field f) {
+    public boolean isModified(Option f) {
         return this.modifiedFields.containsKey(f);
     }
 
@@ -105,7 +105,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Tuple<String, Set<ProcessorEntry<T>>> blameProcessors(Field f) {
+    public Tuple<String, Set<ProcessorEntry<T>>> blameProcessors(Option f) {
         return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modifiedFields.getOrDefault(f, Collections.emptySet())));
     }
 
@@ -115,7 +115,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public Tuple<String, Set<ModContainer>> blameModJson(Field f) {
+    public Tuple<String, Set<ModContainer>> blameModJson(Option f) {
         return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modJsonProcessor.blameMods(f)));
     }
 
