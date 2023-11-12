@@ -72,11 +72,13 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner) {
+    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner, boolean traverseSuper) {
         this.scanners.add(scanner);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
 
+        if (traverseSuper && this.getType().getSuperclass() != Object.class && this.getType().getSuperclass() != null)
+            iterate(this.getType().getSuperclass(), "", new HashSet<>(Arrays.asList(this.getType().getSuperclass().getClasses())), new ArrayList<>());
         iterate(this.getType(), "", new HashSet<>(Arrays.asList(this.getType().getClasses())), new ArrayList<>());
         return this;
     }

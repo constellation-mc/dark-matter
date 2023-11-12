@@ -32,6 +32,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     private Supplier<T> ctx;
     private BiConsumer<OptionProcessorRegistry<T>, ModContainer> registrar;
     private ConfigClassScanner scanner;
+    private boolean traverseSuper = false;
     private Function<TextEntry.InfoHolder<T>, TextEntry> reasonFactory;
 
     private final RedirectsBuilder redirects = RedirectsBuilder.create();
@@ -88,6 +89,12 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
+    public ConfigBuilder<T> traverseSuper(boolean traverseSuper) {
+        this.traverseSuper = traverseSuper;
+        return this;
+    }
+
+    @Override
     public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
         this.reasonFactory = reason;
         return this;
@@ -99,7 +106,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
         .setupOptionManager(this.registrar, notNull(this.reasonFactory, this::defaultReason))
         .setAccessors(notNull(this.getter, this::defaultGetter), notNull(this.setter, this::defaultSetter))
         .setRedirects(this.redirects)
-        .setScanner(this.scanner)
+        .setScanner(this.scanner, this.traverseSuper)
         .afterBuild(notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
     }
 
