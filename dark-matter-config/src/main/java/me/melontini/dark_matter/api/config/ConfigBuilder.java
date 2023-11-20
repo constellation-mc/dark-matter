@@ -73,7 +73,6 @@ public interface ConfigBuilder<T> {
     ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer);
 
     ConfigBuilder<T> scanner(ConfigClassScanner scanner);
-    ConfigBuilder<T> traverseSuper(boolean traverseSuper);
 
     ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason);
 

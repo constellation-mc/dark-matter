@@ -72,13 +72,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner, boolean traverseSuper) {
+    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner) {
         this.scanners.add(scanner);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
 
-        if (traverseSuper && this.getType().getSuperclass() != Object.class && this.getType().getSuperclass() != null)
-            iterate(this.getType().getSuperclass(), "", new HashSet<>(Arrays.asList(this.getType().getSuperclass().getClasses())), new ArrayList<>());
         iterate(this.getType(), "", new HashSet<>(Arrays.asList(this.getType().getClasses())), new ArrayList<>());
         return this;
     }
@@ -93,23 +91,23 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     private void iterate(Class<?> cls, String parentString, Set<Class<?>> recursive, List<Field> fieldRef) {
-        for (Field declaredField : cls.getDeclaredFields()) {
-            if (Modifier.isStatic(declaredField.getModifiers())) continue;
+        for (Field field : cls.getFields()) {
+            if (Modifier.isStatic(field.getModifiers())) continue;
 
-            fieldRef.add(declaredField);
+            fieldRef.add(field);
             ImmutableList<Field> fieldRefView = ImmutableList.copyOf(fieldRef);
-            optionToFields.putIfAbsent(parentString + declaredField.getName(), fieldRefView.stream().map(FieldOption::new).toList());
-            fieldToOption.putIfAbsent(new FieldOption(declaredField), parentString + declaredField.getName());
+            optionToFields.putIfAbsent(parentString + field.getName(), fieldRefView.stream().map(FieldOption::new).toList());
+            fieldToOption.putIfAbsent(new FieldOption(field), parentString + field.getName());
 
             if (!this.scanners.isEmpty()) {
                 ImmutableSet<Class<?>> classes = ImmutableSet.copyOf(recursive);
-                scanners.forEach(scanner -> scanner.scan(cls, declaredField, parentString, classes, fieldRefView));
+                scanners.forEach(scanner -> scanner.scan(cls, field, parentString, classes, fieldRefView));
             }
-            if (recursive.contains(declaredField.getType())) {
-                recursive.addAll(Arrays.asList(declaredField.getType().getClasses()));
-                iterate(declaredField.getType(), parentString + declaredField.getName() + ".", recursive, fieldRef);
+            if (recursive.contains(field.getType())) {
+                recursive.addAll(Arrays.asList(field.getType().getClasses()));
+                iterate(field.getType(), parentString + field.getName() + ".", recursive, fieldRef);
             }
-            fieldRef.remove(declaredField);
+            fieldRef.remove(field);
         }
     }
 
