@@ -115,7 +115,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     private Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason() {
-        return (holder) -> TextEntry.translatable(holder.manager().getMod().getMetadata().getId() + ".config.option_manager.reason." + holder.processor());
+        return (holder) -> TextEntry.translatable(holder.manager().getMod().getMetadata().getId() + ".config.option_manager.reason." + holder.processor().id().replace(':', '.'));
     }
 
     private Getter<T> defaultGetter() {

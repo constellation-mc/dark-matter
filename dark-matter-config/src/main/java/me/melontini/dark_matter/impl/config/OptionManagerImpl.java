@@ -55,10 +55,10 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
             var config = entry.processor().process(this.getConfigManager());
             if (config != null && !config.isEmpty()) {
 
-                this.logger.get().info("Processor: {}", key);
+                this.logger.get().debug("Processor: {}", key);
                 StringBuilder builder = new StringBuilder().append("Config: ");
                 config.keySet().forEach(s -> builder.append(s).append("=").append(config.get(s)).append("; "));
-                this.logger.get().info(builder.toString());
+                this.logger.get().debug(builder.toString());
 
                 configure(entry, config);
             }
