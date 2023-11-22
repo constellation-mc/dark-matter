@@ -94,13 +94,13 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigManager<T> build() {
+    public ConfigManager<T> build(boolean save) {
         return new ConfigManagerImpl<>(this.cls, this.mod, this.name)
         .setupOptionManager(this.registrar, notNull(this.reasonFactory, this::defaultReason))
         .setAccessors(notNull(this.getter, this::defaultGetter), notNull(this.setter, this::defaultSetter))
         .setRedirects(this.redirects)
         .setScanner(this.scanner)
-        .afterBuild(notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
+        .afterBuild(save, notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
     }
 
     private static <T> Supplier<T> defaultCtx(Class<T> cls) {

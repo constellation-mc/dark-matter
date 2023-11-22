@@ -81,7 +81,10 @@ public interface ConfigBuilder<T> {
         return this;
     }
 
-    ConfigManager<T> build();
+    ConfigManager<T> build(boolean save);
+    default ConfigManager<T> build() {
+        return build(true);
+    }
 
     interface Getter<T> {
         Object get(AccessorContext<T> context, String option);
