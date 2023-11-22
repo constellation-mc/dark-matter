@@ -44,7 +44,7 @@ public interface ConfigBuilder<T> {
      * <p>
      * {@link me.melontini.dark_matter.api.config.serializers.gson.GsonSerializers}
      */
-    ConfigBuilder<T> serializer(Function<ConfigManager<T>, ConfigSerializer<T>> ctx);
+    ConfigBuilder<T> serializer(SerializerSupplier<T> ctx);
 
     /**
      * Allows you to register redirects,
@@ -70,11 +70,11 @@ public interface ConfigBuilder<T> {
      * <p>
      * The entrypoint for this is {@code {modid}:config/{config}/processors}
      */
-    ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer);
+    ConfigBuilder<T> processors(ProcessorRegistrar<T> registrar);
 
     ConfigBuilder<T> scanner(ConfigClassScanner scanner);
 
-    ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason);
+    ConfigBuilder<T> defaultReason(DefaultReason<T> reason);
 
     default ConfigBuilder<T> attach(Consumer<ConfigBuilder<T>> attacher) {
         attacher.accept(this);
@@ -84,6 +84,18 @@ public interface ConfigBuilder<T> {
     ConfigManager<T> build(boolean save);
     default ConfigManager<T> build() {
         return build(true);
+    }
+
+    interface SerializerSupplier<T> extends Function<ConfigManager<T>, ConfigSerializer<T>> {
+        ConfigSerializer<T> apply(ConfigManager<T> manager);
+    }
+
+    interface DefaultReason<T> extends Function<TextEntry.InfoHolder<T>, TextEntry> {
+        TextEntry apply(TextEntry.InfoHolder<T> holder);
+    }
+
+    interface ProcessorRegistrar<T> extends BiConsumer<OptionProcessorRegistry<T>, ModContainer> {
+        void accept(OptionProcessorRegistry<T> registry, ModContainer mod);
     }
 
     interface Getter<T> {

@@ -52,7 +52,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> serializer(Function<ConfigManager<T>, ConfigSerializer<T>> serializer) {
+    public ConfigBuilder<T> serializer(SerializerSupplier<T> serializer) {
         this.serializer = serializer;
         return this;
     }
@@ -76,8 +76,8 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer) {
-        this.registrar = consumer;
+    public ConfigBuilder<T> processors(ProcessorRegistrar<T> registrar) {
+        this.registrar = registrar;
         return this;
     }
 
@@ -88,7 +88,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+    public ConfigBuilder<T> defaultReason(DefaultReason<T> reason) {
         this.reasonFactory = reason;
         return this;
     }
