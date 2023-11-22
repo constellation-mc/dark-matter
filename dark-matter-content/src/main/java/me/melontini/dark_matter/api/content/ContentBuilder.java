@@ -3,7 +3,6 @@ package me.melontini.dark_matter.api.content;
 import com.mojang.datafixers.types.Type;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.impl.content.builders.BlockBuilderImpl;
 import me.melontini.dark_matter.impl.content.builders.BlockEntityBuilderImpl;
@@ -110,8 +109,6 @@ public class ContentBuilder {
         }
 
         ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier);
-
-        ItemGroupBuilder animatedIcon(Supplier<AnimatedItemGroup> animatedIcon);
 
         ItemGroupBuilder texture(String texture);
 
