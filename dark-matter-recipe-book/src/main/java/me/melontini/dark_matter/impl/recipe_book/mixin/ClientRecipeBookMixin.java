@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.recipe_book.mixin;
 
-import me.melontini.dark_matter.impl.recipe_book.RecipeBookInternals;
+import me.melontini.dark_matter.impl.recipe_book.ClientRecipeBookUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.recipebook.ClientRecipeBook;
@@ -22,7 +22,7 @@ public class ClientRecipeBookMixin {
     private static void dark_matter$getGroupForRecipe(Recipe<?> recipe, CallbackInfoReturnable<RecipeBookGroup> cir) {
         var rm = Optional.ofNullable(MinecraftClient.getInstance().getNetworkHandler())
                 .map(ClientPlayNetworkHandler::getRegistryManager).orElse(null);
-        RecipeBookInternals.getLookups(recipe.getType()).map(functions -> {
+        ClientRecipeBookUtils.getLookups(recipe.getType()).map(functions -> {
             RecipeBookGroup result;
             for (BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup> function : functions) {
                 if ((result = function.apply(recipe, rm)) != null) {
