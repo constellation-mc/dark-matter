@@ -81,7 +81,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> afterBuild(Function<ConfigManager<T>, ConfigSerializer<T>> serializer, Supplier<T> ctx) {
+    ConfigManagerImpl<T> afterBuild(boolean save, Function<ConfigManager<T>, ConfigSerializer<T>> serializer, Supplier<T> ctx) {
         this.ctx = ctx;
         this.serializer = serializer.apply(this);
 
@@ -112,9 +112,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public void load() {
+    public void load(boolean save) {
         this.config.set(this.getSerializer().load());
-        this.save();
+        if (save) this.save();
     }
 
     @Override

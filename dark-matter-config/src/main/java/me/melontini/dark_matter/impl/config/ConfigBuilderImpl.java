@@ -52,7 +52,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> serializer(Function<ConfigManager<T>, ConfigSerializer<T>> serializer) {
+    public ConfigBuilder<T> serializer(SerializerSupplier<T> serializer) {
         this.serializer = serializer;
         return this;
     }
@@ -76,8 +76,8 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer) {
-        this.registrar = consumer;
+    public ConfigBuilder<T> processors(ProcessorRegistrar<T> registrar) {
+        this.registrar = registrar;
         return this;
     }
 
@@ -88,19 +88,19 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
-    public ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+    public ConfigBuilder<T> defaultReason(DefaultReason<T> reason) {
         this.reasonFactory = reason;
         return this;
     }
 
     @Override
-    public ConfigManager<T> build() {
+    public ConfigManager<T> build(boolean save) {
         return new ConfigManagerImpl<>(this.cls, this.mod, this.name)
         .setupOptionManager(this.registrar, notNull(this.reasonFactory, this::defaultReason))
         .setAccessors(notNull(this.getter, this::defaultGetter), notNull(this.setter, this::defaultSetter))
         .setRedirects(this.redirects)
         .setScanner(this.scanner)
-        .afterBuild(notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
+        .afterBuild(save, notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
     }
 
     private static <T> Supplier<T> defaultCtx(Class<T> cls) {

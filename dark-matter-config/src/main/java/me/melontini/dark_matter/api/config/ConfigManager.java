@@ -44,6 +44,9 @@ public interface ConfigManager<T> {
     String getName();
     Class<T> getType();
 
-    void load();
+    default void load() {
+        load(true);
+    }
+    void load(boolean save);
     void save();
 }
