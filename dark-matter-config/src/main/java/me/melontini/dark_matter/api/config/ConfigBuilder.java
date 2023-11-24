@@ -26,6 +26,13 @@ public interface ConfigBuilder<T> {
     }
 
     /**
+     * If config name is the same as modId.
+     */
+    static <T> ConfigBuilder<T> create(Class<T> cls, ModContainer mod) {
+        return new ConfigBuilderImpl<>(cls, mod, mod.getMetadata().getId());
+    }
+
+    /**
      * Allows to build the config directly, instead of using reflection. Will fall back to reflection if not provided.
      */
     ConfigBuilder<T> constructor(Supplier<T> ctx);
@@ -37,7 +44,7 @@ public interface ConfigBuilder<T> {
      * <p>
      * {@link me.melontini.dark_matter.api.config.serializers.gson.GsonSerializers}
      */
-    ConfigBuilder<T> serializer(Function<ConfigManager<T>, ConfigSerializer<T>> ctx);
+    ConfigBuilder<T> serializer(SerializerSupplier<T> ctx);
 
     /**
      * Allows you to register redirects,
@@ -63,24 +70,41 @@ public interface ConfigBuilder<T> {
      * <p>
      * The entrypoint for this is {@code {modid}:config/{config}/processors}
      */
-    ConfigBuilder<T> processors(BiConsumer<OptionProcessorRegistry<T>, ModContainer> consumer);
+    ConfigBuilder<T> processors(ProcessorRegistrar<T> registrar);
 
     ConfigBuilder<T> scanner(ConfigClassScanner scanner);
 
-    ConfigBuilder<T> defaultReason(Function<TextEntry.InfoHolder<T>, TextEntry> reason);
+    ConfigBuilder<T> defaultReason(DefaultReason<T> reason);
 
     default ConfigBuilder<T> attach(Consumer<ConfigBuilder<T>> attacher) {
         attacher.accept(this);
         return this;
     }
 
-    ConfigManager<T> build();
+    ConfigManager<T> build(boolean save);
+    default ConfigManager<T> build() {
+        return build(true);
+    }
+
+    interface SerializerSupplier<T> extends Function<ConfigManager<T>, ConfigSerializer<T>> {
+        ConfigSerializer<T> apply(ConfigManager<T> manager);
+    }
+
+    interface DefaultReason<T> extends Function<TextEntry.InfoHolder<T>, TextEntry> {
+        TextEntry apply(TextEntry.InfoHolder<T> holder);
+    }
+
+    interface ProcessorRegistrar<T> extends BiConsumer<OptionProcessorRegistry<T>, ModContainer> {
+        void accept(OptionProcessorRegistry<T> registry, ModContainer mod);
+    }
 
     interface Getter<T> {
-        Object get(ConfigManager<T> configManager, String option) throws NoSuchFieldException, IllegalAccessException;
+        Object get(AccessorContext<T> context, String option);
     }
 
     interface Setter<T> {
-        void set(ConfigManager<T> manager, String option, Object value) throws NoSuchFieldException, IllegalAccessException;
+        void set(AccessorContext<T> context, String option, Object value);
     }
+
+    record AccessorContext<T>(ConfigManager<T> manager, T config) {}
 }

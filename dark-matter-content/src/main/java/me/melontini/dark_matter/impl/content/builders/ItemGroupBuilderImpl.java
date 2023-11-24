@@ -3,12 +3,10 @@ package me.melontini.dark_matter.impl.content.builders;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.content.ContentBuilder;
-import me.melontini.dark_matter.api.content.interfaces.AnimatedItemGroup;
 import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
 import me.melontini.dark_matter.impl.content.interfaces.ItemGroupArrayExtender;
-import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -23,7 +21,6 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
 
     private final Identifier identifier;
     private Supplier<ItemStack> icon = () -> ItemStack.EMPTY;
-    private Supplier<AnimatedItemGroup> animatedIcon;
     private String texture;
     private DarkMatterEntries.Collector entries;
     private BooleanSupplier register = Utilities.getTruth();
@@ -40,14 +37,6 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     public ContentBuilder.ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier) {
         MakeSure.notNull(itemStackSupplier, "couldn't build: " + identifier);
         this.icon = itemStackSupplier;
-        return this;
-    }
-
-    @Override
-    public ContentBuilder.ItemGroupBuilder animatedIcon(Supplier<AnimatedItemGroup> animatedIcon) {
-        if (FabricLoader.getInstance().getEnvironmentType() == EnvType.SERVER) return this;
-        MakeSure.notNull(animatedIcon, "couldn't build: " + identifier);
-        this.animatedIcon = animatedIcon;
         return this;
     }
 
@@ -118,7 +107,6 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
             }
         };
 
-        if (this.animatedIcon != null) itemGroup.dm$setIconAnimation(this.animatedIcon);
         if (this.texture != null) itemGroup.setTexture(this.texture);
 
         return itemGroup;

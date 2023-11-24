@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.content;
 
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.fabricmc.fabric.api.object.builder.v1.block.entity.FabricBlockEntityTypeBuilder;
@@ -24,12 +25,9 @@ import java.util.function.Supplier;
 /**
  * Doesn't work without Fabric API
  */
+@UtilityClass
 @SuppressWarnings("unused")
 public class RegistryUtil {
-
-    private RegistryUtil() {
-        throw new UnsupportedOperationException();
-    }
 
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> asBlockEntity(@NotNull Block block) {
         return getBlockEntityFromBlock(block);
