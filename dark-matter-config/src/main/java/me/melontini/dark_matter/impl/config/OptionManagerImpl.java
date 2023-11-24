@@ -3,10 +3,7 @@ package me.melontini.dark_matter.impl.config;
 import me.melontini.dark_matter.api.base.util.PrependingLogger;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
-import me.melontini.dark_matter.api.config.ConfigManager;
-import me.melontini.dark_matter.api.config.NoSuchOptionException;
-import me.melontini.dark_matter.api.config.OptionManager;
-import me.melontini.dark_matter.api.config.OptionProcessorRegistry;
+import me.melontini.dark_matter.api.config.*;
 import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.interfaces.Processor;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
@@ -147,7 +144,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public void register(String id, Processor<T> processor, ModContainer mod, Function<TextEntry.InfoHolder<T>, TextEntry> reason) {
+    public void register(String id, Processor<T> processor, ModContainer mod, ConfigBuilder.DefaultReason<T> reason) {
         register(id, processor, mod);
         this.customReasons.put(id, reason);
     }
