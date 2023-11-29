@@ -1,3 +1,0 @@
-dependencies {
-    include(implementation(annotationProcessor("io.github.llamalad7.mixinextras:mixinextras-fabric:${project.mixin_extras_version}")))
-}

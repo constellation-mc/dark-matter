@@ -13,6 +13,7 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -27,28 +28,28 @@ public class ReflectionUtil {
      * See {@link Reflect#findConstructor(Class, Object...)}
      */
     public static @Nullable <T> Constructor<T> findConstructor(Class<T> clazz, Object... args) {
-        return Reflect.findConstructor(clazz, args).orElse(null);
+        return Reflect.findConstructor(clazz, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)).orElse(null);
     }
 
     /**
-     * See {@link Reflect#findConstructor(Class, List)}
+     * See {@link Reflect#findConstructor(Class, Class[])} (Class, List)}
      */
     public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, List<Object> args) {
-        return Reflect.findConstructor(clazz, args).orElse(null);
+        return Reflect.findConstructor(clazz, args.stream().map(Object::getClass).toArray(Class[]::new)).orElse(null);
     }
 
     /**
      * See {@link Reflect#findMethod(Class, String, Object...)}
      */
     public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, String name, Object... args) {
-        return Reflect.findMethod(clazz, name, args).orElse(null);
+        return Reflect.findMethod(clazz, name, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)).orElse(null);
     }
 
     /**
-     * See {@link Reflect#findMethod(Class, String, List)}
+     * See {@link Reflect#findMethod(Class, String, Object...)} (Class, String, List)}
      */
     public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, String name, List<Object> args) {
-        return Reflect.findMethod(clazz, name, args).orElse(null);
+        return Reflect.findMethod(clazz, name, args.stream().map(Object::getClass).toArray(Class[]::new)).orElse(null);
     }
 
     public static @Nullable <T> Field findField(@NotNull Class<T> clazz, String name) {
