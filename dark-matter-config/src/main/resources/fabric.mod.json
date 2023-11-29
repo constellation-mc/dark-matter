@@ -16,7 +16,7 @@
   "mixins": [
   ],
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": "${loader_version}",
     "minecraft": "*",
     "dark-matter-base": "*"
   },
