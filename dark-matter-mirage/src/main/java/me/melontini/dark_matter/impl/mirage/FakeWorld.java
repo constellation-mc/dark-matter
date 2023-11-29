@@ -26,6 +26,8 @@ import java.util.UUID;
 @UtilityClass
 public class FakeWorld {
 
+    public static final ThreadLocal<Boolean> LOADING = ThreadLocal.withInitial(() -> false);
+
     public static Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
         DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
 
@@ -71,6 +73,11 @@ public class FakeWorld {
     }
 
     public static void init() {
-        INSTANCE.get();
+        try {
+            LOADING.set(true);
+            INSTANCE.get();
+        } finally {
+            LOADING.remove();
+        }
     }
 }
