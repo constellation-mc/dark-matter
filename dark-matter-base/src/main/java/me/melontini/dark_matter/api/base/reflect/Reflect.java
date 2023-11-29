@@ -9,7 +9,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 @UtilityClass
@@ -21,18 +20,18 @@ public class Reflect {
     //
 
     public static <T> Optional<Constructor<T>> findConstructor(@NotNull Class<T> clazz, Object... args) {
-        return Optional.ofNullable(ReflectionInternals.findConstructor(clazz, Arrays.stream(args).toList()));
+        return Optional.ofNullable(ReflectionInternals.findConstructor(clazz, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)));
     }
 
-    public static <T> Optional<Constructor<T>> findConstructor(@NotNull Class<T> clazz, List<Object> args) {
+    public static <T> Optional<Constructor<T>> findConstructor(@NotNull Class<T> clazz, Class<?>... args) {
         return Optional.ofNullable(ReflectionInternals.findConstructor(clazz, args));
     }
 
     public static Optional<Method> findMethod(@NotNull Class<?> clazz, String name, Object... args) {
-        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, name, Arrays.stream(args).toList()));
+        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, name, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)));
     }
 
-    public static Optional<Method> findMethod(@NotNull Class<?> clazz, String name, List<Object> args) {
+    public static Optional<Method> findMethod(@NotNull Class<?> clazz, String name, Class<?>... args) {
         return Optional.ofNullable(ReflectionInternals.findMethod(clazz, name, args));
     }
 
