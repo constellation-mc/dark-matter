@@ -14,7 +14,7 @@
   "entrypoints": {
   },
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": "${loader_version}",
     "minecraft": "*"
   },
   "provides": [

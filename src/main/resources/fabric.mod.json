@@ -12,7 +12,7 @@
   "icon": "assets/dark-matter/icon.png",
   "environment": "*",
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": "${loader_version}",
     "minecraft": "*"
   },
   "provides": [

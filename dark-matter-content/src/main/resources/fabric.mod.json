@@ -17,7 +17,7 @@
     "dark-matter-content.mixins.json"
   ],
   "depends": {
-    "fabricloader": "*",
+    "fabricloader": "${loader_version}",
     "minecraft": ">=1.19",
     "dark-matter-base": "*"
   },
