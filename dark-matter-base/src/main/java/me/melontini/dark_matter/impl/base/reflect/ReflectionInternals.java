@@ -23,9 +23,8 @@ import java.util.List;
 @UtilityClass
 public class ReflectionInternals {
 
-    public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, List<Object> args) {
+    public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, Class<?>... classes) {
         Constructor<T>[] ctxs = (Constructor<T>[]) clazz.getDeclaredConstructors();
-        Class<?>[] classes = args.stream().map(Object::getClass).toArray(Class[]::new);
         if (clazz.getDeclaredConstructors().length == 1) {
             return checkCtx(ctxs[0], classes) ? ctxs[0] : null;
         } else {
@@ -52,9 +51,8 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, String name, List<Object> args) {
+    public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, String name, Class<?>... classes) {
         Method[] methods = clazz.getDeclaredMethods();
-        Class<?>[] classes = args.stream().map(Object::getClass).toArray(Class[]::new);
         if (methods.length == 1) {
             return checkMethod(methods[0], name, classes) ? methods[0] : null;
         } else {
