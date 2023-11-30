@@ -90,10 +90,11 @@ public class EnumInternals {
         MakeSure.notEmpty(internalName, String.format("Tried to extend %s with an empty name", cls.getSimpleName()));
         List<Object> list = new ArrayList<>(List.of(internalName));
         list.addAll(List.of(params));
+        params = list.toArray();
 
-        return (T) Reflect.findMethod(cls, "dark_matter$extendEnum", list)
+        return (T) Reflect.findMethod(cls, "dark_matter$extendEnum", params)
                 .orElseThrow(() -> new IllegalStateException("%s doesn't have a dark_matter$extendEnum method".formatted(cls.getName())))
-                .invoke(cls, list.toArray());
+                .invoke(cls, params);
     }
 
 }
