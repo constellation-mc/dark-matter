@@ -13,6 +13,7 @@ import net.fabricmc.loader.api.ModContainer;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 
 public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRegistry<T> {
@@ -47,8 +48,10 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public void processOptions() {
+    public boolean processOptions() {
         this.modifiedFields.clear();
+
+        AtomicBoolean mod = new AtomicBoolean(false);
         this.optionProcessors.forEach((key, entry) -> {
             var config = entry.processor().process(this.getConfigManager());
             if (config != null && !config.isEmpty()) {
@@ -59,8 +62,10 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
                 this.logger.get().debug(builder.toString());
 
                 configure(entry, config);
+                mod.set(true);
             }
         });
+        return mod.get();
     }
 
     @Override
