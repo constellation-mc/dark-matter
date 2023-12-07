@@ -85,7 +85,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.ctx = ctx;
         this.serializer = serializer.apply(this);
 
-        this.load();
+        this.load(save);
         this.defaultConfig = Lazy.of(() -> this::createDefault);
         return this;
     }
