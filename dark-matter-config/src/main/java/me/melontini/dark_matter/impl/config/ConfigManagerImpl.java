@@ -53,9 +53,13 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         this.mod = mod;
     }
 
-    ConfigManagerImpl<T> setupOptionManager(@Nullable BiConsumer<OptionProcessorRegistry<T>, ModContainer> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
+    ConfigManagerImpl<T> setupOptionManager(Set<BiConsumer<OptionProcessorRegistry<T>, ModContainer>> registrars, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
         this.optionManager = new OptionManagerImpl<>(this, defaultReason);
-        if (registrar != null) registrar.accept(this.optionManager, this.getMod());
+        if (!registrars.isEmpty()) {
+            for (var registrar : registrars) {
+                registrar.accept(this.optionManager, this.getMod());
+            }
+        }
         EntrypointRunner.runWithContext(getShareId("processors"), BiConsumer.class, (consumer, mod) -> Utilities.consume(this.optionManager, mod, cast(consumer)));
         return this;
     }
@@ -72,8 +76,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner) {
-        this.scanners.add(scanner);
+    ConfigManagerImpl<T> setScanners(Set<ConfigClassScanner> scanners) {
+        this.scanners.addAll(scanners);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
 
