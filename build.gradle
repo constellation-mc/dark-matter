@@ -113,8 +113,6 @@ allprojects {
 }
 
 dependencies {
-    localRuntime("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}")
-
     def apiModules = [
             "fabric-api-base",
             "fabric-resource-loader-v0",

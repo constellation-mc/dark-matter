@@ -13,6 +13,7 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Arrays;
 import java.util.function.Function;
 
 public class GsonSerializer<T> implements ConfigSerializer<T> {
@@ -55,7 +56,12 @@ public class GsonSerializer<T> implements ConfigSerializer<T> {
     public void save() {
         try {
             Files.createDirectories(this.getPath().getParent());
-            Files.write(this.getPath(), this.gson.toJson(this.getConfigManager().getConfig()).getBytes());
+            byte[] cfg = this.gson.toJson(this.getConfigManager().getConfig()).getBytes();
+            if (Files.exists(this.getPath())) {
+                byte[] current = Files.readAllBytes(this.getPath());
+                if (Arrays.equals(cfg, current)) return;
+            }
+            Files.write(this.getPath(), cfg);
         } catch (Exception e) {
             DarkMatterLog.error("Failed to save {}", this.getPath(), e);
         }
