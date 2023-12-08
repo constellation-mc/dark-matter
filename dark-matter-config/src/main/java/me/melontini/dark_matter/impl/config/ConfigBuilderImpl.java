@@ -13,6 +13,7 @@ import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import me.melontini.dark_matter.api.config.serializers.gson.GsonSerializers;
 import net.fabricmc.loader.api.ModContainer;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,6 +41,9 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Getter<T> getter;
     private Setter<T> setter;
+
+    private final Set<Consumer<ConfigManager<T>>> saveListeners = new HashSet<>();
+    private final Set<Consumer<ConfigManager<T>>> loadListeners = new HashSet<>();
 
     public ConfigBuilderImpl(Class<T> cls, ModContainer mod, String name) {
         this.name = name;
@@ -96,12 +100,25 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
     }
 
     @Override
+    public ConfigBuilder<T> postLoad(ConfigManager.Event<T> consumer) {
+        this.loadListeners.add(consumer);
+        return this;
+    }
+
+    @Override
+    public ConfigBuilder<T> postSave(ConfigManager.Event<T> consumer) {
+        this.saveListeners.add(consumer);
+        return this;
+    }
+
+    @Override
     public ConfigManager<T> build(boolean save) {
         return new ConfigManagerImpl<>(this.cls, this.mod, this.name)
         .setupOptionManager(this.registrars, notNull(this.reasonFactory, this::defaultReason))
         .setAccessors(notNull(this.getter, this::defaultGetter), notNull(this.setter, this::defaultSetter))
         .setRedirects(this.redirects)
         .setScanners(this.scanners)
+        .addListeners(this.saveListeners, this.loadListeners)
         .afterBuild(save, notNull(this.serializer, () -> GsonSerializers::create), notNull(this.ctx, () -> defaultCtx(this.cls)));
     }
 

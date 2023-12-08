@@ -88,6 +88,12 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
+    ConfigManagerImpl<T> addListeners(Set<Consumer<ConfigManager<T>>> saveListeners, Set<Consumer<ConfigManager<T>>> loadListeners) {
+        this.loadListeners.addAll(loadListeners);
+        this.saveListeners.addAll(saveListeners);
+        return this;
+    }
+
     ConfigManagerImpl<T> afterBuild(boolean save, Function<ConfigManager<T>, ConfigSerializer<T>> serializer, Supplier<T> ctx) {
         this.ctx = ctx;
         this.serializer = serializer.apply(this);
