@@ -1,3 +1,2 @@
 dependencies {
-    implementation(include("net.bytebuddy:byte-buddy-agent:${project.byte_buddy_agent_version}"))
 }

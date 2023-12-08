@@ -47,8 +47,9 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     }
 
     @Override
-    public void processOptions() {
+    public boolean processOptions() {
         this.modifiedFields.clear();
+
         this.optionProcessors.forEach((key, entry) -> {
             var config = entry.processor().process(this.getConfigManager());
             if (config != null && !config.isEmpty()) {
@@ -61,6 +62,8 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
                 configure(entry, config);
             }
         });
+
+        return !this.modifiedFields.isEmpty();
     }
 
     @Override

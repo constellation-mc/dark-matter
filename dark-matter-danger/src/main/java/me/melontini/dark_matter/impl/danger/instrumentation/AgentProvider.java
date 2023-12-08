@@ -1,11 +1,11 @@
 package me.melontini.dark_matter.impl.danger.instrumentation;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import net.bytebuddy.agent.Installer;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.instrument.Instrumentation;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -13,17 +13,27 @@ import java.util.jar.Manifest;
 
 public final class AgentProvider {
 
+    public static Instrumentation instrumentation;
+
+    public static void premain(String arguments, Instrumentation instrumentation) {
+        AgentProvider.instrumentation = instrumentation;
+    }
+
+    public static void agentmain(String arguments, Instrumentation instrumentation) {
+        AgentProvider.instrumentation = instrumentation;
+    }
+
     static File createJarFile() throws IOException {
-        String cls = Installer.class.getName().replace('.', '/') + ".class";
-        try (var is = Installer.class.getResourceAsStream('/' + cls)) {
+        String cls = AgentProvider.class.getName().replace('.', '/') + ".class";
+        try (var is = AgentProvider.class.getResourceAsStream('/' + cls)) {
             MakeSure.notNull(is, "Cannot locate class file for Byte Buddy installer");
 
             File jar = File.createTempFile("dark_matter_agent", ".jar");
             jar.deleteOnExit();
             Manifest manifest = ManifestBuilder.create()
                     .put(Attributes.Name.MANIFEST_VERSION, "1.0")
-                    .put("Launcher-Agent-Class", Installer.class.getName())
-                    .put("Agent-Class", Installer.class.getName())
+                    .put("Launcher-Agent-Class", AgentProvider.class.getName())
+                    .put("Agent-Class", AgentProvider.class.getName())
                     .put("Can-Redefine-Classes", Boolean.TRUE.toString())
                     .put("Can-Retransform-Classes", Boolean.TRUE.toString())
                     .put("Can-Set-Native-Method-Prefix", Boolean.TRUE.toString())

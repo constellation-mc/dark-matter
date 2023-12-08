@@ -12,13 +12,13 @@ import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import net.fabricmc.loader.api.ModContainer;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -47,15 +47,22 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     private final Set<ConfigClassScanner> scanners = Collections.synchronizedSet(new LinkedHashSet<>());
 
+    private final Set<Consumer<ConfigManager<T>>> saveListeners = new HashSet<>();
+    private final Set<Consumer<ConfigManager<T>>> loadListeners = new HashSet<>();
+
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name) {
         this.configClass = cls;
         this.name = name;
         this.mod = mod;
     }
 
-    ConfigManagerImpl<T> setupOptionManager(@Nullable BiConsumer<OptionProcessorRegistry<T>, ModContainer> registrar, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
+    ConfigManagerImpl<T> setupOptionManager(Set<BiConsumer<OptionProcessorRegistry<T>, ModContainer>> registrars, Function<TextEntry.InfoHolder<T>, TextEntry> defaultReason) {
         this.optionManager = new OptionManagerImpl<>(this, defaultReason);
-        if (registrar != null) registrar.accept(this.optionManager, this.getMod());
+        if (!registrars.isEmpty()) {
+            for (var registrar : registrars) {
+                registrar.accept(this.optionManager, this.getMod());
+            }
+        }
         EntrypointRunner.runWithContext(getShareId("processors"), BiConsumer.class, (consumer, mod) -> Utilities.consume(this.optionManager, mod, cast(consumer)));
         return this;
     }
@@ -72,8 +79,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
-    ConfigManagerImpl<T> setScanner(ConfigClassScanner scanner) {
-        this.scanners.add(scanner);
+    ConfigManagerImpl<T> setScanners(Set<ConfigClassScanner> scanners) {
+        this.scanners.addAll(scanners);
         EntrypointRunner.run(getShareId("scanner"), Supplier.class, supplier -> this.scanners.add(cast(supplier.get())));
         this.scanners.removeIf(Objects::isNull);
 
@@ -81,11 +88,17 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         return this;
     }
 
+    ConfigManagerImpl<T> addListeners(Set<Consumer<ConfigManager<T>>> saveListeners, Set<Consumer<ConfigManager<T>>> loadListeners) {
+        this.loadListeners.addAll(loadListeners);
+        this.saveListeners.addAll(saveListeners);
+        return this;
+    }
+
     ConfigManagerImpl<T> afterBuild(boolean save, Function<ConfigManager<T>, ConfigSerializer<T>> serializer, Supplier<T> ctx) {
         this.ctx = ctx;
         this.serializer = serializer.apply(this);
 
-        this.load();
+        this.load(save);
         this.defaultConfig = Lazy.of(() -> this::createDefault);
         return this;
     }
@@ -114,6 +127,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void load(boolean save) {
         this.config.set(this.getSerializer().load());
+        this.loadListeners.forEach(consumer -> consumer.accept(this));
         if (save) this.save();
     }
 
@@ -193,6 +207,18 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     public void save() {
         this.getOptionManager().processOptions();
         this.getSerializer().save();
+
+        this.saveListeners.forEach(consumer -> consumer.accept(this));
+    }
+
+    @Override
+    public void postLoad(Event<T> consumer) {
+        this.loadListeners.add(consumer);
+    }
+
+    @Override
+    public void postSave(Event<T> consumer) {
+        this.saveListeners.add(consumer);
     }
 
     private String getShareId(String key) {

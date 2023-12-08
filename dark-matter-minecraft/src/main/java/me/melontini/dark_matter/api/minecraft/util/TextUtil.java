@@ -19,4 +19,8 @@ public class TextUtil {
     public static MutableText literal(String text) {
         return Text.literal(text);
     }
+
+    public static MutableText empty() {
+        return Text.empty();
+    }
 }

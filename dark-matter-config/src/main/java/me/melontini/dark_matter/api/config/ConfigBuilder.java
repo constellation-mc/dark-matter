@@ -76,6 +76,9 @@ public interface ConfigBuilder<T> {
 
     ConfigBuilder<T> defaultReason(DefaultReason<T> reason);
 
+    ConfigBuilder<T> postLoad(ConfigManager.Event<T> consumer);
+    ConfigBuilder<T> postSave(ConfigManager.Event<T> consumer);
+
     default ConfigBuilder<T> attach(Consumer<ConfigBuilder<T>> attacher) {
         attacher.accept(this);
         return this;
