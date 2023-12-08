@@ -12,13 +12,13 @@ import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import net.fabricmc.loader.api.ModContainer;
-import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -46,6 +46,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final Map<String, List<FieldOption>> optionToFields = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private final Set<ConfigClassScanner> scanners = Collections.synchronizedSet(new LinkedHashSet<>());
+
+    private final Set<Consumer<ConfigManager<T>>> saveListeners = new HashSet<>();
+    private final Set<Consumer<ConfigManager<T>>> loadListeners = new HashSet<>();
 
     public ConfigManagerImpl(Class<T> cls, ModContainer mod, String name) {
         this.configClass = cls;
@@ -118,6 +121,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void load(boolean save) {
         this.config.set(this.getSerializer().load());
+        this.loadListeners.forEach(consumer -> consumer.accept(this));
         if (save) this.save();
     }
 
@@ -197,6 +201,18 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     public void save() {
         this.getOptionManager().processOptions();
         this.getSerializer().save();
+
+        this.saveListeners.forEach(consumer -> consumer.accept(this));
+    }
+
+    @Override
+    public void postLoad(Event<T> consumer) {
+        this.loadListeners.add(consumer);
+    }
+
+    @Override
+    public void postSave(Event<T> consumer) {
+        this.saveListeners.add(consumer);
     }
 
     private String getShareId(String key) {
