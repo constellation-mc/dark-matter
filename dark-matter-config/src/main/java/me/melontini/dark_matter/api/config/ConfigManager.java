@@ -6,6 +6,7 @@ import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
+import java.util.function.Consumer;
 
 @ApiStatus.NonExtendable
 @SuppressWarnings("unused")
@@ -49,4 +50,12 @@ public interface ConfigManager<T> {
     }
     void load(boolean save);
     void save();
+
+    void postLoad(Event<T> consumer);
+    void postSave(Event<T> consumer);
+
+    interface Event<T> extends Consumer<ConfigManager<T>> {
+        @Override
+        void accept(ConfigManager<T> manager);
+    }
 }
