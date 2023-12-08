@@ -18,7 +18,7 @@ public interface OptionManager<T> {
     boolean isModified(Option f);
     boolean isModified(String option);
 
-    void processOptions();
+    boolean processOptions();
 
     Collection<ProcessorEntry<T>> getAllProcessors();
     Optional<ProcessorEntry<T>> getProcessor(String id);

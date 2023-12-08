@@ -20,4 +20,8 @@ public class TextUtil {
     public static MutableText literal(String text) {
         return new LiteralText(text);
     }
+
+    public static MutableText empty() {
+        return Text.empty();
+    }
 }
