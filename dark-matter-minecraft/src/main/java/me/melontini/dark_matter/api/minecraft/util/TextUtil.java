@@ -22,6 +22,6 @@ public class TextUtil {
     }
 
     public static MutableText empty() {
-        return Text.empty();
+        return new LiteralText(""); //This doesn't look right
     }
 }
