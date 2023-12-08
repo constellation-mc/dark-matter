@@ -8,13 +8,12 @@ package me.melontini.dark_matter.impl.danger.instrumentation;
 
 import lombok.Getter;
 import me.melontini.dark_matter.api.base.reflect.MiscReflection;
+import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
 import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.danger.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import net.bytebuddy.agent.ByteBuddyAgent;
-import net.bytebuddy.agent.Installer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.ClassReader;
@@ -32,7 +31,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -147,8 +145,7 @@ public class InstrumentationInternals {
             try {
                 instrumentation = unsafeAttach();
             } catch (Throwable t) {
-                DarkMatterLog.info("Failed to attach using InstrumentationImpl#loadAgent, trying default.", t);
-                instrumentation = ByteBuddyAgent.install();
+                throw new IllegalStateException("Failed to attach using InstrumentationImpl#loadAgent", t);
             }
 
             canInstrument = true;
@@ -161,10 +158,16 @@ public class InstrumentationInternals {
     private static Instrumentation unsafeAttach() throws Throwable {
         File self = AgentProvider.createJarFile();
 
-        try (var is = Installer.class.getClassLoader().getResourceAsStream(Installer.class.getName().replace(".", "/") + ".class")) {
-            MiscReflection.defineClass(ClassLoader.getSystemClassLoader(), Installer.class.getName(), MakeSure.notNull(is).readAllBytes(), Installer.class.getProtectionDomain());
-        } catch (Throwable ignored) {}
-
+        Class<?> ap;
+        try {
+            ap = ClassLoader.getSystemClassLoader().loadClass(AgentProvider.class.getName());
+        } catch (Throwable t) {
+            try (var is = AgentProvider.class.getClassLoader().getResourceAsStream(AgentProvider.class.getName().replace(".", "/") + ".class")) {
+                ap = MiscReflection.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), MakeSure.notNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
+            } catch (Throwable ignored) {
+                throw new RuntimeException("Failed to define " + AgentProvider.class.getName());
+            }
+        }
 
         ThrowableStorage<Throwable> t = new ThrowableStorage<>();
         ModuleLayer.boot().findModule("java.instrument").map(module -> {
@@ -182,6 +185,7 @@ public class InstrumentationInternals {
         }).orElseThrow(() -> new IllegalStateException("'java.instrument' module is not available!"));
         t.tryThrow();
 
-        return ByteBuddyAgent.getInstrumentation();
+        return (Instrumentation) Reflect.setAccessible(Reflect.findField(ap, "instrumentation").orElseThrow())
+                .get(null);
     }
 }
