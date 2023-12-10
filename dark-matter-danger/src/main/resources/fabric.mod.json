@@ -14,7 +14,7 @@
   "entrypoints": {
   },
   "depends": {
-    "fabricloader": "${loader_version}",
+    "fabricloader": ">=${loader_version}",
     "minecraft": "*",
     "dark-matter-base": "*"
   },
