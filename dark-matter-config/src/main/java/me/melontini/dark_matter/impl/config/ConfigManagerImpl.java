@@ -11,6 +11,7 @@ import me.melontini.dark_matter.api.config.interfaces.Option;
 import me.melontini.dark_matter.api.config.interfaces.Redirects;
 import me.melontini.dark_matter.api.config.interfaces.TextEntry;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
+import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 
 import java.lang.reflect.Field;
@@ -126,7 +127,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     @Override
     public void load(boolean save) {
-        this.config.set(this.getSerializer().load());
+        this.config.set(this.getSerializer().load(FabricLoader.getInstance().getConfigDir()));
         this.loadListeners.forEach(consumer -> consumer.accept(this));
         if (save) this.save();
     }
@@ -199,6 +200,11 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
+    public Collection<Option> getFields() {
+        return fieldToOption.keySet();
+    }
+
+    @Override
     public Class<T> getType() {
         return this.configClass;
     }
@@ -206,7 +212,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public void save() {
         this.getOptionManager().processOptions();
-        this.getSerializer().save();
+        this.getSerializer().save(FabricLoader.getInstance().getConfigDir(), this.getConfig());
 
         this.saveListeners.forEach(consumer -> consumer.accept(this));
     }

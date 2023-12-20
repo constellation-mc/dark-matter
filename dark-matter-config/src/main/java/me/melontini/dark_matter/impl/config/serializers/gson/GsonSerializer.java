@@ -8,7 +8,6 @@ import me.melontini.dark_matter.api.config.ConfigManager;
 import me.melontini.dark_matter.api.config.serializers.ConfigSerializer;
 import me.melontini.dark_matter.api.config.serializers.gson.Fixups;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
-import net.fabricmc.loader.api.FabricLoader;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,13 +18,11 @@ import java.util.function.Function;
 public class GsonSerializer<T> implements ConfigSerializer<T> {
 
     private final ConfigManager<T> manager;
-    private final Path configPath;
     private final Gson gson;
     private Function<JsonObject, JsonObject> fixupFunc = Function.identity();
 
     public GsonSerializer(ConfigManager<T> manager, Gson gson) {
         this.manager = manager;
-        this.configPath = FabricLoader.getInstance().getConfigDir().resolve(manager.getName() + ".json");
         this.gson = gson;
     }
 
@@ -39,37 +36,39 @@ public class GsonSerializer<T> implements ConfigSerializer<T> {
     }
 
     @Override
-    public T load() {
-        if (Files.exists(this.getPath())) {
-            try (var reader = Files.newBufferedReader(this.getPath())) {
+    public T load(Path path) {
+        path = this.getPath(path);
+        if (Files.exists(path)) {
+            try (var reader = Files.newBufferedReader(path)) {
                 JsonObject object = this.fixupFunc.apply(JsonParser.parseReader(reader).getAsJsonObject());
 
                 return this.gson.fromJson(object, this.getConfigManager().getType());
             } catch (IOException e) {
-                DarkMatterLog.error("Failed to load {}, using defaults", this.getPath());
+                DarkMatterLog.error("Failed to load {}, using defaults", path);
             }
         }
         return this.getConfigManager().createDefault();
     }
 
     @Override
-    public void save() {
+    public void save(Path path, T config) {
+        path = this.getPath(path);
         try {
-            Files.createDirectories(this.getPath().getParent());
-            byte[] cfg = this.gson.toJson(this.getConfigManager().getConfig()).getBytes();
-            if (Files.exists(this.getPath())) {
-                byte[] current = Files.readAllBytes(this.getPath());
+            Files.createDirectories(path.getParent());
+            byte[] cfg = this.gson.toJson(config).getBytes();
+            if (Files.exists(path)) {
+                byte[] current = Files.readAllBytes(path);
                 if (Arrays.equals(cfg, current)) return;
             }
-            Files.write(this.getPath(), cfg);
+            Files.write(path, cfg);
         } catch (Exception e) {
-            DarkMatterLog.error("Failed to save {}", this.getPath(), e);
+            DarkMatterLog.error("Failed to save {}", path, e);
         }
     }
 
     @Override
-    public Path getPath() {
-        return this.configPath;
+    public Path getPath(Path path) {
+        return path.resolve(getConfigManager().getName() + ".json");
     }
 
     @Override

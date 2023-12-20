@@ -8,10 +8,10 @@ import java.nio.file.Path;
 public interface ConfigSerializer<T> {
 
     @ApiStatus.OverrideOnly
-    T load();
+    T load(Path root);
     @ApiStatus.OverrideOnly
-    void save();
+    void save(Path root, T config);
 
-    Path getPath();
+    Path getPath(Path root);
     ConfigManager<T> getConfigManager();
 }
