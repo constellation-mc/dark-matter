@@ -30,6 +30,8 @@ public interface ConfigManager<T> {
     T load(Path root) throws IOException;
     void save(Path root, T config) throws IOException;
 
+    Path resolve(Path root);
+
     ConfigManager<T> onSave(State state, Listener<T> listener);
     ConfigManager<T> onLoad(Listener<T> listener);
 

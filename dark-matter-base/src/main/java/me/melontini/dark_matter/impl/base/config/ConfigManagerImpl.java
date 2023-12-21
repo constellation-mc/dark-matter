@@ -79,7 +79,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         save.getOrDefault(State.POST, Collections.emptySet()).forEach(listener -> listener.accept(config));
     }
 
-    private Path resolve(Path root) {
+    public Path resolve(Path root) {
         return root.resolve(name() + ".json");
     }
 
