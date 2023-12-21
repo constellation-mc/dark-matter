@@ -15,7 +15,6 @@ import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.List;
 
 /**
  * @author <a href="https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass">source</a>
@@ -51,7 +50,7 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, String name, Class<?>... classes) {
+    public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, boolean traverse, String name, Class<?>... classes) {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length == 1) {
             return checkMethod(methods[0], name, classes) ? methods[0] : null;
@@ -64,7 +63,7 @@ public class ReflectionInternals {
                 }
             }
         }
-        return null;
+        return traverse && clazz.getSuperclass() != null ? findMethod(clazz.getSuperclass(), true, name, classes) : null;
     }
 
     private static boolean checkMethod(Method method, String name, Class<?>[] classes) {
@@ -80,7 +79,7 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static <T> Field findField(Class<T> clazz, String name) {
+    public static <T> Field findField(Class<T> clazz, boolean traverse, String name) {
         Field[] fields = clazz.getDeclaredFields();
         if (fields.length == 1) {
             return fields[0].getName().equals(name) ? fields[0] : null;
@@ -91,7 +90,7 @@ public class ReflectionInternals {
                 }
             }
         }
-        return null;
+        return traverse && clazz.getSuperclass() != null ? findField(clazz.getSuperclass(), true, name) : null;
     }
 
     private static final Lazy<VarHandle> override = Lazy.of(() -> () -> trustedLookup().findVarHandle(AccessibleObject.class, "override", boolean.class));
