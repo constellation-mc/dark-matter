@@ -132,7 +132,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Getter<T> defaultGetter() {
         return (context, option) -> Utilities.supplyUnchecked(() -> {
-            List<Option> fields = context.manager().getFields(option);
+            List<Option> fields = context.manager().getOptions(option);
             Object obj = context.config();
             for (Option field : fields) {
                 obj = field.get(obj);
@@ -143,7 +143,7 @@ public class ConfigBuilderImpl<T> implements ConfigBuilder<T> {
 
     private Setter<T> defaultSetter() {
         return (context, option, value) -> Utilities.runUnchecked(() -> {
-            List<Option> fields = context.manager().getFields(option);
+            List<Option> fields = context.manager().getOptions(option);
             Object obj = context.config();
             for (int i = 0; i < fields.size() - 1; i++) {
                 Option field = fields.get(i);

@@ -23,7 +23,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     private final Map<String, Function<TextEntry.InfoHolder<T>, TextEntry>> customReasons = new ConcurrentHashMap<>();
     private final Lazy<PrependingLogger> logger;
 
-    private final Map<Option, Set<ProcessorEntry<T>>> modifiedFields = new ConcurrentHashMap<>();
+    private final Map<Option, Set<ProcessorEntry<T>>> modifiedOptions = new ConcurrentHashMap<>();
 
     private final ModJsonProcessor modJsonProcessor;
 
@@ -48,7 +48,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
     @Override
     public boolean processOptions() {
-        this.modifiedFields.clear();
+        this.modifiedOptions.clear();
 
         this.optionProcessors.forEach((key, entry) -> {
             var config = entry.processor().process(this.getConfigManager());
@@ -63,7 +63,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
             }
         });
 
-        return !this.modifiedFields.isEmpty();
+        return !this.modifiedOptions.isEmpty();
     }
 
     @Override
@@ -82,8 +82,8 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
         config.forEach((s, o) -> {
             try {
                 this.getConfigManager().set(s, o);
-                Option f = this.getConfigManager().getField(s);
-                this.modifiedFields.computeIfAbsent(f, field -> new HashSet<>()).add(entry);
+                Option f = this.getConfigManager().getOption(s);
+                this.modifiedOptions.computeIfAbsent(f, field -> new HashSet<>()).add(entry);
             } catch (NoSuchOptionException e) {
                 DarkMatterLog.error("Option %s does not exist (%s)".formatted(s, entry.id()), e);
             }
@@ -97,27 +97,27 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
 
     @Override
     public boolean isModified(Option f) {
-        return this.modifiedFields.containsKey(f);
+        return this.modifiedOptions.containsKey(f);
     }
 
     @Override
     public boolean isModified(String option) {
-        return isModified(this.getConfigManager().getField(option));
+        return isModified(this.getConfigManager().getOption(option));
     }
 
     @Override
     public Tuple<String, Set<ProcessorEntry<T>>> blameProcessors(Option f) {
-        return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modifiedFields.getOrDefault(f, Collections.emptySet())));
+        return Tuple.of(this.getConfigManager().getKey(f), Collections.unmodifiableSet(this.modifiedOptions.getOrDefault(f, Collections.emptySet())));
     }
 
     @Override
     public Set<ProcessorEntry<T>> blameProcessors(String option) {
-        return Collections.unmodifiableSet(this.modifiedFields.getOrDefault(this.getConfigManager().getField(option), Collections.emptySet()));
+        return Collections.unmodifiableSet(this.modifiedOptions.getOrDefault(this.getConfigManager().getOption(option), Collections.emptySet()));
     }
 
     @Override
     public Tuple<String, Set<ModContainer>> blameModJson(Option f) {
-        return Tuple.of(this.getConfigManager().getOption(f), Collections.unmodifiableSet(this.modJsonProcessor.blameMods(f)));
+        return Tuple.of(this.getConfigManager().getKey(f), Collections.unmodifiableSet(this.modJsonProcessor.blameMods(f)));
     }
 
     @Override
@@ -128,7 +128,7 @@ public class OptionManagerImpl<T> implements OptionManager<T>, OptionProcessorRe
     @Override
     public Optional<TextEntry> getReason(String processor, String option) {
         try {
-            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.getConfigManager(), this.getProcessor(processor).orElseThrow(() -> new NoSuchFieldException("processor: " + processor)), option, this.getConfigManager().getField(option))));
+            return Optional.ofNullable(this.customReasons.getOrDefault(processor, this.defaultReason).apply(new TextEntry.InfoHolder<>(this.getConfigManager(), this.getProcessor(processor).orElseThrow(() -> new NoSuchFieldException("processor: " + processor)), option, this.getConfigManager().getOption(option))));
         } catch (NoSuchFieldException e) {
             return Optional.empty();
         }

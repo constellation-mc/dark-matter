@@ -20,25 +20,25 @@ public interface ConfigManager<T> {
     /**
      * @throws NoSuchOptionException if the option is not found
      */
-    <V> V get(String option);
-    default <V> V get(Class<V> type, String option) {return get(option);}
+    <V> V get(String key);
+    default <V> V get(Class<V> type, String key) {return get(key);}
     <V> V getDefault(String option);
-    default <V> V getDefault(Class<V> type, String option) {return get(option);}
-    void set(String option, Object value);
-    default void resetToDefault(String... options) {
-        for (String option : options) {
-            set(option, getDefault(option));
+    default <V> V getDefault(Class<V> type, String key) {return get(key);}
+    void set(String key, Object value);
+    default void resetToDefault(String... keys) {
+        for (String key : keys) {
+            set(key, getDefault(key));
         }
     }
 
-    Collection<Option> getFields();
-    List<Option> getFields(String option);
-    default Option getField(String option) {
-        List<Option> fields = getFields(option);
+    Collection<Option> getOptions();
+    List<Option> getOptions(String option);
+    default Option getOption(String option) {
+        List<Option> fields = getOptions(option);
         return fields.get(fields.size() - 1);
     }
-    String getOption(Option field);
-    Collection<String> getOptions();
+    String getKey(Option field);
+    Collection<String> getKeys();
 
     OptionManager<T> getOptionManager();
     ConfigSerializer<T> getSerializer();

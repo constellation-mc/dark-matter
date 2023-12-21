@@ -78,7 +78,7 @@ class ModJsonProcessor {
 
     private void processValues(CustomValue.CvObject values, ModContainer mod) {
         for (Map.Entry<String, CustomValue> feature : values) {
-            Option f = manager.getField(feature.getKey());
+            Option f = manager.getOption(feature.getKey());
 
             var converter = TYPES.get().get(f.type());
             if (converter == null) {
@@ -90,7 +90,7 @@ class ModJsonProcessor {
     }
 
     Set<ModContainer> blameMods(String feature) {
-        return modBlame.getOrDefault(manager.getField(feature), Collections.emptySet());
+        return modBlame.getOrDefault(manager.getOption(feature), Collections.emptySet());
     }
 
     Set<ModContainer> blameMods(Option field) {

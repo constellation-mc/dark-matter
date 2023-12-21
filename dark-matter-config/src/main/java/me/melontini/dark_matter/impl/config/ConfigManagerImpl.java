@@ -43,8 +43,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private ConfigSerializer<T> serializer;
     private Supplier<T> ctx;
 
-    private final Map<Option, String> fieldToOption = new ConcurrentHashMap<>();
-    private final Map<String, List<FieldOption>> optionToFields = Collections.synchronizedMap(new LinkedHashMap<>());
+    private final Map<Option, String> optionToKey = new ConcurrentHashMap<>();
+    private final Map<String, List<FieldOption>> keyToOption = Collections.synchronizedMap(new LinkedHashMap<>());
 
     private final Set<ConfigClassScanner> scanners = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -110,8 +110,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
             fieldRef.add(field);
             ImmutableList<Field> fieldRefView = ImmutableList.copyOf(fieldRef);
-            optionToFields.putIfAbsent(parentString + field.getName(), fieldRefView.stream().map(FieldOption::new).toList());
-            fieldToOption.putIfAbsent(new FieldOption(field), parentString + field.getName());
+            keyToOption.putIfAbsent(parentString + field.getName(), fieldRefView.stream().map(FieldOption::new).toList());
+            optionToKey.putIfAbsent(new FieldOption(field), parentString + field.getName());
 
             if (!this.scanners.isEmpty()) {
                 ImmutableSet<Class<?>> classes = ImmutableSet.copyOf(recursive);
@@ -158,20 +158,20 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public List<Option> getFields(String option) {
-        List<FieldOption> f = this.optionToFields.get(option = this.redirects.apply(option));
+    public List<Option> getOptions(String option) {
+        List<FieldOption> f = this.keyToOption.get(option = this.redirects.apply(option));
         if (f == null) throw new NoSuchOptionException(option);
         return Collections.unmodifiableList(f);
     }
 
     @Override
-    public String getOption(Option field) {
-        return this.fieldToOption.get(field);
+    public String getKey(Option field) {
+        return this.optionToKey.get(field);
     }
 
     @Override
-    public List<String> getOptions() {
-        return this.optionToFields.keySet().stream().toList();
+    public List<String> getKeys() {
+        return this.keyToOption.keySet().stream().toList();
     }
 
     @Override
@@ -200,8 +200,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public Collection<Option> getFields() {
-        return fieldToOption.keySet();
+    public Collection<Option> getOptions() {
+        return optionToKey.keySet();
     }
 
     @Override
