@@ -50,25 +50,22 @@ public final class Utilities {
         return (U) o;
     }
 
-    @SneakyThrows
     public static <E extends Throwable> void runUnchecked(ThrowingRunnable<E> runnable) {
-        runnable.run();
+        Exceptions.run(runnable);
     }
 
-    @SneakyThrows
     public static <T, E extends Throwable> T supplyUnchecked(ThrowingSupplier<T, E> supplier) {
-        return supplier.get();
+        return Exceptions.supply(supplier);
     }
 
     @SneakyThrows
     public static <T, E extends Throwable> T consumeUnchecked(T obj, ThrowingConsumer<T, E> consumer) {
-        consumer.accept(obj);
-        return obj;
+        return Exceptions.consume(obj, consumer);
     }
 
     @SneakyThrows
     public static <T, R, E extends Throwable> R processUnchecked(T obj, ThrowingFunction<T, R, E> function) {
-        return function.apply(obj);
+        return Exceptions.process(obj, function);
     }
 
     public static void run(Runnable runnable) {

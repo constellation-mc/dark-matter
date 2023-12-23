@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util;
 
+import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -47,6 +48,7 @@ public class PrependingLogger {
     };
 
     private static final Function<Logger, String> DEFAULT = logger -> "";
+    @Getter
     private final Logger backing;
     protected volatile Function<Logger, String> prefixGetter = DEFAULT;
 
@@ -202,9 +204,5 @@ public class PrependingLogger {
 
     public void trace(String msg, Object... args) {
         backing.trace(prefixGetter.apply(backing) + msg, args);
-    }
-
-    public Logger getBacking() {
-        return backing;
     }
 }
