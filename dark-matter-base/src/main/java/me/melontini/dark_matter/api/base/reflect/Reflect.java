@@ -28,15 +28,27 @@ public class Reflect {
     }
 
     public static Optional<Method> findMethod(@NotNull Class<?> clazz, String name, Object... args) {
-        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, name, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)));
+        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, false, name, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)));
     }
 
     public static Optional<Method> findMethod(@NotNull Class<?> clazz, String name, Class<?>... args) {
-        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, name, args));
+        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, false, name, args));
     }
 
     public static Optional<Field> findField(@NotNull Class<?> clazz, String name) {
-        return Optional.ofNullable(ReflectionInternals.findField(clazz, name));
+        return Optional.ofNullable(ReflectionInternals.findField(clazz, false, name));
+    }
+
+    public static Optional<Method> findMethodInHierarchy(@NotNull Class<?> clazz, String name, Object... args) {
+        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, true, name, Arrays.stream(args).map(Object::getClass).toArray(Class[]::new)));
+    }
+
+    public static Optional<Method> findMethodInHierarchy(@NotNull Class<?> clazz, String name, Class<?>... args) {
+        return Optional.ofNullable(ReflectionInternals.findMethod(clazz, true, name, args));
+    }
+
+    public static Optional<Field> findFieldInHierarchy(@NotNull Class<?> clazz, String name) {
+        return Optional.ofNullable(ReflectionInternals.findField(clazz, true, name));
     }
 
     //
