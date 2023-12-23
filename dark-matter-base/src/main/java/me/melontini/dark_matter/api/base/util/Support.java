@@ -107,6 +107,10 @@ public class Support {
         }
     }
 
+    public static void share(String id, Object o) {
+        FabricLoader.getInstance().getObjectShare().put(id, o);
+    }
+
     public static <T> void whenAvailable(String id, Class<T> type /*generics moment*/, BiConsumer<String, T> consumer) {
         FabricLoader.getInstance().getObjectShare().whenAvailable(id, (s, o) -> {
             if (type.isInstance(o)) consumer.accept(s, type.cast(o));
