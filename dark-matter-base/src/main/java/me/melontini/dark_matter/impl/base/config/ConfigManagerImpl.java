@@ -8,7 +8,10 @@ import me.melontini.dark_matter.api.base.config.ConfigManager;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.*;
+import java.util.Arrays;
+import java.util.LinkedHashSet;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -20,10 +23,12 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     private final String name;
     private final Supplier<T> constructor;
 
-    private final Set<Consumer<JsonObject>> fixers = new HashSet<>();
+    private final Set<Consumer<JsonObject>> fixers = new LinkedHashSet<>();
 
-    private final Map<State, Set<Listener<T>>> save = new HashMap<>();
-    private final Set<Listener<T>> load = new HashSet<>();
+    private final Set<Listener<T>> save = new LinkedHashSet<>();
+    private final Set<Listener<T>> load = new LinkedHashSet<>();
+
+    private final Set<Handler> handlers = new LinkedHashSet<>();
 
     public ConfigManagerImpl(Class<T> cls, String name, Supplier<T> constructor) {
         this.cls = cls;
@@ -43,40 +48,45 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public T load(Path root) throws IOException {
+    public T load(Path root) {
         var path = resolve(root);
 
-        T config;
+        AtomicReference<T> config = new AtomicReference<>();
         if (Files.exists(path)) {
             try (var reader = Files.newBufferedReader(path)) {
                 JsonObject json = GSON.fromJson(reader, JsonObject.class);
                 fixers.forEach(fixer -> fixer.accept(json));
-                config = GSON.fromJson(json, type());
+                config.set(GSON.fromJson(json, type()));
+            } catch (IOException e) {
+                handlers.forEach(handler -> handler.accept(e, Stage.LOAD));
+                config.set(createDefault());
             }
         } else {
-            config = createDefault();
+            config.set(createDefault());
         }
-        load.forEach(listener -> listener.accept(config));
-        return config;
+        load.forEach(listener -> listener.accept(config.get()));
+        return config.get();
     }
 
     @Override
-    public void save(Path root, T config) throws IOException {
+    public void save(Path root, T config) {
         var path = resolve(root);
 
-        save.getOrDefault(State.PRE, Collections.emptySet()).forEach(listener -> listener.accept(config));
+        save.forEach(listener -> listener.accept(config));
 
-        Files.createDirectories(path.getParent());
-        byte[] cfg = GSON.toJson(config).getBytes();
-        if (Files.exists(path)) {
-            byte[] old = Files.readAllBytes(path);
-            if (Arrays.equals(old, cfg)) {
-                save.getOrDefault(State.POST, Collections.emptySet()).forEach(listener -> listener.accept(config));
-                return;
+        try {
+            Files.createDirectories(path.getParent());
+            byte[] cfg = GSON.toJson(config).getBytes();
+            if (Files.exists(path)) {
+                byte[] old = Files.readAllBytes(path);
+                if (Arrays.equals(old, cfg)) {
+                    return;
+                }
             }
+            Files.write(path, cfg);
+        } catch (IOException e) {
+            handlers.forEach(handler -> handler.accept(e, Stage.SAVE));
         }
-        Files.write(path, cfg);
-        save.getOrDefault(State.POST, Collections.emptySet()).forEach(listener -> listener.accept(config));
     }
 
     public Path resolve(Path root) {
@@ -84,14 +94,20 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public ConfigManager<T> onSave(State state, Listener<T> listener) {
-        save.computeIfAbsent(state, k -> new HashSet<>()).add(listener);
+    public ConfigManager<T> onSave(Listener<T> listener) {
+        save.add(listener);
         return this;
     }
 
     @Override
     public ConfigManager<T> onLoad(Listener<T> listener) {
         load.add(listener);
+        return this;
+    }
+
+    @Override
+    public ConfigManager<T> exceptionHandler(Handler handler) {
+        handlers.add(handler);
         return this;
     }
 

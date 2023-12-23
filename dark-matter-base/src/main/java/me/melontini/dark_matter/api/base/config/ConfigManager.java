@@ -5,6 +5,7 @@ import me.melontini.dark_matter.impl.base.config.ConfigManagerImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -27,13 +28,28 @@ public interface ConfigManager<T> {
     ConfigManager<T> fixup(Consumer<JsonObject> fixer);
 
     T createDefault();
-    T load(Path root) throws IOException;
-    void save(Path root, T config) throws IOException;
+    T load(Path root);
+    void save(Path root, T config);
 
     Path resolve(Path root);
 
-    ConfigManager<T> onSave(State state, Listener<T> listener);
+    /**
+     * Executed right before the config is saved.
+     * Can be used to force options, e.g. if an incompatible mod is loaded.
+     */
+    ConfigManager<T> onSave(Listener<T> listener);
+
+    /**
+     * Executed right before the config is returned by {@code load}.
+     * Generally not very useful, since it's usually only executed once.
+     */
     ConfigManager<T> onLoad(Listener<T> listener);
+
+    /**
+     * Handle IOExceptions thrown by the config manager.
+     * If none of the handlers throw an exception during {@code load}, the default config is returned.
+     */
+    ConfigManager<T> exceptionHandler(Handler handler);
 
     Class<T> type();
     String name();
@@ -42,7 +58,12 @@ public interface ConfigManager<T> {
         void accept(T config);
     }
 
-    enum State {
-        PRE, POST
+    interface Handler extends BiConsumer<IOException, Stage> {
+        void accept(IOException e, Stage stage);
+    }
+
+    enum Stage {
+        SAVE,
+        LOAD
     }
 }
