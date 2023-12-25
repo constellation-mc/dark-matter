@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.analytics;
 
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.impl.analytics.AnalyticsInternals;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.concurrent.ExecutorService;
@@ -24,17 +25,17 @@ public abstract class MessageHandler<T> {
 
     public final void send(T consumer, boolean wait, boolean errors) {
         MakeSure.notNull(consumer, "null consumer provided");
-        if (analytics.enabled() || analytics.handleCrashes()) sendInternal(consumer, wait, errors);
+        if (AnalyticsInternals.canSend()) sendInternal(consumer, wait, errors);
     }
 
     public final void send(T consumer, boolean wait) {
         MakeSure.notNull(consumer, "null consumer provided");
-        if (analytics.enabled() || analytics.handleCrashes()) sendInternal(consumer, wait, false);
+        if (AnalyticsInternals.canSend()) sendInternal(consumer, wait, false);
     }
 
     public final void send(T consumer) {
         MakeSure.notNull(consumer, "null consumer provided");
-        if (analytics.enabled() || analytics.handleCrashes()) sendInternal(consumer, false, false);
+        if (AnalyticsInternals.canSend()) sendInternal(consumer, false, false);
     }
 
     @ApiStatus.OverrideOnly

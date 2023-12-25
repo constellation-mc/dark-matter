@@ -5,7 +5,6 @@ import me.melontini.dark_matter.api.base.util.BadCrypt;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -26,7 +25,7 @@ public class AnalyticsImpl implements Analytics {
             MessageDigest d = MessageDigest.getInstance("SHA-256");
             Path idPath = FabricLoader.getInstance().getGameDir().resolve(".dark-matter/analytics").resolve(BadCrypt.digestToHexString(name, d).substring(0, 35) + ".id");
 
-            if (!this.enabled()) {
+            if (!AnalyticsInternals.enabled()) {
                 Files.deleteIfExists(idPath);
                 return nullID;
             }
@@ -52,15 +51,5 @@ public class AnalyticsImpl implements Analytics {
     @Override
     public UUID getUUID() {
         return this.uuid;
-    }
-
-    @Override
-    public boolean enabled() {
-        return AnalyticsInternals.isEnabled();
-    }
-
-    @Override
-    public boolean handleCrashes() {
-        return AnalyticsInternals.handleCrashes();
     }
 }

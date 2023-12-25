@@ -4,6 +4,7 @@ import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.api.analytics.MessageHandler;
 import me.melontini.dark_matter.api.analytics.Prop;
 import me.melontini.dark_matter.api.analytics.mixpanel.interfaces.Mixpanel;
+import me.melontini.dark_matter.impl.analytics.AnalyticsInternals;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 
 import java.util.concurrent.Future;
@@ -17,7 +18,7 @@ public class MixpanelHandler extends MessageHandler<MixpanelAnalytics.MessagePro
     }
 
     protected void sendInternal(MixpanelAnalytics.MessageProvider consumer, boolean wait, boolean errors) {
-        if (!analytics.enabled() && !analytics.handleCrashes()) return;
+        if (!AnalyticsInternals.canSend()) return;
         Future<?> future = EXECUTOR.submit(() -> {
             try {
                 consumer.consume(this.mixpanel, this.analytics);

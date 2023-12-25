@@ -52,9 +52,13 @@ public interface Analytics {
         return enabled();
     }
 
-    boolean enabled();
+    default boolean enabled() {
+        return AnalyticsInternals.enabled();
+    }
 
-    boolean handleCrashes();
+    default boolean handleCrashes() {
+        return AnalyticsInternals.handleCrashes();
+    }
 
     /**
      * Nuke profiles using the old ID.

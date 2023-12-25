@@ -5,6 +5,7 @@ import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.api.analytics.crashes.Crashlytics;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import me.melontini.dark_matter.impl.analytics.AnalyticsInternals;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.crash.CrashReport;
 
@@ -29,7 +30,7 @@ public final class CrashlyticsInternals {
 
     public static void handleCrash(CrashReport report, Throwable cause, String latestLog, EnvType envType) {
         for (Tuple<Analytics, Crashlytics.Handler> tuple : HANDLERS.values()) {
-            if (tuple.left().handleCrashes()) {
+            if (AnalyticsInternals.handleCrashes()) {
                 tuple.right().handle(report, cause, latestLog, envType);
             }
         }
