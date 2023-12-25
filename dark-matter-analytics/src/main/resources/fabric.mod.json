@@ -16,6 +16,9 @@
       "me.melontini.dark_matter.impl.analytics.AnalyticsInternals::init"
     ]
   },
+  "mixins": [
+    "dark-matter-analytics.mixins.json"
+  ],
   "depends": {
     "fabricloader": ">=${loader_version}",
     "minecraft": "*",

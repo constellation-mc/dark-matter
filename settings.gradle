@@ -10,14 +10,16 @@ pluginManagement {
 
 rootProject.name = "dark-matter"
 
-include("${rootProject.name}-base")
-include("${rootProject.name}-analytics")
-include("${rootProject.name}-analytics-crashes")
-include("${rootProject.name}-analytics-mixpanel")
-include("${rootProject.name}-content")
-include("${rootProject.name}-danger")
-include("${rootProject.name}-enums")
-include("${rootProject.name}-glitter")
-include("${rootProject.name}-minecraft")
-include("${rootProject.name}-mirage")
-include("${rootProject.name}-recipe-book")
+void module(String name) {
+    include("${rootProject.name}-${name}")
+}
+
+module("base")
+module("analytics")
+module("content")
+module("danger")
+module("enums")
+module("glitter")
+module("minecraft")
+module("mirage")
+module("recipe-book")

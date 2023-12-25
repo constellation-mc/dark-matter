@@ -7,7 +7,6 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
 import net.fabricmc.api.EnvType;
 import net.minecraft.util.crash.CrashReport;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.HashMap;
 import java.util.Map;

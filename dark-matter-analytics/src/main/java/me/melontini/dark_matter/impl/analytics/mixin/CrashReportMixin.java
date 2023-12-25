@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.impl.analytics.crashes.mixin;
+package me.melontini.dark_matter.impl.analytics.mixin;
 
 import me.melontini.dark_matter.impl.analytics.crashes.CrashlyticsInternals;
 import net.fabricmc.api.EnvType;
