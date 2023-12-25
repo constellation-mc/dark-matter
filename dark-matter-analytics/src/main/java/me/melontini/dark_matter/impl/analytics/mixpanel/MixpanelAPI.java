@@ -3,7 +3,10 @@ package me.melontini.dark_matter.impl.analytics.mixpanel;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
-import me.melontini.dark_matter.api.analytics.mixpanel.interfaces.Mixpanel;
+import me.melontini.dark_matter.api.analytics.Analytics;
+import me.melontini.dark_matter.api.analytics.mixpanel.Mixpanel;
+import me.melontini.dark_matter.impl.analytics.AnalyticsImpl;
+import net.fabricmc.loader.api.ModContainer;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.io.IOException;
@@ -20,13 +23,14 @@ import java.util.UUID;
 //TODO (Union, Append, Remove) List properties
 //TODO Group profiles (everything)
 @ApiStatus.Internal
-public class MixpanelAPI implements Mixpanel {
+public class MixpanelAPI extends AnalyticsImpl implements Mixpanel {
     private static final String BASE_URL = "https://api.mixpanel.com";
     private static final String EU_URL = "https://api-eu.mixpanel.com";
     private static final HttpClient CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofMillis(2000)).proxy(ProxySelector.getDefault()).build();
     private final Holder holder;
 
-    public MixpanelAPI(boolean eu, String projectToken) {
+    public MixpanelAPI(boolean eu, String projectToken, ModContainer mod) {
+        super(mod);
         this.holder = new Holder(projectToken, eu ? EU_URL : BASE_URL);
     }
 
@@ -107,6 +111,7 @@ public class MixpanelAPI implements Mixpanel {
     }
 
     private void call(String endpoint, JsonObject... objects) {
+        if (!Analytics.enabled()) return;
         JsonArray array = new JsonArray();
         for (JsonObject object : objects) {
             array.add(object);

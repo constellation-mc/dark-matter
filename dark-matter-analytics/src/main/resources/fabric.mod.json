@@ -13,7 +13,8 @@
   "environment": "*",
   "entrypoints": {
     "preLaunch": [
-      "me.melontini.dark_matter.impl.analytics.AnalyticsInternals::init"
+      "me.melontini.dark_matter.impl.analytics.AnalyticsInternals::init",
+      "me.melontini.dark_matter.impl.analytics.crashes.CrashlyticsInternals::init"
     ]
   },
   "mixins": [

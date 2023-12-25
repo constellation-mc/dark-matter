@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.base.util.classes;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -17,6 +18,11 @@ public interface Context {
             public <T> Optional<T> get(Class<T> cls, String key) {
                 return Optional.empty();
             }
+
+            @Override
+            public String toString() {
+                return Collections.emptyMap().toString();
+            }
         };
     }
 
@@ -27,6 +33,28 @@ public interface Context {
             public <T> Optional<T> get(Class<T> cls, String key) {
                 return Optional.ofNullable(cls.cast(ctx.get(key)));
             }
+
+            @Override
+            public String toString() {
+                return ctx.toString();
+            }
         };
+    }
+
+    static Builder builder() {
+        return new Builder();
+    }
+
+    class Builder {
+        private final Map<String, Object> map = Collections.synchronizedMap(new HashMap<>());
+        private Builder() {}
+
+        public Builder put(String key, Object value) {
+            map.put(key, value);
+            return this;
+        }
+        public Context build() {
+            return Context.of(map);
+        }
     }
 }

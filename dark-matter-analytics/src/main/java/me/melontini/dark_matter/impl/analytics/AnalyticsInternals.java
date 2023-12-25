@@ -1,11 +1,9 @@
 package me.melontini.dark_matter.impl.analytics;
 
 import lombok.experimental.UtilityClass;
+import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.api.base.config.ConfigManager;
 import net.fabricmc.loader.api.FabricLoader;
-
-import java.util.Optional;
-import java.util.UUID;
 
 @UtilityClass
 public class AnalyticsInternals {
@@ -15,18 +13,12 @@ public class AnalyticsInternals {
                 throw new RuntimeException("Failed to %s dark-matter/analytics!".formatted(stage.toString().toLowerCase()));
             });
     private static final ReadConfig CONFIG = loadConfig();
-    private static UUID oldID = null;
 
     private static ReadConfig loadConfig() {
         Config config = CONFIG_MANAGER.load(FabricLoader.getInstance().getConfigDir());
-        oldID = config.userUUID;
         CONFIG_MANAGER.save(FabricLoader.getInstance().getConfigDir(), config);
 
-        return new ReadConfig(config.enabled,  config.crashesEnabled);
-    }
-
-    public static boolean canSend() {
-        return enabled() || handleCrashes();
+        return new ReadConfig(config.enabled, config.crashesEnabled, config.uniqueId);
     }
 
     public static boolean enabled() {
@@ -34,25 +26,25 @@ public class AnalyticsInternals {
     }
 
     public static boolean handleCrashes() {
-        return CONFIG.crashesEnabled();
+        return enabled() && CONFIG.crashesEnabled();
     }
 
-    public static Optional<UUID> getOldID() {
-        return Optional.ofNullable(oldID);
+    public static boolean uniqueId() {
+        return enabled() && CONFIG.uniqueId();
     }
 
     public static void init() {
         // Init the config on PreLaunch.
+        Analytics.get(FabricLoader.getInstance().getModContainer("dark-matter").orElseThrow());
     }
 
-    private record ReadConfig(boolean enabled, boolean crashesEnabled) {
+    private record ReadConfig(boolean enabled, boolean crashesEnabled, boolean uniqueId) {
 
     }
 
     private static class Config {
         public boolean enabled = true;
+        public boolean uniqueId = true;
         public boolean crashesEnabled = true;
-        @Deprecated
-        public UUID userUUID;
     }
 }

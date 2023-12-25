@@ -2,7 +2,6 @@ package me.melontini.dark_matter.impl.base;
 
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.PrependingLogger;
-import org.jetbrains.annotations.ApiStatus;
 
 @UtilityClass
 public final class DarkMatterLog {

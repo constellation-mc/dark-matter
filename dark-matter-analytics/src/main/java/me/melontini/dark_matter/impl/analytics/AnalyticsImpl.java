@@ -15,8 +15,21 @@ public class AnalyticsImpl implements Analytics {
 
     private final UUID uuid;
 
-    public AnalyticsImpl(ModContainer mod, boolean loadID) {
-        this.uuid = loadID ? this.init(mod) : nullID;
+    public AnalyticsImpl(ModContainer mod) {
+        this.uuid = Analytics.uniqueId() ? this.init(mod) : this.off(mod);
+    }
+
+    private UUID off(ModContainer mod) {
+        try {
+            byte[] name = (mod.getMetadata().getId() + FabricLoader.getInstance().getGameDir().toString()).getBytes();
+            MessageDigest d = MessageDigest.getInstance("SHA-256");
+            Path idPath = FabricLoader.getInstance().getGameDir().resolve(".dark-matter/analytics").resolve(BadCrypt.digestToHexString(name, d).substring(0, 35) + ".id");
+
+            Files.deleteIfExists(idPath);
+        } catch (Exception e) {
+            DarkMatterLog.error("Failed to init analytics for mod " + mod.getMetadata().getId(), e);
+        }
+        return nullID;
     }
 
     private UUID init(ModContainer mod) {
@@ -24,11 +37,6 @@ public class AnalyticsImpl implements Analytics {
             byte[] name = (mod.getMetadata().getId() + FabricLoader.getInstance().getGameDir().toString()).getBytes();
             MessageDigest d = MessageDigest.getInstance("SHA-256");
             Path idPath = FabricLoader.getInstance().getGameDir().resolve(".dark-matter/analytics").resolve(BadCrypt.digestToHexString(name, d).substring(0, 35) + ".id");
-
-            if (!AnalyticsInternals.enabled()) {
-                Files.deleteIfExists(idPath);
-                return nullID;
-            }
 
             UUID uuid = UUID.randomUUID();
             if (!Files.exists(idPath)) {
