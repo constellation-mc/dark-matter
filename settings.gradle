@@ -15,8 +15,8 @@ void module(String name) {
 }
 
 module("base")
-module("analytics")
 module("content")
+module("crash-handler")
 module("danger")
 module("enums")
 module("glitter")
