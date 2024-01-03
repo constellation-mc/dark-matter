@@ -52,11 +52,9 @@ public interface Mixpanel extends Analytics {
     }
 
     static String getPropName(Prop prop) {
-        return switch (prop) {
-            case OS -> "$os";
-            case TIMEZONE -> "$timezone";
-            case COUNTRY_CODE -> "mp_country_code";
-            default -> prop.name().toLowerCase();
-        };
+        if (prop == Prop.OS) {
+            return "$os";
+        }
+        return prop.name().toLowerCase();
     }
 }

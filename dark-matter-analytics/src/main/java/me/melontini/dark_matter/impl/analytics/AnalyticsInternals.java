@@ -1,7 +1,6 @@
 package me.melontini.dark_matter.impl.analytics;
 
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.analytics.Analytics;
 import me.melontini.dark_matter.api.base.config.ConfigManager;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -35,7 +34,6 @@ public class AnalyticsInternals {
 
     public static void init() {
         // Init the config on PreLaunch.
-        Analytics.get(FabricLoader.getInstance().getModContainer("dark-matter").orElseThrow());
     }
 
     private record ReadConfig(boolean enabled, boolean crashesEnabled, boolean uniqueId) {
