@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 
 @UtilityClass
 public final class CrashlyticsInternals {
@@ -40,9 +41,13 @@ public final class CrashlyticsInternals {
         return latestLog;
     }
 
+    private static final WeakHashMap<Throwable, Object> CAUGHT_EXCEPTIONS = new WeakHashMap<>();
+
     public static void handleCrash(Throwable cause, Context context) {
-        for (Crashlytics.Handler handler : HANDLERS.values()) {
-            handler.handle(cause, context);
+        if (CAUGHT_EXCEPTIONS.put(cause, new Object()) == null) {
+            for (Crashlytics.Handler handler : HANDLERS.values()) {
+                handler.handle(cause, context);
+            }
         }
     }
 }
