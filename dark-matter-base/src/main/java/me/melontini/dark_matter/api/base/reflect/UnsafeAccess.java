@@ -2,7 +2,6 @@ package me.melontini.dark_matter.api.base.reflect;
 
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.impl.base.reflect.UnsafeInternals;
-import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import java.lang.reflect.Field;
@@ -37,15 +36,5 @@ public class UnsafeAccess {
      */
     public static Unsafe getUnsafe() {
         return UnsafeInternals.getUnsafe();
-    }
-
-    @Deprecated(forRemoval = true)
-    public static @Nullable Object internalUnsafe() {
-        return UnsafeInternals.internalUnsafe();
-    }
-
-    @Deprecated(forRemoval = true)
-    public static long getObjectFieldOffset(Class<?> clazz, String name) {
-        return UnsafeInternals.getObjectFieldOffset(clazz, name);
     }
 }
