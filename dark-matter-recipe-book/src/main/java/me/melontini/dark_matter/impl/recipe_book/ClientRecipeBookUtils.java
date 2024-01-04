@@ -96,6 +96,8 @@ public class ClientRecipeBookUtils {
 
     public static RecipeBookGroup createGroup(String internalName, ItemStack... stacks) {
         MakeSure.notEmpty(internalName, "Tried to create a RecipeBookGroup with an empty string.");
+        MakeSure.notEmpty(stacks, "Tried to create a RecipeBookGroup with no icons.");
+        MakeSure.isTrue(stacks.length <= 2, "Tried to create a RecipeBookGroup with too many icons!");
 
         return EnumWrapper.RecipeBookGroup.extend(internalName, stacks);
     }

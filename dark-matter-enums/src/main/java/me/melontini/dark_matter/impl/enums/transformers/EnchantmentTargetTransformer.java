@@ -17,7 +17,6 @@ public class EnchantmentTargetTransformer implements IAsmTransformer {
 
     @Override
     public void beforeApply(ClassNode targetClass, IMixinInfo mixinInfo) {
-        final String resolvedItem = Mapper.mapClass("net.minecraft.class_1792");
         final String resolvedIsAcceptableItem = Mapper.mapMethod("net.minecraft.class_1886", "method_8177", "(Lnet/minecraft/class_1792;)Z");
 
         if (Modifier.isAbstract(targetClass.access)) {
