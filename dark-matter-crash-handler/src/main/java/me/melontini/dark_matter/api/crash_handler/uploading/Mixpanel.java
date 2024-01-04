@@ -6,6 +6,8 @@ import me.melontini.dark_matter.impl.crash_handler.uploading.MixpanelAPI;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.concurrent.CompletableFuture;
+
 public interface Mixpanel extends Uploader<Void, Mixpanel.Context> {
 
     static Mixpanel get(String token, boolean eu) {
@@ -18,7 +20,7 @@ public interface Mixpanel extends Uploader<Void, Mixpanel.Context> {
      * @return nothing.
      */
     @Override
-    Void upload(Context context);
+    CompletableFuture<Void> upload(Context context);
 
     /**
      * Attaches properties to a JsonObject.

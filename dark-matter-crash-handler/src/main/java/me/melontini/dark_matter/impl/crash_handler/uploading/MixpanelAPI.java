@@ -6,7 +6,6 @@ import me.melontini.dark_matter.api.crash_handler.uploading.Mixpanel;
 import me.melontini.dark_matter.api.crash_handler.uploading.Uploader;
 import org.jetbrains.annotations.ApiStatus;
 
-import java.io.IOException;
 import java.net.ProxySelector;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -14,6 +13,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 @ApiStatus.Internal
 public class MixpanelAPI implements Mixpanel {
@@ -27,7 +27,7 @@ public class MixpanelAPI implements Mixpanel {
         this.holder = new Holder(projectToken, eu ? EU_URL : BASE_URL);
     }
 
-    public void trackEvent(String eventName, JsonObject props) {
+    public CompletableFuture<Void> trackEvent(String eventName, JsonObject props) {
         JsonObject object = new JsonObject();
         object.addProperty("event", eventName);
 
@@ -42,36 +42,39 @@ public class MixpanelAPI implements Mixpanel {
 
         object.add("properties", props);
 
-        call(object);
+        try {
+            call(object);
+            return CompletableFuture.completedFuture(null);
+        } catch (Exception e) {
+            return CompletableFuture.failedFuture(e);
+        }
     }
 
-    private void call(JsonObject... objects) {
+    private void call(JsonObject... objects) throws Exception {
         if (!Uploader.enabled()) return;
 
         JsonArray array = new JsonArray();
         for (JsonObject object : objects) {
             array.add(object);
         }
-        try {
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(this.holder.endpoint() + "/track?ip=0"))
-                    .header("accept", "text/plain")
-                    .header("content-type", "application/json")
-                    .method("POST", HttpRequest.BodyPublishers.ofString(array.toString()))
-                    .build();
-            HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-            if (response.statusCode() != 200) throw new RuntimeException("Status Code: " + response.statusCode() + " Body: " + response.body());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(this.holder.endpoint() + "/track?ip=0"))
+                .header("accept", "text/plain")
+                .header("content-type", "application/json")
+                .method("POST", HttpRequest.BodyPublishers.ofString(array.toString()))
+                .build();
+        HttpResponse<String> response = CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+        if (response.statusCode() != 200)
+            throw new RuntimeException("Status Code: " + response.statusCode() + " Body: " + response.body());
     }
 
     @Override
-    public Void upload(Context context) {
-        if (!Uploader.enabled()) return null;
+    public CompletableFuture<Void> upload(Context context) {
+        if (!Uploader.enabled()) return CompletableFuture.failedFuture(Uploader.uploadDisabledException());
 
-        trackEvent(context.event(), context.props());
-        return null;
+        return trackEvent(context.event(), context.props());
     }
 
     private record Holder(String token, String endpoint) {
