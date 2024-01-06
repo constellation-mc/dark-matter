@@ -9,6 +9,8 @@ The `analytics` module is no more! It's been replaced by `crash-handler`, which 
 ### Base
 
 * Added `Path` to `ConfigManager` interfaces.
+* `ConfigManager.of(Class<T>, String)` not passing the Exception to the RuntimeException constructor.
+* `ConfigManager.Handler` now accepts all Exceptions, not only I/O.
 * `VarHandle` methods from `MiscReflection` should now work on Java 22
 * Removed `@Deprecated(forRemoval = true)` methods.
 
