@@ -5,7 +5,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import me.melontini.dark_matter.api.base.config.ConfigManager;
 
-import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -57,7 +56,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
                 JsonObject json = GSON.fromJson(reader, JsonObject.class);
                 fixers.forEach(fixer -> fixer.accept(json));
                 config.set(GSON.fromJson(json, type()));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 handlers.forEach(handler -> handler.accept(e, Stage.LOAD, path));
                 config.set(createDefault());
             }
@@ -84,7 +83,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
                 }
             }
             Files.write(path, cfg);
-        } catch (IOException e) {
+        } catch (Exception e) {
             handlers.forEach(handler -> handler.accept(e, Stage.SAVE, path));
         }
     }
