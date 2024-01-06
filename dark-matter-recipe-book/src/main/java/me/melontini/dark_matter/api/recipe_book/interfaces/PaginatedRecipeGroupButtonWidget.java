@@ -13,15 +13,4 @@ public interface PaginatedRecipeGroupButtonWidget {
     default void dm$setPage(int page) {
         throw new IllegalStateException("Interface not implemented");
     }
-
-    @Deprecated(forRemoval = true)
-    default int getPage() {
-        return dm$getPage();
-    }
-
-    @Deprecated(forRemoval = true)
-    default void setPage(int page) {
-        dm$setPage(page);
-    }
-
 }

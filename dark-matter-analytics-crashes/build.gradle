@@ -1,3 +1,0 @@
-dependencies {
-    api(project(path: ':dark-matter-analytics', configuration: 'namedElements'))
-}
