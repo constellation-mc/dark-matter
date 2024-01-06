@@ -1,12 +1,12 @@
 package me.melontini.dark_matter.api.crash_handler.uploading;
 
 import me.melontini.dark_matter.api.crash_handler.Prop;
+import me.melontini.dark_matter.impl.crash_handler.CrashlyticsInternals;
 import me.melontini.dark_matter.impl.crash_handler.uploading.Config;
 
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * The base interface for all uploaders. {@link Mixpanel} or {@link McLogs}
@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
  */
 public interface Uploader<R, C extends Record> {
 
-    ExecutorService SERVICE = Executors.newSingleThreadExecutor(r -> new Thread(r, "Dark-Matter-Uploader-Thread"));
+    ExecutorService SERVICE = CrashlyticsInternals.getService();
     UUID CRASH_UUID = UUID.fromString("be4db047-16df-4e41-9121-f1e87618ddea");
 
     /**
