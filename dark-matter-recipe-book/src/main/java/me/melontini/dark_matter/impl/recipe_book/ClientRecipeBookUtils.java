@@ -15,6 +15,7 @@ import net.minecraft.registry.DynamicRegistryManager;
 
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
@@ -41,6 +42,10 @@ public class ClientRecipeBookUtils {
             VANILLA_CATEGORIES.get(category).get();
         }
         return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
+    }
+
+    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> lookup) {
+        registerGroupLookup(type, (recipe, dynamicRegistryManager) -> lookup.apply(recipe));
     }
 
     public static void registerGroupLookup(RecipeType<?> type, BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup> function) {

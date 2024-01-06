@@ -33,7 +33,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
-        ClientRecipeBookUtils.registerGroupLookup(type, (recipe, dynamicRegistryManager) -> lookup.apply(recipe));
+        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
     }
 
     /**
