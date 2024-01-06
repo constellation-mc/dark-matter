@@ -1,0 +1,15 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "plugin": "me.melontini.dark_matter.impl.crash_handler.DummyPlugin",
+  "package": "me.melontini.dark_matter.impl.crash_handler.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "CrashReportMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

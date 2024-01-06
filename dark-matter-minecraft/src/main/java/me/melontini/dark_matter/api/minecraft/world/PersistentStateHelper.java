@@ -21,12 +21,10 @@ public final class PersistentStateHelper {
         return world.getPersistentStateManager().getOrCreate(readFunction, supplier, id);
     }
 
-    public static <T extends PersistentState> T getOrCreate(ServerWorld world, Supplier<T> supplier, String id) {
+    public static <T extends PersistentState & DeserializableState> T getOrCreate(ServerWorld world, Supplier<T> supplier, String id) {
         return getOrCreate(world, nbt -> {
             T state = supplier.get();
-            if (state instanceof DeserializableState ds) {
-                ds.readNbt(nbt);
-            } else throw new IllegalArgumentException("State must implement DeserializableState to use getOrCreate(ServerWorld, Supplier<T>, String)!");
+            state.readNbt(nbt);
             return state;
         }, supplier, id);
     }

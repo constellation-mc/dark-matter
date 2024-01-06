@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-crash-handler",
+  "version": "${version}",
+  "name": "Dark Matter Crash Handler",
+  "description": "Handles Crashes!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/dark-matter-crash-handler/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "me.melontini.dark_matter.impl.crash_handler.uploading.Config::init"
+    ]
+  },
+  "mixins": [
+    "dark-matter-crash-handler.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "*",
+    "dark-matter-base": "*"
+  },
+  "provides": [
+    "dark_matter_crash_handler"
+  ],
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

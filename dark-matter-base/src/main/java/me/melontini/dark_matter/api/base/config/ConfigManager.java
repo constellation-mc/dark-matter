@@ -5,7 +5,6 @@ import me.melontini.dark_matter.impl.base.config.ConfigManagerImpl;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
@@ -36,12 +35,14 @@ public interface ConfigManager<T> {
     /**
      * Executed right before the config is saved.
      * Can be used to force options, e.g. if an incompatible mod is loaded.
+     * <p>The listener is invoked on the thread where was {@code onSave} called</p>
      */
     ConfigManager<T> onSave(Listener<T> listener);
 
     /**
      * Executed right before the config is returned by {@code load}.
      * Generally not very useful, since it's usually only executed once.
+     * <p>The listener is invoked on the thread where was {@code onLoad} called</p>
      */
     ConfigManager<T> onLoad(Listener<T> listener);
 
@@ -54,12 +55,12 @@ public interface ConfigManager<T> {
     Class<T> type();
     String name();
 
-    interface Listener<T> extends Consumer<T> {
-        void accept(T config);
+    interface Listener<T> {
+        void accept(T config, Path path);
     }
 
-    interface Handler extends BiConsumer<IOException, Stage> {
-        void accept(IOException e, Stage stage);
+    interface Handler {
+        void accept(IOException e, Stage stage, Path path);
     }
 
     enum Stage {

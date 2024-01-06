@@ -1,12 +1,31 @@
 ## What's new:
 
-* This release drops the `config` module in favor of a much simpler `ConfigManager` in `base`.
-* While the new manager is nowhere near as "feature-packed" as `config` was, you can replicate most of `config`'s features using events.
+The `analytics` module is no more! It's been replaced by `crash-handler`, which can only upload crash reports and logs.
+
+### Analytics
+
+* Removed module
 
 ### Base
 
-* Added `ConfigManager`. A handler for as many configs as you want, whereever you want.
-* Moved unchecked `run`, `consume`, `supply`, `process` to `Exceptions`.
-* Added `*InHierarchy` to `Reflect` for methods an fields.
-* Added `Context`.
-* Added `share` to `Support`.
+* Added `Path` to `ConfigManager` interfaces.
+* `VarHandle` methods from `MiscReflection` should now work on Java 22
+* Removed `@Deprecated(forRemoval = true)` methods.
+
+### Content
+
+* Removed `@Deprecated(forRemoval = true)` methods.
+
+### Crash Handler
+
+* Module added.
+
+### Minecraft
+
+* Removed `WorldUtil`.
+* Fixed generic type on `getOrCreate(ServerWorld, Supplier<T>, String)`
+
+### Recipe Book
+
+* Removed `@Deprecated(forRemoval = true)` methods.
+* Calls to `ImmutableList.of` and `ImmutableMap.of` are now automatically wrapped with mutable alternatives.
