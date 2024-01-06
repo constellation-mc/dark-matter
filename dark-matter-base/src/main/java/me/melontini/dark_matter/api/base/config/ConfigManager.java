@@ -3,7 +3,6 @@ package me.melontini.dark_matter.api.base.config;
 import com.google.gson.JsonObject;
 import me.melontini.dark_matter.impl.base.config.ConfigManagerImpl;
 
-import java.io.IOException;
 import java.nio.file.Path;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -15,7 +14,7 @@ public interface ConfigManager<T> {
             try {
                 return type.getConstructor().newInstance();
             } catch (Exception e) {
-                throw new RuntimeException();
+                throw new RuntimeException("Failed to construct %s".formatted(type.getName()), e);
             }
         });
     }
@@ -60,7 +59,7 @@ public interface ConfigManager<T> {
     }
 
     interface Handler {
-        void accept(IOException e, Stage stage, Path path);
+        void accept(Exception e, Stage stage, Path path);
     }
 
     enum Stage {
