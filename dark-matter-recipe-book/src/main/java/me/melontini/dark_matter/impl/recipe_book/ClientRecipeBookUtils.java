@@ -3,7 +3,6 @@ package me.melontini.dark_matter.impl.recipe_book;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.enums.EnumWrapper;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -25,19 +24,22 @@ public class ClientRecipeBookUtils {
 
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
 
-    private static final Lazy<Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>>> VANILLA_CATEGORIES = Lazy.of(() -> () -> Utilities.consume(new HashMap<>(), map -> {
+    private static final Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>> VANILLA_CATEGORIES = Utilities.consume(new HashMap<>(), map -> {
         map.put(RecipeBookCategory.CRAFTING, () -> RecipeBookGroup.CRAFTING);
         map.put(RecipeBookCategory.FURNACE, () -> RecipeBookGroup.FURNACE);
         map.put(RecipeBookCategory.BLAST_FURNACE, () -> RecipeBookGroup.BLAST_FURNACE);
         map.put(RecipeBookCategory.SMOKER, () -> RecipeBookGroup.SMOKER);
-    }));
+    });
 
     private static boolean isVanillaCategory(RecipeBookCategory category) {
-        return VANILLA_CATEGORIES.get().containsKey(category);
+        return VANILLA_CATEGORIES.containsKey(category);
     }
 
     private static List<RecipeBookGroup> getGroupsForCategory(RecipeBookCategory category) {
-        return VANILLA_CATEGORIES.get().get(category).get();
+        if (isVanillaCategory(category)) {
+            VANILLA_CATEGORIES.get(category).get();
+        }
+        return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
     }
 
     public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
@@ -47,14 +49,8 @@ public class ClientRecipeBookUtils {
 
     public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(category, groups);
-        if (isVanillaCategory(category)) {
-            List<RecipeBookGroup> groupList = getGroupsForCategory(category);
-            (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
-            groupList.addAll(groups);
-            return;
-        }
 
-        List<RecipeBookGroup> groupList = GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
+        List<RecipeBookGroup> groupList = getGroupsForCategory(category);
         (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
         groupList.addAll(groups);
     }
@@ -62,16 +58,8 @@ public class ClientRecipeBookUtils {
     public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(category, groups);
         MakeSure.isTrue(index >= 0, "Index can't be below 0!");
-        if (isVanillaCategory(category)) {
-            List<RecipeBookGroup> groupList = getGroupsForCategory(category);
-            (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
 
-            if (index >= groupList.size()) groupList.addAll(groups);
-            else groupList.addAll(index, groups);
-            return;
-        }
-
-        List<RecipeBookGroup> groupList = GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
+        List<RecipeBookGroup> groupList = getGroupsForCategory(category);
         (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
 
         if (index >= groupList.size()) groupList.addAll(groups);
