@@ -58,13 +58,13 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
                 fixers.forEach(fixer -> fixer.accept(json));
                 config.set(GSON.fromJson(json, type()));
             } catch (IOException e) {
-                handlers.forEach(handler -> handler.accept(e, Stage.LOAD));
+                handlers.forEach(handler -> handler.accept(e, Stage.LOAD, path));
                 config.set(createDefault());
             }
         } else {
             config.set(createDefault());
         }
-        load.forEach(listener -> listener.accept(config.get()));
+        load.forEach(listener -> listener.accept(config.get(), path));
         return config.get();
     }
 
@@ -72,7 +72,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     public void save(Path root, T config) {
         var path = resolve(root);
 
-        save.forEach(listener -> listener.accept(config));
+        save.forEach(listener -> listener.accept(config, path));
 
         try {
             Files.createDirectories(path.getParent());
@@ -85,7 +85,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
             }
             Files.write(path, cfg);
         } catch (IOException e) {
-            handlers.forEach(handler -> handler.accept(e, Stage.SAVE));
+            handlers.forEach(handler -> handler.accept(e, Stage.SAVE, path));
         }
     }
 
