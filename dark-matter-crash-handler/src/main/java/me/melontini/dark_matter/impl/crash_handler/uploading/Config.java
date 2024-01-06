@@ -11,8 +11,8 @@ import java.nio.file.StandardCopyOption;
 public class Config {
 
     private static final ConfigManager<RawConfig> CONFIG_MANAGER = ConfigManager.of(RawConfig.class, "dark-matter/crash_upload", RawConfig::new)
-            .exceptionHandler((e, stage) -> {
-                throw new RuntimeException("Failed to %s dark-matter/crash_upload!".formatted(stage.toString().toLowerCase()));
+            .exceptionHandler((e, stage, path) -> {
+                throw new RuntimeException("Failed to %s %s!".formatted(stage.toString().toLowerCase(), FabricLoader.getInstance().getGameDir().relativize(path)));
             });
     private static final ReadConfig CONFIG = loadConfig();
 
