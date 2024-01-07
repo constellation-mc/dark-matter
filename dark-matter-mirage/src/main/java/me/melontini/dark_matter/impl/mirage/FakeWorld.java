@@ -64,7 +64,8 @@ public class FakeWorld {
         for (RegistryKey<? extends Registry<?>> key : keys) {
             SimpleRegistry<Object> registry = new SimpleRegistry<>(Utilities.cast(key), Lifecycle.stable());
 
-            pain.getWrapperOrThrow(key).streamEntries().forEach(ref -> registry.add(ref.registryKey(), ref.value(), Lifecycle.stable()));
+            pain.getOptionalWrapper(key).ifPresent(impl -> impl.streamEntries().forEach(ref -> registry.add(ref.registryKey(), ref.value(), Lifecycle.stable())));
+
             registry.freeze();
             regs.add(registry);
         }
