@@ -81,6 +81,6 @@ public class FakeWorld {
     }
 
     public static void init() {
-
+        INSTANCE.get();
     }
 }
