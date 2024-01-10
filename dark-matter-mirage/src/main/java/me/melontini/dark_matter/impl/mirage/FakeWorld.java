@@ -57,7 +57,14 @@ public class FakeWorld {
     }
 
     private static CombinedDynamicRegistries<ServerDynamicRegistryType> bootstrapBuiltin(CombinedDynamicRegistries<ServerDynamicRegistryType> cdr) {
-        var pain = BuiltinRegistries.createWrapperLookup();
+        RegistryWrapper.WrapperLookup pain;
+        try {
+            LOADING.set(true);
+            pain = BuiltinRegistries.createWrapperLookup();
+        } finally {
+            LOADING.remove();
+        }
+
         List<? extends RegistryKey<? extends Registry<?>>> keys = RegistryLoader.DYNAMIC_REGISTRIES.stream().map(RegistryLoader.Entry::key).toList();
 
         List<SimpleRegistry<Object>> regs = new ArrayList<>();
@@ -74,11 +81,6 @@ public class FakeWorld {
     }
 
     public static void init() {
-        try {
-            LOADING.set(true);
-            INSTANCE.get();
-        } finally {
-            LOADING.remove();
-        }
+
     }
 }

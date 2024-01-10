@@ -1,5 +1,6 @@
 accessWidener  v2	named
 
+transitive-accessible class net/minecraft/registry/RegistryBuilder$Registries
 transitive-accessible class net/minecraft/screen/ScreenHandlerType$Factory
 transitive-accessible class net/minecraft/item/ItemGroup$Entries
 transitive-accessible class net/minecraft/item/ItemGroup$EntriesImpl
