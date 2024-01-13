@@ -31,17 +31,22 @@ public class FakeWorld {
     public static Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
         DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
 
-        var regs = FakeWorld.getRegistries();
+        try {
+            LOADING.set(true);
+            var regs = FakeWorld.getRegistries();
 
-        ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
-        networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
+            networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
 
-        return new ClientWorld(networkHandler,
-                new ClientWorld.Properties(Difficulty.EASY, false, false),
-                World.OVERWORLD,
-                regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
-                0, 0, null,
-                MinecraftClient.getInstance().worldRenderer, true, 0);
+            return new ClientWorld(networkHandler,
+                    new ClientWorld.Properties(Difficulty.EASY, false, false),
+                    World.OVERWORLD,
+                    regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
+                    0, 0, null,
+                    MinecraftClient.getInstance().worldRenderer, true, 0);
+        } finally {
+            LOADING.remove();
+        }
     });
 
     private static CombinedDynamicRegistries<ServerDynamicRegistryType> getRegistries() {
@@ -57,13 +62,8 @@ public class FakeWorld {
     }
 
     private static CombinedDynamicRegistries<ServerDynamicRegistryType> bootstrapBuiltin(CombinedDynamicRegistries<ServerDynamicRegistryType> cdr) {
-        RegistryWrapper.WrapperLookup pain;
-        try {
-            LOADING.set(true);
-            pain = BuiltinRegistries.createWrapperLookup();
-        } finally {
-            LOADING.remove();
-        }
+        RegistryWrapper.WrapperLookup pain = BuiltinRegistries.createWrapperLookup();
+
 
         List<? extends RegistryKey<? extends Registry<?>>> keys = RegistryLoader.DYNAMIC_REGISTRIES.stream().map(RegistryLoader.Entry::key).toList();
 

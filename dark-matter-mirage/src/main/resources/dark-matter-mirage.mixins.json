@@ -3,11 +3,10 @@
   "minVersion": "0.8",
   "package": "me.melontini.dark_matter.impl.mirage.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "RegistriesMixin"
-  ],
   "client": [
-    "MinecraftClientMixin"
+    "MinecraftClientMixin",
+    "RegistriesMixin",
+    "WorldMixin"
   ],
   "injectors": {
     "defaultRequire": 1
