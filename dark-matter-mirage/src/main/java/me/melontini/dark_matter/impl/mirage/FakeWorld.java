@@ -7,12 +7,14 @@ import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientDynamicRegistryType;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
+import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptionsRegistryHolder;
@@ -35,8 +37,10 @@ public class FakeWorld {
             LOADING.set(true);
             var regs = FakeWorld.getRegistries();
 
-            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
-            networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+            var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+
+            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), new ClientConnection(NetworkSide.CLIENTBOUND), new ClientConnectionState(
+                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null, immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null));
 
             return new ClientWorld(networkHandler,
                     new ClientWorld.Properties(Difficulty.EASY, false, false),

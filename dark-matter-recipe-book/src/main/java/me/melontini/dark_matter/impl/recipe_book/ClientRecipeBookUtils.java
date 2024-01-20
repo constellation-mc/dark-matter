@@ -9,6 +9,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
+import net.minecraft.recipe.RecipeEntry;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.registry.DynamicRegistryManager;
@@ -22,7 +23,7 @@ import java.util.function.Supplier;
 @UtilityClass
 public class ClientRecipeBookUtils {
 
-    private static final Map<RecipeType<?>, List<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
+    private static final Map<RecipeType<?>, List<BiFunction<RecipeEntry<?>, DynamicRegistryManager, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
 
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
 
@@ -44,11 +45,11 @@ public class ClientRecipeBookUtils {
         return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
     }
 
-    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> lookup) {
+    public static void registerGroupLookup(RecipeType<?> type, Function<RecipeEntry<?>, RecipeBookGroup> lookup) {
         registerGroupLookup(type, (recipe, dynamicRegistryManager) -> lookup.apply(recipe));
     }
 
-    public static void registerGroupLookup(RecipeType<?> type, BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup> function) {
+    public static void registerGroupLookup(RecipeType<?> type, BiFunction<RecipeEntry<?>, DynamicRegistryManager, RecipeBookGroup> function) {
         MakeSure.notNulls(type, function);
         GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new ArrayList<>(1)).add(0, function);
     }
@@ -96,7 +97,7 @@ public class ClientRecipeBookUtils {
         return EnumWrapper.RecipeBookGroup.extend(internalName, stacks);
     }
 
-    public static Optional<List<BiFunction<Recipe<?>, DynamicRegistryManager, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
+    public static Optional<List<BiFunction<RecipeEntry<?>, DynamicRegistryManager, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
         return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableList(GROUP_LOOKUPS.get(type))) : Optional.empty();
     }
 

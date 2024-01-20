@@ -15,7 +15,7 @@ public class MinecraftClientTickMixin {
         ValueTrackerImpl.tick();
     }
 
-    @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/LevelLoadingScreen;tick()V"))
+    @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/world/LevelLoadingScreen;tick()V"))
     private void dark_matter$tickValueTrackIntegratedServer(CallbackInfo ci) {
         ValueTrackerImpl.tick();
     }

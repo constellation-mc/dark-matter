@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 public final class PersistentStateHelper {
 
     public static <T extends PersistentState> T getOrCreate(ServerWorld world, Function<NbtCompound, T> readFunction, Supplier<T> supplier, String id) {
-        return world.getPersistentStateManager().getOrCreate(readFunction, supplier, id);
+        return world.getPersistentStateManager().getOrCreate(new PersistentState.Type<>(supplier, readFunction, null), id);
     }
 
     public static <T extends PersistentState & DeserializableState> T getOrCreate(ServerWorld world, Supplier<T> supplier, String id) {
