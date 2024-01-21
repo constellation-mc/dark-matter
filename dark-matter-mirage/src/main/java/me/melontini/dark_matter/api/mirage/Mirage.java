@@ -9,13 +9,10 @@ import net.minecraft.client.world.ClientWorld;
 @UtilityClass
 public class Mirage {
 
-    @Deprecated
-    public static final ClientWorld FAKE_WORLD = FakeWorld.INSTANCE.get();
-    @Deprecated
-    public static final LightmapTextureManager ALWAYS_BRIGHT_LTM = AlwaysBrightLightmapTextureManager.INSTANCE;
-
     public static ClientWorld getFakeWorld() {
-        return FakeWorld.INSTANCE.get();
+        FakeWorld.EXCEPTION.tryThrow();
+
+        return FakeWorld.INSTANCE;
     }
 
     public static LightmapTextureManager getAlwaysBrightLTM() {

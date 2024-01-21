@@ -2,7 +2,7 @@ package me.melontini.dark_matter.impl.mirage;
 
 import com.mojang.authlib.GameProfile;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
+import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -20,20 +20,23 @@ import java.util.UUID;
 @UtilityClass
 public class FakeWorld {
 
-    public static final Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
-        DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
-
-        return new ClientWorld(
-                new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null),
-                new ClientWorld.Properties(Difficulty.EASY, false, false),
-                World.OVERWORLD,
-                DynamicRegistryManager.BUILTIN.get().get(Registry.DIMENSION_TYPE_KEY).entryOf(DimensionTypes.OVERWORLD),
-                0, 0, null,
-                MinecraftClient.getInstance().worldRenderer, false, 0
-        );
-    });
+    public static ClientWorld INSTANCE;
+    public static ThrowableStorage<RuntimeException> EXCEPTION = new ThrowableStorage<>();
 
     public static void init() {
-        INSTANCE.get();
+        try {
+            DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
+
+            INSTANCE = new ClientWorld(
+                    new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null),
+                    new ClientWorld.Properties(Difficulty.EASY, false, false),
+                    World.OVERWORLD,
+                    DynamicRegistryManager.BUILTIN.get().get(Registry.DIMENSION_TYPE_KEY).entryOf(DimensionTypes.OVERWORLD),
+                    0, 0, null,
+                    MinecraftClient.getInstance().worldRenderer, false, 0
+            );
+        } catch (Exception e) {
+            EXCEPTION.set(new RuntimeException("Failed to create FakeWorld instance!", e));
+        }
     }
 }
