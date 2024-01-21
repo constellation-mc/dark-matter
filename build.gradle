@@ -123,14 +123,6 @@ def fabric(Project project, List<String> modules) {
     }
 }
 
-dependencies {
-    fabric(project, [
-            "fabric-api-base",
-            "fabric-resource-loader-v0",
-            "fabric-object-builder-api-v1"
-    ])
-}
-
 subprojects.each {
     remapJar.dependsOn("${it.path}:remapJar")
 }

@@ -13,10 +13,12 @@ public interface ItemGroupExtensions {
         return false;
     }
 
+    @Environment(EnvType.CLIENT)
     default ItemGroup dm$setIconAnimation(AnimatedItemGroup animation) {
         return this.dm$setIconAnimation(() -> animation);
     }
 
+    @Environment(EnvType.CLIENT)
     default ItemGroup dm$setIconAnimation(Supplier<AnimatedItemGroup> animation) {
         throw new IllegalStateException("Interface not implemented");
     }

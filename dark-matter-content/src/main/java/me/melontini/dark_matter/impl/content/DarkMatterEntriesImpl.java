@@ -11,6 +11,7 @@ import java.util.Set;
 public class DarkMatterEntriesImpl implements DarkMatterEntries {
 
     private final Collection<ItemStack> tabStacks;
+    //TODO
     private final Set<ItemStack> searchStacks;
 
     public DarkMatterEntriesImpl(Collection<ItemStack> tabStacks, Collection<ItemStack> searchStacks) {

@@ -23,9 +23,6 @@ import java.util.Optional;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-/**
- * Most things don't work without Fabric API.
- */
 @UtilityClass
 @SuppressWarnings("unused")
 public class ContentBuilder {
@@ -41,14 +38,6 @@ public class ContentBuilder {
         Identifier getId();
 
         @Nullable T build();
-
-        default Optional<T> buildOrEmpty() {
-            try {
-                return Optional.ofNullable(build());
-            } catch (Throwable t) {
-                return Optional.empty();
-            }
-        }
 
         default Optional<T> optional() {
             return Optional.ofNullable(build());

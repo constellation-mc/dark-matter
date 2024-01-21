@@ -2,7 +2,6 @@ dependencies {
     api(project(path: ':dark-matter-minecraft', configuration: 'namedElements'))
 
     fabric(project, [
-            "fabric-object-builder-api-v1",
             "fabric-registry-sync-v0"
     ])
 }

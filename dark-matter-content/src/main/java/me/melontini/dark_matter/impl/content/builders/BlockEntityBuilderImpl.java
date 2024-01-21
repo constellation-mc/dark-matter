@@ -10,6 +10,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
@@ -57,7 +58,7 @@ public class BlockEntityBuilderImpl<T extends BlockEntity> implements ContentBui
 
     @Override
     public @Nullable BlockEntityType<T> build() {
-        BlockEntityType<T> t = RegistryUtil.create(this.register, this.identifier, "block_entity_type",
+        BlockEntityType<T> t = RegistryUtil.register(this.register, Registry.BLOCK_ENTITY_TYPE, this.identifier,
                 () -> BlockEntityType.Builder.<T>create(factory, blocks.toArray(Block[]::new)).build(type));
 
         if (t != null) {

@@ -8,6 +8,7 @@ import me.melontini.dark_matter.impl.content.mixin.item_group_builder.ItemAccess
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.BooleanSupplier;
@@ -49,7 +50,7 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
 
     @Override
     public T build() {
-        T item = RegistryUtil.createItem(this.register, this.identifier, this.itemSupplier);
+        T item = RegistryUtil.register(this.register, Registry.ITEM, this.identifier, this.itemSupplier);
 
         if (item != null && this.itemGroup != null) ((ItemAccessor) item).dark_matter$setGroup(this.itemGroup);
         return item;
