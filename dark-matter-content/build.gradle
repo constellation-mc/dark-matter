@@ -1,13 +1,9 @@
 dependencies {
     api(project(path: ':dark-matter-minecraft', configuration: 'namedElements'))
 
-    def apiModules = [
+    fabric(project, [
             "fabric-api-base",
             "fabric-resource-loader-v0",
             "fabric-object-builder-api-v1"
-    ]
-
-    for (final def module in apiModules) {
-        modImplementation(fabricApi.module(module, project.fabric_api_version))
-    }
+    ])
 }
