@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.mirage;
 import com.mojang.authlib.GameProfile;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
+import me.melontini.dark_matter.api.minecraft.client.events.AfterFirstReload;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -24,7 +25,7 @@ public class FakeWorld {
     public static ThrowableStorage<RuntimeException> EXCEPTION = new ThrowableStorage<>();
 
     public static void init() {
-        try {
+        AfterFirstReload.EVENT.register(() -> {
             DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
 
             INSTANCE = new ClientWorld(
@@ -35,8 +36,6 @@ public class FakeWorld {
                     0, 0, null,
                     MinecraftClient.getInstance().worldRenderer, false, 0
             );
-        } catch (Exception e) {
-            EXCEPTION.set(new RuntimeException("Failed to create FakeWorld instance!", e));
-        }
+        });
     }
 }

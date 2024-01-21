@@ -12,6 +12,9 @@
   "icon": "assets/dark-matter-mirage/icon.png",
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "me.melontini.dark_matter.impl.mirage.FakeWorld::init"
+    ]
   },
   "mixins": [
     "dark-matter-mirage.mixins.json"
