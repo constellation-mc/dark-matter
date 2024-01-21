@@ -111,7 +111,9 @@ allprojects {
 subprojects {
     dependencies {
         implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixin_extras_version}"))
-        api(project(path: ':dark-matter-base', configuration: 'namedElements'))
+        if (project.name != "dark-matter-base") {
+            api(project(path: ':dark-matter-base', configuration: 'namedElements'))
+        }
     }
 }
 
@@ -132,10 +134,18 @@ dependencies {
 subprojects.each {
     remapJar.dependsOn("${it.path}:remapJar")
 }
+
+dependencies {
+    afterEvaluate {
+        subprojects.each {
+            api(project(path: "${it.path}", configuration: "namedElements"))
+        }
+    }
+}
+
 remapJar {
     afterEvaluate {
         subprojects.forEach {
-
             nestedJars.from(project("${it.path}").tasks.named("remapJar"))
         }
     }

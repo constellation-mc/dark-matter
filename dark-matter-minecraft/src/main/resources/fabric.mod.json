@@ -20,7 +20,9 @@
   "depends": {
     "fabricloader": ">=${loader_version}",
     "minecraft": ">=${minecraft_version}",
-    "dark-matter-base": "*"
+    "dark-matter-base": "*",
+    "fabric-api-base": "*",
+    "fabric-resource-loader-v0": "*"
   },
   "provides": [
     "dark_matter_minecraft"
