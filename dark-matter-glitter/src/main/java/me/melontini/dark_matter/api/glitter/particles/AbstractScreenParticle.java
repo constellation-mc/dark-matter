@@ -54,7 +54,7 @@ public abstract class AbstractScreenParticle implements Drawable {
         tickLogic();
     }
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     protected void tickLogic() {
     }
 

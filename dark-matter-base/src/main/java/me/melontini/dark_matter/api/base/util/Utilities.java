@@ -16,13 +16,13 @@ import java.util.function.*;
 @UtilityClass
 public final class Utilities {
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static boolean IS_DEV = FabricLoader.getInstance().isDevelopmentEnvironment();
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static final Random RANDOM = MathStuff.random();
 
     private static final BooleanSupplier TRUTH = () -> true;
