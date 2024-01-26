@@ -4,8 +4,11 @@ import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.enums.EnumWrapper;
+import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.event.Event;
+import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.recipe.Recipe;
@@ -13,14 +16,11 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 
 import java.util.*;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 @UtilityClass
 public class ClientRecipeBookUtils {
-
-    private static final Map<RecipeType<?>, List<Function<Recipe<?>, RecipeBookGroup>>> GROUP_LOOKUPS = new HashMap<>();
 
     private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
 
@@ -31,6 +31,25 @@ public class ClientRecipeBookUtils {
         map.put(RecipeBookCategory.SMOKER, () -> RecipeBookGroup.SMOKER);
     });
 
+    private static final Map<RecipeType<?>, Event<?>> EVENTS = new HashMap<>();
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Recipe<?>> Event<RecipeGroupLookupEvent<T>> forType(RecipeType<T> type, boolean create) {
+        if (create) {
+            return Utilities.cast(EVENTS.computeIfAbsent(type, type1 -> EventFactory.createArrayBacked(RecipeGroupLookupEvent.class, recipeGroupLookupEvents -> (id, recipe) -> {
+                RecipeBookGroup group;
+                for (RecipeGroupLookupEvent<T> event : recipeGroupLookupEvents) {
+                    if ((group = event.lookup(id, (T) recipe)) != null) {
+                        return group;
+                    }
+                }
+                return null;
+            })));
+        } else {
+            return Utilities.cast(EVENTS.get(type));
+        }
+    }
+
     private static boolean isVanillaCategory(RecipeBookCategory category) {
         return VANILLA_CATEGORIES.containsKey(category);
     }
@@ -40,11 +59,6 @@ public class ClientRecipeBookUtils {
             VANILLA_CATEGORIES.get(category).get();
         }
         return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
-    }
-
-    public static void registerGroupLookup(RecipeType<?> type, Function<Recipe<?>, RecipeBookGroup> function) {
-        MakeSure.notNulls(type, function);
-        GROUP_LOOKUPS.computeIfAbsent(type, type1 -> new ArrayList<>(1)).add(0, function);
     }
 
     public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
@@ -88,10 +102,6 @@ public class ClientRecipeBookUtils {
         MakeSure.isTrue(stacks.length <= 2, "Tried to create a RecipeBookGroup with too many icons!");
 
         return EnumWrapper.RecipeBookGroup.extend(internalName, stacks);
-    }
-
-    public static Optional<List<Function<Recipe<?>, RecipeBookGroup>>> getLookups(RecipeType<?> type) {
-        return GROUP_LOOKUPS.containsKey(type) ? Optional.of(Collections.unmodifiableList(GROUP_LOOKUPS.get(type))) : Optional.empty();
     }
 
     public static Optional<List<RecipeBookGroup>> getGroups(RecipeBookCategory category) {
