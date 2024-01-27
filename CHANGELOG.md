@@ -1,5 +1,7 @@
 ## What's new:
 
-### Mirage
+1.20.4 port. It compiles and that is all that matters!™
 
-* Disabled damage sources init in FakeWorld, as some mods inject registry dependent logic into the constructor. (I'm not giving up)
+### Recipe Book
+
+* `registerGroupLookup` now passes RecipeEntry instead of Recipe. 
