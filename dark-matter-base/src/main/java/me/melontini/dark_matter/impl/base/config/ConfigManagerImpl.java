@@ -3,7 +3,9 @@ package me.melontini.dark_matter.impl.base.config;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
+import lombok.experimental.ExtensionMethod;
 import me.melontini.dark_matter.api.base.config.ConfigManager;
+import me.melontini.dark_matter.api.base.util.classes.Context;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -14,6 +16,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+@ExtensionMethod(Files.class)
 public class ConfigManagerImpl<T> implements ConfigManager<T> {
 
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
@@ -47,15 +50,16 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public T load(Path root) {
+    public T load(Path root, Context context) {
         var path = resolve(root);
+        Gson gson = context.get(Gson.class, "gson").orElse(GSON);
 
         AtomicReference<T> config = new AtomicReference<>();
-        if (Files.exists(path)) {
-            try (var reader = Files.newBufferedReader(path)) {
-                JsonObject json = GSON.fromJson(reader, JsonObject.class);
+        if (path.exists()) {
+            try (var reader = path.newBufferedReader()) {
+                JsonObject json = gson.fromJson(reader, JsonObject.class);
                 fixers.forEach(fixer -> fixer.accept(json));
-                config.set(GSON.fromJson(json, type()));
+                config.set(gson.fromJson(json, type()));
             } catch (Exception e) {
                 handlers.forEach(handler -> handler.accept(e, Stage.LOAD, path));
                 config.set(createDefault());
@@ -68,24 +72,32 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public void save(Path root, T config) {
+    public T load(Path root) {
+        return load(root, Context.of());
+    }
+
+    @Override
+    public void save(Path root, T config, Context context) {
         var path = resolve(root);
+        Gson gson = context.get(Gson.class, "gson").orElse(GSON);
 
         save.forEach(listener -> listener.accept(config, path));
 
         try {
-            Files.createDirectories(path.getParent());
-            byte[] cfg = GSON.toJson(config).getBytes();
-            if (Files.exists(path)) {
-                byte[] old = Files.readAllBytes(path);
-                if (Arrays.equals(old, cfg)) {
-                    return;
-                }
+            path.getParent().createDirectories();
+            byte[] cfg = gson.toJson(config).getBytes();
+            if (path.exists() && Arrays.equals(path.readAllBytes(), cfg)) {
+                return;
             }
-            Files.write(path, cfg);
+            path.write(cfg);
         } catch (Exception e) {
             handlers.forEach(handler -> handler.accept(e, Stage.SAVE, path));
         }
+    }
+
+    @Override
+    public void save(Path root, T config) {
+        save(root, config, Context.of());
     }
 
     public Path resolve(Path root) {
