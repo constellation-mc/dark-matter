@@ -4,10 +4,11 @@ import com.google.common.base.Strings;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawableHelper;
 import net.minecraft.client.util.math.MatrixStack;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.Field;
 import java.time.Duration;
@@ -30,12 +31,12 @@ public class ValueTrackerImpl {
 
     public static void addTracker(String s, Supplier<?> supplier) {
         MakeSure.notNulls(s, supplier);
-        TRACKERS.putIfAbsent(s, supplier);
+        TRACKERS.put(s, supplier);
     }
 
     public static void addTracker(String s, Supplier<?> supplier, Duration duration) {
         MakeSure.notNulls(s, supplier, duration);
-        TRACKERS.putIfAbsent(s, supplier);
+        TRACKERS.put(s, supplier);
         TIMERS.put(s, Tuple.of(Instant.now(), duration));
     }
 
@@ -67,7 +68,7 @@ public class ValueTrackerImpl {
     public static void addStaticFieldTracker(String s, Field f) {
         MakeSure.notNulls(s, f);
         Reflect.setAccessible(f);
-        TRACKERS.putIfAbsent(s, () -> {
+        TRACKERS.put(s, () -> {
             try {
                 return f.get(null);
             } catch (IllegalAccessException e) {
@@ -79,7 +80,7 @@ public class ValueTrackerImpl {
     public static void addStaticFieldTracker(String s, Field f, Duration duration) {
         MakeSure.notNulls(s, f, duration);
         Reflect.setAccessible(f);
-        TRACKERS.putIfAbsent(s, () -> {
+        TRACKERS.put(s, () -> {
             try {
                 return f.get(null);
             } catch (IllegalAccessException e) {
@@ -109,15 +110,17 @@ public class ValueTrackerImpl {
         return VIEW;
     }
 
+    public static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
+
     public static void tick() {
-        Renderer.DARK_MATTER$VALUES_TO_RENDER.clear();
+        DARK_MATTER$VALUES_TO_RENDER.clear();
 
         ValueTrackerImpl.checkTimers();
-        ValueTrackerImpl.getView().forEach((id, supplier) -> Renderer.DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
+        ValueTrackerImpl.getView().forEach((id, supplier) -> DARK_MATTER$VALUES_TO_RENDER.add(id + ": " + supplier.get()));
     }
 
+    @Environment(EnvType.CLIENT)
     public static class Renderer {
-        static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
 
         public static void render(MatrixStack stack) {
             if (!DARK_MATTER$VALUES_TO_RENDER.isEmpty()) {
