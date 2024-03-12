@@ -1,15 +1,17 @@
 package me.melontini.dark_matter.api.base.util.classes;
 
+import java.util.concurrent.atomic.AtomicReference;
+
 public class ThrowableStorage<T extends Throwable> {
 
-    private T throwable;
+    private final AtomicReference<T> throwable = new AtomicReference<>();
 
     public ThrowableStorage() {
-        throwable = null;
+        throwable.set(null);
     }
 
     public ThrowableStorage(T throwable) {
-        this.throwable = throwable;
+        this.throwable.set(throwable);
     }
 
     public static <T extends Throwable> ThrowableStorage<T> of(T throwable) {
@@ -21,16 +23,16 @@ public class ThrowableStorage<T extends Throwable> {
     }
 
     public void set(T throwable) {
-        this.throwable = throwable;
+        this.throwable.set(throwable);
     }
 
     public T get() {
-        return throwable;
+        return throwable.get();
     }
 
     public void tryThrow() throws T {
-        if (throwable != null) {
-            throw throwable;
+        if (throwable.get() != null) {
+            throw throwable.get();
         }
     }
 }

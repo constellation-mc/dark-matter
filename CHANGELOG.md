@@ -1,7 +1,11 @@
 ## What's new:
 
-1.20.4 port. It compiles and that is all that matters!™
+Cherry-picked non-breaking fixes from 4.0.0 and added utils from Andromeda.
 
-### Recipe Book
+### Content
 
-* `registerGroupLookup` now passes RecipeEntry instead of Recipe. 
+* Added `appendStacks` to `DarkMatterEntries`
+
+### Minecraft
+
+* Added `ItemStackUtil` and `ExtraCodecs`

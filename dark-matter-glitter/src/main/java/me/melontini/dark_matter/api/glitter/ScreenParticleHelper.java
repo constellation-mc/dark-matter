@@ -11,6 +11,8 @@ import net.minecraft.particle.ParticleEffect;
 import java.util.List;
 import java.util.function.Supplier;
 
+import static me.melontini.dark_matter.impl.glitter.ScreenParticleInternals.current;
+
 
 @UtilityClass
 @SuppressWarnings("unused")
@@ -18,69 +20,69 @@ import java.util.function.Supplier;
 public final class ScreenParticleHelper {
 
     public static void addParticle(AbstractScreenParticle particle) {
-        ScreenParticleInternals.addParticle(particle);
+        ScreenParticleInternals.addScreenParticle(null, particle);
     }
 
     public static void addParticle(Supplier<AbstractScreenParticle> particle) {
-        ScreenParticleInternals.addParticle(particle);
+        ScreenParticleInternals.addScreenParticle(null, particle);
     }
 
     public static void addParticle(ParticleEffect parameters, double x, double y, double velX, double velY) {
-        ScreenParticleInternals.addParticle(parameters, x, y, velX, velY);
+        ScreenParticleInternals.addScreenParticle(null, parameters, x, y, velX, velY);
     }
 
     public static void addParticle(ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
-        ScreenParticleInternals.addParticle(parameters, x, y, velX, velY, velZ);
+        ScreenParticleInternals.addScreenParticle(null, parameters, x, y, velX, velY, velZ);
     }
 
     public static void addParticles(AbstractScreenParticle... particle) {
-        ScreenParticleInternals.addParticles(particle);
+        ScreenParticleInternals.addScreenParticles(null, particle);
     }
 
     public static void addParticles(List<AbstractScreenParticle> particle) {
-        ScreenParticleInternals.addParticles(particle);
+        ScreenParticleInternals.addScreenParticles(null, particle);
     }
 
     public static void addParticles(Supplier<AbstractScreenParticle> particle, int count) {
-        ScreenParticleInternals.addParticles(particle, count);
+        ScreenParticleInternals.addScreenParticles(null, particle, count);
     }
 
     public static void addParticles(ParticleEffect parameters, double x, double y, double deltaX, double deltaY, double speed, int count) {
-        ScreenParticleInternals.addParticles(parameters, x, y, deltaX, deltaY, speed, count);
+        ScreenParticleInternals.addScreenParticles(null, parameters, x, y, deltaX, deltaY, speed, count);
     }
 
     /////////////////////////////
 
     public static void addScreenParticle(AbstractScreenParticle particle) {
-        ScreenParticleInternals.addScreenParticle(particle);
+        ScreenParticleInternals.addScreenParticle(current(), particle);
     }
 
     public static void addScreenParticle(Supplier<AbstractScreenParticle> particle) {
-        ScreenParticleInternals.addScreenParticle(particle);
+        ScreenParticleInternals.addScreenParticle(current(), particle);
     }
 
     public static void addScreenParticle(ParticleEffect parameters, double x, double y, double velX, double velY) {
-        ScreenParticleInternals.addScreenParticle(parameters, x, y, velX, velY);
+        ScreenParticleInternals.addScreenParticle(current(), parameters, x, y, velX, velY);
     }
 
     public static void addScreenParticle(ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
-        ScreenParticleInternals.addScreenParticle(parameters, x, y, velX, velY, velZ);
+        ScreenParticleInternals.addScreenParticle(current(), parameters, x, y, velX, velY, velZ);
     }
 
     public static void addScreenParticles(AbstractScreenParticle... particles) {
-        ScreenParticleInternals.addScreenParticles(particles);
+        ScreenParticleInternals.addScreenParticles(current(), particles);
     }
 
     public static void addScreenParticles(List<AbstractScreenParticle> particles) {
-        ScreenParticleInternals.addScreenParticles(particles);
+        ScreenParticleInternals.addScreenParticles(current(), particles);
     }
 
     public static void addScreenParticles(Supplier<AbstractScreenParticle> particle, int count) {
-        ScreenParticleInternals.addScreenParticles(particle, count);
+        ScreenParticleInternals.addScreenParticles(current(), particle, count);
     }
 
     public static void addScreenParticles(ParticleEffect parameters, double x, double y, double deltaX, double deltaY, double speed, int count) {
-        ScreenParticleInternals.addScreenParticles(parameters, x, y, deltaX, deltaY, speed, count);
+        ScreenParticleInternals.addScreenParticles(current(), parameters, x, y, deltaX, deltaY, speed, count);
     }
 
     /////////////////////////////
