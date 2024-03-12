@@ -19,7 +19,7 @@ public class ExtraCodecs {
 
     public static final Codec<Integer> COLOR = Codec.either(Codec.INT, Codec.intRange(0, 255).listOf())
             .comapFlatMap(e -> e.map(DataResult::success, integers -> {
-                if (integers.size() != 3) return DataResult.error("colors array must contain exactly 3 colors (RGB)");
+                if (integers.size() != 3) return DataResult.error(() -> "colors array must contain exactly 3 colors (RGB)");
                 return DataResult.success(ColorUtil.toColor(integers.get(0), integers.get(1), integers.get(2)));
             }), Either::left);
 
