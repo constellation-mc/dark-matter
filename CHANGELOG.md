@@ -1,33 +1,11 @@
 ## What's new:
 
-The `analytics` module is no more! It's been replaced by `crash-handler`, which can only upload crash reports and logs.
-
-### Analytics
-
-* Removed module
-
-### Base
-
-* Added `Path` to `ConfigManager` interfaces.
-* `ConfigManager.of(Class<T>, String)` not passing the Exception to the RuntimeException constructor.
-* `ConfigManager.Handler` now accepts all Exceptions, not only I/O.
-* `VarHandle` methods from `MiscReflection` should now work on Java 22
-* Removed `@Deprecated(forRemoval = true)` methods.
+Cherry-picked non-breaking fixes from 4.0.0 and added utils from Andromeda.
 
 ### Content
 
-* Removed `@Deprecated(forRemoval = true)` methods.
-
-### Crash Handler
-
-* Module added.
+* Added `appendStacks` to `DarkMatterEntries`
 
 ### Minecraft
 
-* Removed `WorldUtil`.
-* Fixed generic type on `getOrCreate(ServerWorld, Supplier<T>, String)`
-
-### Recipe Book
-
-* Removed `@Deprecated(forRemoval = true)` methods.
-* Calls to `ImmutableList.of` and `ImmutableMap.of` are now automatically wrapped with mutable alternatives.
+* Added `ItemStackUtil` and `ExtraCodecs`
