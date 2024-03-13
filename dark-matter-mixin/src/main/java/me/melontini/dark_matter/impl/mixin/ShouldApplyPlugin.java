@@ -22,7 +22,7 @@ public final class ShouldApplyPlugin implements IPluginPlugin {
     private static final String SHOULD_APPLY_DESC = "L" + MixinShouldApply.class.getName().replace(".", "/") + ";";
 
     @Override
-    public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
+    public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode) {
         AnnotationNode node = Annotations.getVisible(mixinNode, MixinShouldApply.class);
         if (node == null) return true;
 

@@ -11,9 +11,6 @@ import net.minecraft.util.collection.WeightedList;
 import java.util.List;
 import java.util.function.Function;
 
-/**
- * Will move to a different module in 4.0.0
- */
 @UtilityClass
 public class ExtraCodecs {
 

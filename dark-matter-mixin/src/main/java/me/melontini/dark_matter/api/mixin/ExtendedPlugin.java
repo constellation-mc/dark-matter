@@ -46,7 +46,7 @@ public class ExtendedPlugin implements IMixinConfigPlugin {
             if (node.visibleAnnotations != null) annotationNodes.addAll(node.visibleAnnotations);
             if (node.invisibleAnnotations != null) annotationNodes.addAll(node.invisibleAnnotations);
 
-            return shouldApplyPlugin.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes);
+            return shouldApplyPlugin.shouldApplyMixin(targetClassName, mixinClassName, node);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

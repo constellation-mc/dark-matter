@@ -15,14 +15,11 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.util.Annotations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class AsmTransformerPlugin implements IPluginPlugin {
 
-    private final HashMap<Tuple<String, String>, Set<IAsmTransformer>> transformers = new HashMap<>();
+    private final Map<Tuple<String, String>, Set<IAsmTransformer>> transformers = Collections.synchronizedMap(new HashMap<>());
 
     @Override
     public void beforeApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
@@ -38,7 +35,7 @@ public class AsmTransformerPlugin implements IPluginPlugin {
             try {
                 Class<?> cls = Class.forName(type.getClassName());
                 if (IAsmTransformer.class.isAssignableFrom(cls)) {
-                    Set<IAsmTransformer> transformers = this.transformers.computeIfAbsent(Tuple.of(mixinInfo.getClassName(), targetClassName), k -> new HashSet<>());
+                    Set<IAsmTransformer> transformers = this.transformers.computeIfAbsent(Tuple.of(mixinInfo.getClassName(), targetClassName), k -> new LinkedHashSet<>());
                     transformers.add((IAsmTransformer) Reflect.setAccessible(cls.getDeclaredConstructor()).newInstance());
                     DarkMatterLog.debug("Added transformer {} to mixin {}", type.getClassName(), mixinInfo.getClassName());
                 } else throw new IllegalStateException("javac failed me. %s is not a transformer!".formatted(type.getClassName()));

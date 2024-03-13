@@ -18,6 +18,7 @@ import java.lang.annotation.Target;
  * This annotation is very hacky and its stability is questionable. There's barely any validation.
  * Also, a lot of things have to go right for this to apply correctly.
  */
+@Deprecated
 @ApiStatus.Experimental
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)

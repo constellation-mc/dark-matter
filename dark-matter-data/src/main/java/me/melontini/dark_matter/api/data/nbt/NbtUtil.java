@@ -50,7 +50,7 @@ public class NbtUtil {
      */
     public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory) {
         if (nbt == null) return;
-        if (nbt.getList(key, NbtElement.COMPOUND_TYPE) == null) return;
+        if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) return;
 
         NbtList nbtList = nbt.getList(key, NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < nbtList.size(); ++i) {
@@ -69,18 +69,37 @@ public class NbtUtil {
         return nbt.getInt(name);
     }
 
+    @Contract("null, _, _ -> param3")
+    public static float getFloat(NbtCompound nbt, String name, float defaultValue) {
+        if (nbt == null || !nbt.contains(name)) return defaultValue;
+        return nbt.getFloat(name);
+    }
+
+    @Contract("null, _, _ -> param3")
+    public static double getDouble(NbtCompound nbt, String name, double defaultValue) {
+        if (nbt == null || !nbt.contains(name)) return defaultValue;
+        return nbt.getDouble(name);
+    }
+
+    @Contract("null, _, _ -> param3")
+    public static byte getByte(NbtCompound nbt, String name, byte defaultValue) {
+        if (nbt == null || !nbt.contains(name)) return defaultValue;
+        return nbt.getByte(name);
+    }
+
+
+    @Contract("null, _, _ -> param3")
+    public static String getString(NbtCompound nbt, String name, String defaultValue) {
+        if (nbt == null || !nbt.contains(name)) return defaultValue;
+        return nbt.getString(name);
+    }
+
     @Deprecated
     @Contract("null, _, _, _ -> param3")
     public static int getInt(NbtCompound nbt, String name, int min, int max) {
         if (nbt == null || !nbt.contains(name)) return min;
         int i = nbt.getInt(name);
         return MathHelper.clamp(i, min, max);
-    }
-
-    @Contract("null, _, _ -> param3")
-    public static float getFloat(NbtCompound nbt, String name, float defaultValue) {
-        if (nbt == null || !nbt.contains(name)) return defaultValue;
-        return nbt.getFloat(name);
     }
 
     @Deprecated
@@ -91,12 +110,6 @@ public class NbtUtil {
         return MathHelper.clamp(i, min, max);
     }
 
-    @Contract("null, _, _ -> param3")
-    public static double getDouble(NbtCompound nbt, String name, double defaultValue) {
-        if (nbt == null || !nbt.contains(name)) return defaultValue;
-        return nbt.getDouble(name);
-    }
-
     @Deprecated
     @Contract("null, _, _, _ -> param3")
     public static double getDouble(NbtCompound nbt, String name, double min, double max) {
@@ -105,24 +118,11 @@ public class NbtUtil {
         return MathHelper.clamp(i, min, max);
     }
 
-    @Contract("null, _, _ -> param3")
-    public static byte getByte(NbtCompound nbt, String name, byte defaultValue) {
-        if (nbt == null || !nbt.contains(name)) return defaultValue;
-        return nbt.getByte(name);
-    }
-
     @Deprecated
     @Contract("null, _, _, _ -> param3")
     public static float getByte(NbtCompound nbt, String name, byte min, byte max) {
         if (nbt == null || !nbt.contains(name)) return min;
         byte i = nbt.getByte(name);
         return MathHelper.clamp(i, min, max);
-    }
-
-
-    @Contract("null, _, _ -> param3")
-    public static String getString(NbtCompound nbt, String name, String defaultValue) {
-        if (nbt == null || !nbt.contains(name)) return defaultValue;
-        return nbt.getString(name);
     }
 }

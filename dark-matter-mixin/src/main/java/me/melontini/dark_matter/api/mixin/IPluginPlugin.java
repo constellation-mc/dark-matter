@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.api.mixin;
 
-import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
@@ -13,7 +12,7 @@ public interface IPluginPlugin {
 
     }
 
-    default boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
+    default boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode) {
         return true;
     }
 

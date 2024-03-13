@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.mixin;
 
+import lombok.Getter;
 import me.melontini.dark_matter.impl.mixin.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
@@ -8,22 +9,29 @@ import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.VersionParsingException;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.jetbrains.annotations.ApiStatus;
-import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.service.MixinService;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 @ApiStatus.Experimental
 public class ExtendablePlugin implements IMixinConfigPlugin {
 
     private final Set<IPluginPlugin> plugins;
 
+    /**
+     * -- GETTER --
+     *  The package is set at the start of {@code onPluginLoad}
+     * , so it's not available earlier. (collectPlugins, ctx, clinit)
+     *
+     */
+    @Getter
+    private String mixinPackage;
+
     public ExtendablePlugin() {
-        Set<IPluginPlugin> plugins = new HashSet<>();
+        Set<IPluginPlugin> plugins = new LinkedHashSet<>();
         plugins.add(DefaultPlugins.mixinPredicatePlugin());
         this.collectPlugins(plugins);
 
@@ -32,6 +40,7 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     @Override
     public final void onLoad(String mixinPackage) {
+        this.mixinPackage = mixinPackage;
         this.plugins.forEach(plugin -> plugin.onPluginLoad(mixinPackage));
         this.onPluginLoad(mixinPackage);
     }
@@ -43,24 +52,17 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
     @Override
     public final boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        AtomicBoolean apply = new AtomicBoolean(true);
         try {
             ClassNode node = MixinService.getService().getBytecodeProvider().getClassNode(mixinClassName);
-            List<AnnotationNode> annotationNodes = new ArrayList<>();
-
-            if (node.invisibleAnnotations != null) annotationNodes.addAll(node.invisibleAnnotations);
-            if (node.visibleAnnotations != null) annotationNodes.addAll(node.visibleAnnotations);
 
             for (IPluginPlugin plugin : this.plugins) {
-                apply.set(plugin.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes));
-                if (!apply.get()) break;
+                if (!plugin.shouldApplyMixin(targetClassName, mixinClassName, node)) return false;
             }
 
-            if (apply.get()) apply.set(this.shouldApplyMixin(targetClassName, mixinClassName, node, annotationNodes));
+            return this.shouldApplyMixin(targetClassName, mixinClassName, node);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        return apply.get();
     }
 
     @Override
@@ -102,7 +104,7 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
     }
 
     @ApiStatus.OverrideOnly
-    protected boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode, List<AnnotationNode> mergedAnnotations) {
+    protected boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode) {
         return true;
     }
 
@@ -189,5 +191,4 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
         }
 
     }
-
 }
