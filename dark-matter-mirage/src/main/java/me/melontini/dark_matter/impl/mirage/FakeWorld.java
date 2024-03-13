@@ -2,7 +2,6 @@ package me.melontini.dark_matter.impl.mirage;
 
 import com.mojang.authlib.GameProfile;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
 import me.melontini.dark_matter.api.minecraft.client.events.AfterFirstReload;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
@@ -22,7 +21,6 @@ import java.util.UUID;
 public class FakeWorld {
 
     public static ClientWorld INSTANCE;
-    public static ThrowableStorage<RuntimeException> EXCEPTION = new ThrowableStorage<>();
 
     public static void init() {
         AfterFirstReload.EVENT.register(() -> {

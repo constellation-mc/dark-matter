@@ -10,8 +10,6 @@ import net.minecraft.client.world.ClientWorld;
 public class Mirage {
 
     public static ClientWorld getFakeWorld() {
-        FakeWorld.EXCEPTION.tryThrow();
-
         return FakeWorld.INSTANCE;
     }
 

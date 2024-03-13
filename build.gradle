@@ -110,16 +110,21 @@ allprojects {
 
 subprojects {
     dependencies {
-        implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixin_extras_version}"))
         if (project.name != "dark-matter-base") {
             api(project(path: ':dark-matter-base', configuration: 'namedElements'))
         }
     }
 }
 
-def fabric(Project project, List<String> modules) {
+static def fabric(Project project, List<String> modules) {
     for (final def module in modules) {
-        project.dependencies.modApi(fabricApi.module(module, project.fabric_api_version))
+        project.dependencies.modApi(project.fabricApi.module(module, project.fabric_api_version))
+    }
+}
+
+static def darkMatter(Project project, List<String> modules) {
+    for (final def module in modules) {
+        project.dependencies.api(project.dependencies.project(path: ":dark-matter-${module}", configuration: 'namedElements'))
     }
 }
 

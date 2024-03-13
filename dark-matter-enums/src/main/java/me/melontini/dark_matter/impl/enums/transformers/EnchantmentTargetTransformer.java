@@ -1,8 +1,8 @@
 package me.melontini.dark_matter.impl.enums.transformers;
 
 import me.melontini.dark_matter.api.base.util.Mapper;
-import me.melontini.dark_matter.api.base.util.mixin.AsmUtil;
-import me.melontini.dark_matter.api.base.util.mixin.IAsmTransformer;
+import me.melontini.dark_matter.api.mixin.AsmUtil;
+import me.melontini.dark_matter.api.mixin.IAsmTransformer;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;

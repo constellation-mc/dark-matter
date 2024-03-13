@@ -1,4 +1,3 @@
 dependencies {
-    api(project(path: ':dark-matter-minecraft', configuration: 'namedElements'))
-    api(project(path: ':dark-matter-mirage', configuration: 'namedElements'))
+    darkMatter(project, ["minecraft", "mirage"])
 }

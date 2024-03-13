@@ -1,5 +1,5 @@
 dependencies {
-    api(project(path: ':dark-matter-minecraft', configuration: 'namedElements'))
+    darkMatter(project, ["minecraft"])
 
     fabric(project, [
             "fabric-registry-sync-v0"

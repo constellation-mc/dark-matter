@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-mixin",
+  "version": "${version}",
+  "name": "Dark Matter Mixin",
+  "description": "Mixin will get real in 53.. 52..!",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/dark-matter-mixin/icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "*",
+    "dark-matter-base": "*"
+  },
+  "provides": [
+    "dark_matter_mixin"
+  ],
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

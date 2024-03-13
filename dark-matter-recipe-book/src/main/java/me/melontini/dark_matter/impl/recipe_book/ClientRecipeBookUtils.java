@@ -22,9 +22,9 @@ import java.util.function.Supplier;
 @UtilityClass
 public class ClientRecipeBookUtils {
 
-    private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new HashMap<>();
+    private static final Map<RecipeBookCategory, List<RecipeBookGroup>> GROUPS_FOR_CATEGORY = new IdentityHashMap<>();
 
-    private static final Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>> VANILLA_CATEGORIES = Utilities.consume(new HashMap<>(), map -> {
+    private static final Map<RecipeBookCategory, Supplier<List<RecipeBookGroup>>> VANILLA_CATEGORIES = Utilities.consume(new IdentityHashMap<>(), map -> {
         map.put(RecipeBookCategory.CRAFTING, () -> RecipeBookGroup.CRAFTING);
         map.put(RecipeBookCategory.FURNACE, () -> RecipeBookGroup.FURNACE);
         map.put(RecipeBookCategory.BLAST_FURNACE, () -> RecipeBookGroup.BLAST_FURNACE);
