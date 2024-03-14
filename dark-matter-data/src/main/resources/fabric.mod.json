@@ -19,6 +19,9 @@
     "dark-matter-base": "*",
     "dark-matter-minecraft": "*"
   },
+  "mixins": [
+    "dark-matter-data.mixins.json"
+  ],
   "provides": [
     "dark_matter_data"
   ],
@@ -26,6 +29,11 @@
     "modmenu": {
       "parent": "dark-matter",
       "badges": [ "library" ]
+    },
+    "loom:injected_interfaces": {
+      "net/minecraft/server/MinecraftServer": [
+        "me/melontini/dark_matter/api/data/loading/DataPackContentsAccessor"
+      ]
     }
   }
 }
