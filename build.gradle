@@ -51,26 +51,6 @@ allprojects {
         }
     }
 
-    remapSourcesJar {
-        doLast {
-            copy {
-                from "$project.layout.buildDirectory/libs"
-                into "$rootProject.layout.buildDirectory/all_output"
-                include "*sources.jar"
-            }
-        }
-    }
-
-    remapJar {
-        doLast {
-            copy {
-                from "$project.layout.buildDirectory/libs"
-                into "$rootProject.layout.buildDirectory/all_output"
-                include "*.jar"
-            }
-        }
-    }
-
     clean {
         doLast {
             delete "$rootProject.layout.buildDirectory/all_output"
