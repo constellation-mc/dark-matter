@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.data.mixin.loading;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
@@ -20,10 +21,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.function.Function;
 
 @Mixin(value = DataPackContents.class, priority = 1100)
@@ -40,7 +38,7 @@ abstract class DataPackContentsMixin implements DataPackContentsAccessor {
     private void dark_matter$addReloaders(DynamicRegistryManager.Immutable dynamicRegistryManager, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, int functionPermissionLevel, CallbackInfo ci) {
         List<IdentifiableResourceReloadListener> list = new ArrayList<>();
         ServerReloadersEvent.EVENT.invoker().register(new ContextImpl(dynamicRegistryManager, enabledFeatures, list::add));
-        this.reloaders = list;
+        this.reloaders = ImmutableList.copyOf(list);
 
         var cls = IdentifiableResourceReloadListener.class;
         this.reloadersMap = getContents().stream().filter(cls::isInstance).map(cls::cast)
