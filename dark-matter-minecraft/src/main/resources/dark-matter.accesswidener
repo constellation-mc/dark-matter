@@ -2,9 +2,9 @@ accessWidener  v2	named
 
 transitive-accessible class net/minecraft/registry/RegistryBuilder$Registries
 transitive-accessible class net/minecraft/screen/ScreenHandlerType$Factory
-#transitive-accessible class net/minecraft/item/ItemGroup$Entries
-#transitive-accessible class net/minecraft/item/ItemGroup$EntriesImpl
-#transitive-accessible class net/minecraft/item/ItemGroup$StackVisibility
+transitive-accessible class net/minecraft/item/ItemGroup$Entries
+transitive-accessible class net/minecraft/item/ItemGroup$EntriesImpl
+transitive-accessible class net/minecraft/item/ItemGroup$StackVisibility
 transitive-accessible class net/minecraft/village/raid/Raid$Member
 transitive-accessible class net/minecraft/recipe/Ingredient$TagEntry
 transitive-accessible class net/minecraft/recipe/Ingredient$StackEntry
