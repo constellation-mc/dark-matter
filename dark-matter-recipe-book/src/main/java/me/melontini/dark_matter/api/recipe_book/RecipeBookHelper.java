@@ -36,7 +36,7 @@ public final class RecipeBookHelper {
     @Deprecated
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
-        RecipeGroupLookupEvent.legacy(type, lookup);
+        RecipeGroupLookupEvent.legacy(type, (recipe, registryManager) -> lookup.apply(recipe));
     }
 
     /**
@@ -51,7 +51,7 @@ public final class RecipeBookHelper {
      */
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull BiFunction<Recipe<?>, @Nullable DynamicRegistryManager, @Nullable RecipeBookGroup> lookup) {
-        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
+        RecipeGroupLookupEvent.legacy(type, lookup);
     }
 
     //

@@ -36,10 +36,10 @@ public class ClientRecipeBookUtils {
     @SuppressWarnings("unchecked")
     public static <T extends Recipe<?>> Event<RecipeGroupLookupEvent<T>> forType(RecipeType<T> type, boolean create) {
         if (create) {
-            return Utilities.cast(EVENTS.computeIfAbsent(type, type1 -> EventFactory.createArrayBacked(RecipeGroupLookupEvent.class, recipeGroupLookupEvents -> (id, recipe) -> {
+            return Utilities.cast(EVENTS.computeIfAbsent(type, type1 -> EventFactory.createArrayBacked(RecipeGroupLookupEvent.class, recipeGroupLookupEvents -> (id, recipe, registryManager) -> {
                 RecipeBookGroup group;
                 for (RecipeGroupLookupEvent<T> event : recipeGroupLookupEvents) {
-                    if ((group = event.lookup(id, (T) recipe)) != null) {
+                    if ((group = event.lookup(id, (T) recipe, registryManager)) != null) {
                         return group;
                     }
                 }

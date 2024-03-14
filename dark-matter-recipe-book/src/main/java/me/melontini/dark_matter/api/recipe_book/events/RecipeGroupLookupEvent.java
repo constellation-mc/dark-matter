@@ -7,10 +7,12 @@ import net.fabricmc.fabric.api.event.Event;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
+import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**
@@ -21,14 +23,14 @@ import java.util.function.Function;
 @Environment(EnvType.CLIENT)
 public interface RecipeGroupLookupEvent<T extends Recipe<?>> {
 
-    RecipeBookGroup lookup(Identifier id, T recipe);
+    RecipeBookGroup lookup(Identifier id, T recipe, @Nullable DynamicRegistryManager registryManager);
 
     static <T extends Recipe<?>> Event<RecipeGroupLookupEvent<T>> forType(RecipeType<T> type) {
         return ClientRecipeBookUtils.forType(type, true);
     }
 
     @Deprecated
-    static void legacy(RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
-        forType(type).register((id, recipe) -> lookup.apply(recipe));
+    static void legacy(RecipeType<?> type, @NotNull BiFunction<Recipe<?>, @Nullable DynamicRegistryManager, @Nullable RecipeBookGroup> lookup) {
+        forType(type).register((id, recipe, registryManager) -> lookup.apply(recipe, registryManager));
     }
 }

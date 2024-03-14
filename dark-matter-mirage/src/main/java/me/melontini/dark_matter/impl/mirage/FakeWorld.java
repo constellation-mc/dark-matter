@@ -5,6 +5,7 @@ import com.mojang.serialization.Lifecycle;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
+import me.melontini.dark_matter.api.minecraft.client.events.AfterFirstReload;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientDynamicRegistryType;
@@ -28,26 +29,7 @@ public class FakeWorld {
 
     public static final ThreadLocal<Boolean> LOADING = ThreadLocal.withInitial(() -> false);
 
-    public static Lazy<ClientWorld> INSTANCE = Lazy.of(() -> () -> {
-        DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
-
-        try {
-            LOADING.set(true);
-            var regs = FakeWorld.getRegistries();
-
-            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
-            networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
-
-            return new ClientWorld(networkHandler,
-                    new ClientWorld.Properties(Difficulty.EASY, false, false),
-                    World.OVERWORLD,
-                    regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
-                    0, 0, null,
-                    MinecraftClient.getInstance().worldRenderer, true, 0);
-        } finally {
-            LOADING.remove();
-        }
-    });
+    public static ClientWorld INSTANCE;
 
     private static CombinedDynamicRegistries<ServerDynamicRegistryType> getRegistries() {
         CombinedDynamicRegistries<ServerDynamicRegistryType> combinedDynamicRegistries = ServerDynamicRegistryType.createCombinedDynamicRegistries();
@@ -81,6 +63,25 @@ public class FakeWorld {
     }
 
     public static void init() {
-        INSTANCE.get();
+        AfterFirstReload.EVENT.register(() -> {
+            DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
+
+            try {
+                LOADING.set(true);
+                var regs = FakeWorld.getRegistries();
+
+                ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
+                networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+
+                INSTANCE = new ClientWorld(networkHandler,
+                        new ClientWorld.Properties(Difficulty.EASY, false, false),
+                        World.OVERWORLD,
+                        regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
+                        0, 0, null,
+                        MinecraftClient.getInstance().worldRenderer, true, 0);
+            } finally {
+                LOADING.remove();
+            }
+        });
     }
 }

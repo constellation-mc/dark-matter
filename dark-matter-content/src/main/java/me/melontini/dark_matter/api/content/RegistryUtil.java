@@ -10,7 +10,7 @@ import net.minecraft.item.Item;
 import net.minecraft.registry.Registry;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.RegistryKey;
+import net.minecraft.registry.RegistryKey;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 

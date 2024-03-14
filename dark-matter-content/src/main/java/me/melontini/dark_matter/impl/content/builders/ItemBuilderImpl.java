@@ -7,8 +7,8 @@ import me.melontini.dark_matter.api.content.ItemGroupHelper;
 import me.melontini.dark_matter.api.content.RegistryUtil;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 
 import java.util.function.BooleanSupplier;
@@ -50,7 +50,7 @@ public class ItemBuilderImpl<T extends Item> implements ContentBuilder.ItemBuild
 
     @Override
     public T build() {
-        T item = RegistryUtil.register(this.register, Registry.ITEM, this.identifier, this.itemSupplier);
+        T item = RegistryUtil.register(this.register, Registries.ITEM, this.identifier, this.itemSupplier);
         if (item != null && this.itemGroup != null) ItemGroupHelper.addItemGroupInjection(this.itemGroup, (enabledFeatures, operatorEnabled, entriesImpl) -> entriesImpl.add(item));
         return item;
     }

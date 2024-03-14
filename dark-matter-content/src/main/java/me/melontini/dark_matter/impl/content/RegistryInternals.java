@@ -5,6 +5,7 @@ import me.melontini.dark_matter.api.base.util.Utilities;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;

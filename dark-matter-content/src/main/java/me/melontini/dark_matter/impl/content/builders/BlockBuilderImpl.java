@@ -7,8 +7,9 @@ import me.melontini.dark_matter.api.content.RegistryUtil;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
+import net.minecraft.registry.Registry;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -57,7 +58,7 @@ public class BlockBuilderImpl<T extends Block> implements ContentBuilder.BlockBu
 
     @Override
     public T build() {
-        T block = RegistryUtil.register(this.register, Registry.BLOCK, this.identifier, this.blockSupplier);
+        T block = RegistryUtil.register(this.register, Registries.BLOCK, this.identifier, this.blockSupplier);
 
         if (block != null) {
             if (itemFactory != null) itemFactory.produce(block, this.identifier).build();

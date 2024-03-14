@@ -8,7 +8,6 @@ import me.melontini.dark_matter.api.content.interfaces.DarkMatterEntries;
 import me.melontini.dark_matter.api.minecraft.util.TextUtil;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import me.melontini.dark_matter.impl.content.DarkMatterEntriesImpl;
-import net.fabricmc.fabric.api.itemgroup.v1.FabricItemGroup;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
@@ -82,12 +81,7 @@ public class ItemGroupBuilderImpl implements ContentBuilder.ItemGroupBuilder {
     public ItemGroup build() {
         if (!this.register.getAsBoolean()) return null;
 
-        ItemGroup.Builder builder;
-        if (FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) {
-            builder = FabricItemGroup.builder();
-        } else {
-            builder = new ItemGroup.Builder(null, -1);
-        }
+        ItemGroup.Builder builder = new ItemGroup.Builder(null, -1);
         builder.entries((displayContext, operatorEnabled) -> {});
         builder.icon(() -> ItemGroupBuilderImpl.this.icon.get());
 
