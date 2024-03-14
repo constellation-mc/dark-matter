@@ -17,7 +17,7 @@ import java.util.List;
  */
 @UtilityClass
 @SuppressWarnings("unused")
-@Deprecated
+@Deprecated(forRemoval = true)
 public class ReflectionUtil {
 
     /**
@@ -73,12 +73,10 @@ public class ReflectionUtil {
         return Reflect.setAccessible(field, true);
     }
 
-    @Deprecated
     public static Object getField(Field field, Object o) {
         return ReflectionInternals.getField(field, o);
     }
 
-    @Deprecated
     public static void setField(Field field, Object o, Object value) {
         ReflectionInternals.setField(field, o, value);
     }

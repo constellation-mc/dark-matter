@@ -18,8 +18,9 @@
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "minecraft": ">=1.19",
-    "dark-matter-base": "*"
+    "minecraft": ">=${minecraft_version}",
+    "dark-matter-base": "*",
+    "fabric-registry-sync-v0": "*"
   },
   "provides": [
     "dark_matter_content"

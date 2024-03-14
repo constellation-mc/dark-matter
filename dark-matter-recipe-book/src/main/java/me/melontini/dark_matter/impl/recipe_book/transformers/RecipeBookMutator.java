@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.recipe_book.transformers;
 
-import me.melontini.dark_matter.api.base.util.mixin.IAsmTransformer;
+import me.melontini.dark_matter.api.mixin.IAsmTransformer;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.ClassNode;

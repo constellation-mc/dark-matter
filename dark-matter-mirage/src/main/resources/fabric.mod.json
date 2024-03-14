@@ -12,13 +12,16 @@
   "icon": "assets/dark-matter-mirage/icon.png",
   "environment": "*",
   "entrypoints": {
+    "client": [
+      "me.melontini.dark_matter.impl.mirage.FakeWorld::init"
+    ]
   },
   "mixins": [
     "dark-matter-mirage.mixins.json"
   ],
   "depends": {
     "fabricloader": ">=${loader_version}",
-    "minecraft": ">=1.19",
+    "minecraft": ">=${minecraft_version}",
     "dark-matter-base": "*"
   },
   "provides": [

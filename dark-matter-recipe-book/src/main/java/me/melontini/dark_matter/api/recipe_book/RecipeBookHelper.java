@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.recipe_book;
 
 import lombok.experimental.UtilityClass;
+import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
 import me.melontini.dark_matter.impl.recipe_book.ClientRecipeBookUtils;
 import me.melontini.dark_matter.impl.recipe_book.RecipeBookUtils;
 import net.fabricmc.api.EnvType;
@@ -30,10 +31,12 @@ public final class RecipeBookHelper {
      * <p>
      * It's recommended to keep this simple, as it will be run for every recipe.
      * @param lookup The lookup function. Please note, the function must return null if the recipe doesn't match.
+     * @deprecated See {@link RecipeGroupLookupEvent}
      */
+    @Deprecated
     @Environment(EnvType.CLIENT)
     public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<Recipe<?>, @Nullable RecipeBookGroup> lookup) {
-        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
+        RecipeGroupLookupEvent.legacy(type, lookup);
     }
 
     /**

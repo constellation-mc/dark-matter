@@ -2,7 +2,6 @@ plugins {
     id 'java-library'
     id 'fabric-loom' version "${loom_version}" apply false
     id 'maven-publish'
-    id 'io.github.juuxel.loom-vineflower' version "${vineflower_version}" apply false
     id 'io.freefair.lombok' version '8.3' apply false
 }
 
@@ -20,7 +19,6 @@ allprojects {
 
     apply plugin: 'java-library'
     apply plugin: 'fabric-loom'
-    apply plugin: 'io.github.juuxel.loom-vineflower'
     apply plugin: 'maven-publish'
     apply plugin: 'io.freefair.lombok'
 
@@ -34,13 +32,16 @@ allprojects {
     }
 
     processResources {
-        inputs.property "version", project.version
-        inputs.property "loader_version", project.loader_version
+        var input = [
+                "version"          : project.version,
+                "loader_version"   : project.loader_version,
+                "minecraft_version": project.minecraft_version
+        ]
+        inputs.properties input
         filteringCharset "UTF-8"
 
         filesMatching("fabric.mod.json") {
-            expand "version": project.version,
-                    "loader_version": project.loader_version
+            expand input
         }
     }
 
@@ -53,8 +54,8 @@ allprojects {
     remapSourcesJar {
         doLast {
             copy {
-                from "$project.buildDir/libs"
-                into "$rootProject.buildDir/all_output"
+                from "$project.layout.buildDirectory/libs"
+                into "$rootProject.layout.buildDirectory/all_output"
                 include "*sources.jar"
             }
         }
@@ -63,8 +64,8 @@ allprojects {
     remapJar {
         doLast {
             copy {
-                from "$project.buildDir/libs"
-                into "$rootProject.buildDir/all_output"
+                from "$project.layout.buildDirectory/libs"
+                into "$rootProject.layout.buildDirectory/all_output"
                 include "*.jar"
             }
         }
@@ -72,7 +73,7 @@ allprojects {
 
     clean {
         doLast {
-            delete "$rootProject.buildDir/all_output"
+            delete "$rootProject.layout.buildDirectory/all_output"
         }
     }
 
@@ -80,11 +81,6 @@ allprojects {
         minecraft("com.mojang:minecraft:${project.minecraft_version}")
         mappings("net.fabricmc:yarn:${project.yarn_mappings}:v2")
         modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-
-        if (project.name != "dark-matter-base" && project.name != rootProject.name) {
-            implementation(annotationProcessor("io.github.llamalad7:mixinextras-fabric:${project.mixin_extras_version}"))
-            api(project(path: ':dark-matter-base', configuration: 'namedElements'))
-        }
     }
 
     allprojects.forEach { p ->
@@ -112,20 +108,43 @@ allprojects {
     }
 }
 
-dependencies {
-    def apiModules = [
-            "fabric-api-base",
-            "fabric-resource-loader-v0",
-            "fabric-object-builder-api-v1",
-            "fabric-item-group-api-v1"
-    ]
-
-    for (final def module in apiModules) {
-        modLocalRuntime(fabricApi.module(module, project.fabric_api_version))
+subprojects {
+    dependencies {
+        if (project.name != "dark-matter-base") {
+            api(project(path: ':dark-matter-base', configuration: 'namedElements'))
+        }
     }
+}
 
-    for (Project pj : subprojects) {
-        api(include(project(path: ":${pj.name}", configuration: 'namedElements')))
+static def fabric(Project project, List<String> modules) {
+    for (final def module in modules) {
+        project.dependencies.modApi(project.fabricApi.module(module, project.fabric_api_version))
+    }
+}
+
+static def darkMatter(Project project, List<String> modules) {
+    for (final def module in modules) {
+        project.dependencies.api(project.dependencies.project(path: ":dark-matter-${module}", configuration: 'namedElements'))
+    }
+}
+
+subprojects.each {
+    remapJar.dependsOn("${it.path}:remapJar")
+}
+
+dependencies {
+    afterEvaluate {
+        subprojects.each {
+            api(project(path: "${it.path}", configuration: "namedElements"))
+        }
+    }
+}
+
+remapJar {
+    afterEvaluate {
+        subprojects.forEach {
+            nestedJars.from(project("${it.path}").tasks.named("remapJar"))
+        }
     }
 }
 

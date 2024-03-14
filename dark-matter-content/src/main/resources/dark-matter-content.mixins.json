@@ -8,7 +8,8 @@
     "item_group_builder.ItemGroupMixin"
   ],
   "client": [
-    "animated_groups.CreativeInventoryScreenMixin"
+    "animated_groups.CreativeInventoryScreenMixin",
+    "animated_groups.ItemGroupMixin"
   ],
   "injectors": {
     "defaultRequire": 1

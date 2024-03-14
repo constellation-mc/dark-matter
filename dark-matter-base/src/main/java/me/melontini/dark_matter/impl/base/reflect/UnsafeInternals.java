@@ -1,7 +1,6 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import org.jetbrains.annotations.ApiStatus;
@@ -74,42 +73,23 @@ public class UnsafeInternals {
         return UNSAFE.get();
     }
 
+    @Deprecated(forRemoval = true)
     private static final Lazy<Object> internalUnsafe = Lazy.of(() -> () -> getReference(Unsafe.class.getDeclaredField("theInternalUnsafe"), null));
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static @Nullable Object internalUnsafe() {
         return internalUnsafe.get();
     }
 
+    @Deprecated(forRemoval = true)
     private static final Lazy<MethodHandle> objectFieldOffset = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(internalUnsafe().getClass(), "objectFieldOffset", MethodType.methodType(long.class, Class.class, String.class)));
 
-    @Deprecated
+    @Deprecated(forRemoval = true)
     public static long getObjectFieldOffset(Class<?> clazz, String name) {
         try {
             return (long) objectFieldOffset.get().invokeWithArguments(internalUnsafe(), clazz, name);
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static int offset = -1;
-
-    //https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass
-    public static int getOverrideOffset() {
-        if (offset == -1) {
-            try {
-                Field f = Unsafe.class.getDeclaredField("theUnsafe"), f1 = Unsafe.class.getDeclaredField("theUnsafe");
-                f.setAccessible(true);
-                f1.setAccessible(false);
-                Unsafe unsafe = (Unsafe) f.get(null);
-                int i;//override boolean byte offset. should result in 12 for java 17
-                for (i = 0; unsafe.getBoolean(f, i) == unsafe.getBoolean(f1, i); i++) ;
-                offset = i;
-            } catch (Exception ignored) {
-                offset = 12; //fallback to 12 just in case
-            }
-        }
-        MakeSure.isTrue(offset != -1);
-        return offset;
     }
 }

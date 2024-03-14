@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.registry.Registry;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
@@ -56,7 +57,7 @@ public class BlockBuilderImpl<T extends Block> implements ContentBuilder.BlockBu
 
     @Override
     public T build() {
-        T block = RegistryUtil.createBlock(this.register, this.identifier, this.blockSupplier);
+        T block = RegistryUtil.register(this.register, Registry.BLOCK, this.identifier, this.blockSupplier);
 
         if (block != null) {
             if (itemFactory != null) itemFactory.produce(block, this.identifier).build();

@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.api.base.config;
 
 import com.google.gson.JsonObject;
+import me.melontini.dark_matter.api.base.util.classes.Context;
 import me.melontini.dark_matter.impl.base.config.ConfigManagerImpl;
 
 import java.nio.file.Path;
@@ -26,7 +27,9 @@ public interface ConfigManager<T> {
     ConfigManager<T> fixup(Consumer<JsonObject> fixer);
 
     T createDefault();
+    T load(Path root, Context context);
     T load(Path root);
+    void save(Path root, T config, Context context);
     void save(Path root, T config);
 
     Path resolve(Path root);
@@ -54,10 +57,12 @@ public interface ConfigManager<T> {
     Class<T> type();
     String name();
 
+    @FunctionalInterface
     interface Listener<T> {
         void accept(T config, Path path);
     }
 
+    @FunctionalInterface
     interface Handler {
         void accept(Exception e, Stage stage, Path path);
     }
