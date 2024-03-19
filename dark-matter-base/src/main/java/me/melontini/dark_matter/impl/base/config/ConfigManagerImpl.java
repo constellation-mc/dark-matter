@@ -5,7 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import lombok.experimental.ExtensionMethod;
 import me.melontini.dark_matter.api.base.config.ConfigManager;
-import me.melontini.dark_matter.api.base.util.classes.Context;
+import me.melontini.dark_matter.api.base.util.Context;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -52,7 +52,7 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     @Override
     public T load(Path root, Context context) {
         var path = resolve(root);
-        Gson gson = context.get(Gson.class, "gson").orElse(GSON);
+        Gson gson = context.get(ConfigManager.GSON).orElse(GSON);
 
         AtomicReference<T> config = new AtomicReference<>();
         if (path.exists()) {
@@ -72,14 +72,9 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
     }
 
     @Override
-    public T load(Path root) {
-        return load(root, Context.of());
-    }
-
-    @Override
     public void save(Path root, T config, Context context) {
         var path = resolve(root);
-        Gson gson = context.get(Gson.class, "gson").orElse(GSON);
+        Gson gson = context.get(ConfigManager.GSON).orElse(GSON);
 
         save.forEach(listener -> listener.accept(config, path));
 
@@ -93,11 +88,6 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         } catch (Exception e) {
             handlers.forEach(handler -> handler.accept(e, Stage.SAVE, path));
         }
-    }
-
-    @Override
-    public void save(Path root, T config) {
-        save(root, config, Context.of());
     }
 
     public Path resolve(Path root) {

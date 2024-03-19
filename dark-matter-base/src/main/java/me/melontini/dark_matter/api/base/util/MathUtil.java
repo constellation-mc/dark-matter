@@ -6,7 +6,7 @@ import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 @UtilityClass
-public final class MathStuff {
+public final class MathUtil {
 
     //"doesn't MathHelper already add this?" - yes, but it uses Mogang's random, and I don't like it.
     public static double nextDouble(Random random, double min, double max) {
@@ -97,35 +97,5 @@ public final class MathStuff {
         i = 0x5f3759df - (i >> 1);
         x = Float.intBitsToFloat(i);
         return x * (1.5f - (0.5f * x) * x * x);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static double fastSqrt(double x, int numIterations) {
-        return Math.sqrt(x);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static float fastSqrt(float x, int numIterations) {
-        return (float) Math.sqrt(x);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static double inverseSqrt(double x, int numIterations) {
-        return 1 / Math.sqrt(x);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static float inverseSqrt(float x, int numIterations) {
-        return 1 / (float) Math.sqrt(x);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static long round(double value) {
-        return Math.round(value);
-    }
-
-    @Deprecated(since = "2.0.0")
-    public static int round(float value) {
-        return Math.round(value);
     }
 }

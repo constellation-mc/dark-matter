@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.crash_handler;
 
-import me.melontini.dark_matter.api.base.util.classes.Context;
+import me.melontini.dark_matter.api.base.util.Context;
 import me.melontini.dark_matter.api.crash_handler.Crashlytics;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfig;
 import org.spongepowered.asm.mixin.extensibility.IMixinErrorHandler;

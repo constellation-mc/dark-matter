@@ -6,41 +6,50 @@ import me.melontini.dark_matter.impl.content.RegistryInternals;
 import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
+import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.Item;
-import net.minecraft.registry.Registry;
 import net.minecraft.item.ItemConvertible;
+import net.minecraft.registry.Registry;
+import net.minecraft.resource.featuretoggle.FeatureSet;
+import net.minecraft.screen.ScreenHandler;
+import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
-import net.minecraft.registry.RegistryKey;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.function.BiFunction;
 import java.util.function.BooleanSupplier;
 import java.util.function.Supplier;
 
-/**
- * Doesn't work without Fabric API
- */
 @UtilityClass
 @SuppressWarnings("unused")
 public class RegistryUtil {
 
-    public static <T extends BlockEntity> @Nullable BlockEntityType<T> asBlockEntity(@NotNull Block block) {
+    @Contract("null -> null")
+    public <T extends BlockEntity> BlockEntityType<T> asBlockEntity(@Nullable Block block) {
         return RegistryInternals.getBlockEntityFromBlock(block);
     }
 
-    public static <T extends Item> T asItem(ItemConvertible convertible) {
+    @Contract("null -> null")
+    public <T extends Item> T asItem(@Nullable ItemConvertible convertible) {
         return convertible != null ? Utilities.cast(convertible.asItem()) : null;
     }
 
-    public <V, T extends V> @Nullable T register(BooleanSupplier condition, Registry<V> registry, Identifier id, Supplier<T> entry) {
-        if (condition.getAsBoolean()) {
-            return Registry.register(registry, id, entry.get());
-        }
-        return null;
+    public <T extends ScreenHandler> Supplier<ScreenHandlerType<T>> screenHandlerType(BiFunction<Integer, PlayerInventory, T> factory) {
+        return () -> new ScreenHandlerType<>(factory::apply, FeatureSet.empty());
     }
 
-    public <V, T extends V> @Nullable T register(BooleanSupplier condition, Registry<V> registry, RegistryKey<V> id, Supplier<T> entry) {
-        if (condition.getAsBoolean()) {
+    public <V, T extends V> @Nullable T register(Registry<V> registry, Identifier id, Supplier<T> entry) {
+        return register(true, registry, id, entry);
+    }
+
+    public <V, T extends V> @Nullable T register(BooleanSupplier condition, Registry<V> registry, Identifier id, Supplier<T> entry) {
+        return register(condition.getAsBoolean(), registry, id, entry);
+    }
+
+    public <V, T extends V> @Nullable T register(boolean condition, Registry<V> registry, Identifier id, Supplier<T> entry) {
+        if (condition) {
             return Registry.register(registry, id, entry.get());
         }
         return null;

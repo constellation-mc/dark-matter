@@ -1,9 +1,9 @@
 package me.melontini.dark_matter.impl.minecraft.client.util;
 
+import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -22,15 +22,15 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
-import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
 public class DrawInternals {
 
-    public static final Lazy<FakeScreen> FAKE_SCREEN = Lazy.of(() -> FakeScreen::new);
+    public static final Supplier<FakeScreen> FAKE_SCREEN = Suppliers.memoize(FakeScreen::new);
 
     private DrawInternals() {
         throw new UnsupportedOperationException();

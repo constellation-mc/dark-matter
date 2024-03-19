@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.mixin;
 
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import me.melontini.dark_matter.api.mixin.AsmUtil;
 import me.melontini.dark_matter.api.mixin.IAsmTransformer;
 import me.melontini.dark_matter.api.mixin.IPluginPlugin;

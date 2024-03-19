@@ -1,6 +1,8 @@
 package me.melontini.dark_matter.api.crash_handler;
 
-public interface Prop {
+import java.util.function.Supplier;
+
+public interface Prop extends Supplier<String> {
     String name();
     String get();
 }

@@ -2,10 +2,10 @@ package me.melontini.dark_matter.api.base.util;
 
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.classes.ThrowingConsumer;
-import me.melontini.dark_matter.api.base.util.classes.ThrowingFunction;
-import me.melontini.dark_matter.api.base.util.classes.ThrowingRunnable;
-import me.melontini.dark_matter.api.base.util.classes.ThrowingSupplier;
+import me.melontini.dark_matter.api.base.util.functions.ThrowingConsumer;
+import me.melontini.dark_matter.api.base.util.functions.ThrowingFunction;
+import me.melontini.dark_matter.api.base.util.functions.ThrowingRunnable;
+import me.melontini.dark_matter.api.base.util.functions.ThrowingSupplier;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,19 +23,21 @@ public final class Utilities {
     public static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
     @Deprecated(forRemoval = true)
-    public static final Random RANDOM = MathStuff.random();
+    public static final Random RANDOM = MathUtil.random();
 
     private static final BooleanSupplier TRUTH = () -> true;
     private static final BooleanSupplier FALSE = () -> false;
 
+    private static final Runnable EMPTY_RUNNABLE = () -> {};
+
     public static <T> T pickAtRandom(@NotNull T[] list) {
         MakeSure.notEmpty(list);
-        return list[MathStuff.threadRandom().nextInt(list.length)];
+        return list[MathUtil.threadRandom().nextInt(list.length)];
     }
 
     public static <T> T pickAtRandom(@NotNull List<T> list) {
         MakeSure.notEmpty(list);
-        return list.get(MathStuff.threadRandom().nextInt(list.size()));
+        return list.get(MathUtil.threadRandom().nextInt(list.size()));
     }
 
     public static BooleanSupplier getTruth() {
@@ -100,6 +102,10 @@ public final class Utilities {
 
     public static <T, U> boolean test(T obj, U obj1, BiPredicate<T, U> test) {
         return test.test(obj, obj1);
+    }
+
+    public Runnable emptyRunnable() {
+        return EMPTY_RUNNABLE;
     }
 
     public static boolean isDev() {

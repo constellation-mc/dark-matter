@@ -3,7 +3,7 @@ package me.melontini.dark_matter.impl.crash_handler;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.base.util.classes.Context;
+import me.melontini.dark_matter.api.base.util.Context;
 import me.melontini.dark_matter.api.crash_handler.Crashlytics;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -25,8 +25,8 @@ public final class CrashlyticsInternals {
             public void run() {
                 try {
                     s.shutdown();
-                    if (!s.awaitTermination(15, TimeUnit.SECONDS)) {
-                        System.err.printf("[%s] Upload tasks took too long to complete! > 15s%n", this.getName());
+                    if (!s.awaitTermination(8, TimeUnit.SECONDS)) {
+                        System.err.printf("[%s] Upload tasks took too long to complete! > 8s%n", this.getName());
                         s.shutdownNow();
                     }
                 } catch (InterruptedException e) {

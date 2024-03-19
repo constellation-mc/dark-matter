@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.api.base.util.classes;
+package me.melontini.dark_matter.api.base.util;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -8,21 +8,26 @@ import java.util.function.BiConsumer;
 
 public interface Context {
 
-    <T> Optional<T> get(Class<T> cls, String key);
-    void forEach(BiConsumer<String, Object> consumer);
-    default <T> T orThrow(Class<T> cls, String key) {
-        return get(cls, key).orElseThrow(() -> new IllegalStateException("Missing required context '%s'!".formatted(key)));
+    <T> Optional<T> get(Key<T> key);
+    void forEach(BiConsumer<Key<?>, Object> consumer);
+    default <T> T orThrow(Key<T> key) {
+        return get(key).orElseThrow(() -> new IllegalStateException("Missing required context '%s'!".formatted(key)));
     }
+
+    static <T> Key<T> key(String id) {
+        return new Key<>(id);
+    }
+    record Key<T>(String id) { }
 
     static Context of() {
         return new Context() {
             @Override
-            public <T> Optional<T> get(Class<T> cls, String key) {
+            public <T> Optional<T> get(Key<T> key) {
                 return Optional.empty();
             }
 
             @Override
-            public void forEach(BiConsumer<String, Object> consumer) {}
+            public void forEach(BiConsumer<Key<?>, Object> consumer) {}
 
             @Override
             public String toString() {
@@ -31,16 +36,16 @@ public interface Context {
         };
     }
 
-    static Context of(Map<String, Object> map) {
+    static Context of(Map<Key<?>, Object> map) {
         return new Context() {
-            private final Map<String, Object> ctx = Collections.unmodifiableMap(map);
+            private final Map<Key<?>, Object> ctx = Collections.unmodifiableMap(map);
             @Override
-            public <T> Optional<T> get(Class<T> cls, String key) {
-                return Optional.ofNullable(cls.cast(ctx.get(key)));
+            public <T> Optional<T> get(Key<T> key) {
+                return Optional.ofNullable((T) ctx.get(key));
             }
 
             @Override
-            public void forEach(BiConsumer<String, Object> consumer) {
+            public void forEach(BiConsumer<Key<?>, Object> consumer) {
                 ctx.forEach(consumer);
             }
 
@@ -56,10 +61,10 @@ public interface Context {
     }
 
     class Builder {
-        private final Map<String, Object> map = Collections.synchronizedMap(new HashMap<>());
+        private final Map<Key<?>, Object> map = Collections.synchronizedMap(new HashMap<>());
         private Builder() {}
 
-        public Builder put(String key, Object value) {
+        public <T> Builder put(Key<T> key, T value) {
             map.put(key, value);
             return this;
         }

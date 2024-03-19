@@ -1,7 +1,8 @@
 package me.melontini.dark_matter.api.base.config;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-import me.melontini.dark_matter.api.base.util.classes.Context;
+import me.melontini.dark_matter.api.base.util.Context;
 import me.melontini.dark_matter.impl.base.config.ConfigManagerImpl;
 
 import java.nio.file.Path;
@@ -9,6 +10,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public interface ConfigManager<T> {
+
+    Context.Key<Gson> GSON = Context.key("gson");
 
     static <T> ConfigManager<T> of(Class<T> type, String name) {
         return new ConfigManagerImpl<>(type, name, () -> {
@@ -28,9 +31,7 @@ public interface ConfigManager<T> {
 
     T createDefault();
     T load(Path root, Context context);
-    T load(Path root);
     void save(Path root, T config, Context context);
-    void save(Path root, T config);
 
     Path resolve(Path root);
 

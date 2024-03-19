@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.api.base.util.classes;
+package me.melontini.dark_matter.api.base.util.functions;
 
 import java.util.Objects;
 

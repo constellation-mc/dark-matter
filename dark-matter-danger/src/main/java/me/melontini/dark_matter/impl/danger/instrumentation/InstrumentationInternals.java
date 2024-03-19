@@ -7,10 +7,9 @@
 package me.melontini.dark_matter.impl.danger.instrumentation;
 
 import lombok.Getter;
-import me.melontini.dark_matter.api.base.reflect.MiscReflection;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
+import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.classes.ThrowableStorage;
 import me.melontini.dark_matter.api.danger.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.danger.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -31,6 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
@@ -63,7 +63,7 @@ public class InstrumentationInternals {
 
     public static void retransform(InstrumentationAccess.AsmTransformer transformer, boolean export, Class<?>... cls) throws TransformationException {
         HashSet<Class<?>> classes = Arrays.stream(cls).collect(Collectors.toCollection(HashSet::new));
-        ThrowableStorage<Throwable> throwable = ThrowableStorage.of();
+        AtomicReference<Throwable> throwable = new AtomicReference<>();
         InstrumentationAccess.AbstractFileTransformer fileTransformer = (loader, className, classBeingRedefined, protectionDomain, classfileBuffer) -> {
             if (classes.contains(classBeingRedefined)) {
                 try {
@@ -97,7 +97,7 @@ public class InstrumentationInternals {
             instrumentation.addTransformer(fileTransformer, true);
             instrumentation.retransformClasses(cls);
             instrumentation.removeTransformer(fileTransformer);
-            throwable.tryThrow();
+            if (throwable.get() != null) throw throwable.get();
         } catch (Throwable t) {
             throw new TransformationException("Failed to retransform classes %s".formatted(Arrays.toString(cls)), t);
         }
@@ -163,17 +163,17 @@ public class InstrumentationInternals {
             ap = ClassLoader.getSystemClassLoader().loadClass(AgentProvider.class.getName());
         } catch (Throwable t) {
             try (var is = AgentProvider.class.getClassLoader().getResourceAsStream(AgentProvider.class.getName().replace(".", "/") + ".class")) {
-                ap = MiscReflection.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), MakeSure.notNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
+                ap = UnsafeUtils.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), MakeSure.notNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
             } catch (Throwable ignored) {
                 throw new RuntimeException("Failed to define " + AgentProvider.class.getName());
             }
         }
 
-        ThrowableStorage<Throwable> t = new ThrowableStorage<>();
+        AtomicReference<Throwable> t = new AtomicReference<>();
         ModuleLayer.boot().findModule("java.instrument").map(module -> {
             try {
                 Class<?> cls = Class.forName("sun.instrument.InstrumentationImpl");
-                MethodHandles.Lookup lookup = MiscReflection.lookupIn(cls);
+                MethodHandles.Lookup lookup = UnsafeUtils.lookupIn(cls);
                 lookup.findStatic(cls, "loadAgent", MethodType.methodType(void.class, String.class))
                         .invokeWithArguments(self.toString());
             } catch (Throwable e) {
@@ -183,7 +183,7 @@ public class InstrumentationInternals {
             }
             return self;
         }).orElseThrow(() -> new IllegalStateException("'java.instrument' module is not available!"));
-        t.tryThrow();
+        if (t.get() != null) throw t.get();
 
         return (Instrumentation) Reflect.setAccessible(Reflect.findField(ap, "instrumentation").orElseThrow())
                 .get(null);

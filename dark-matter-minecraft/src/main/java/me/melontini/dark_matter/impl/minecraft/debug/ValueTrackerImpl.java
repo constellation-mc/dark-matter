@@ -3,7 +3,7 @@ package me.melontini.dark_matter.impl.minecraft.debug;
 import com.google.common.base.Strings;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.classes.Tuple;
+import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;

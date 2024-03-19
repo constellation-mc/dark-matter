@@ -1,24 +1,29 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
+import com.google.common.base.Suppliers;
 import lombok.experimental.UtilityClass;
+import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
+import java.security.ProtectionDomain;
+import java.util.function.Supplier;
+
+import static me.melontini.dark_matter.api.base.util.Exceptions.supply;
 
 @UtilityClass
 @ApiStatus.Internal
 public class UnsafeInternals {
 
-    private static final Lazy<Unsafe> UNSAFE = Lazy.of(() -> () -> {
+    private static final Supplier<Unsafe> UNSAFE = Suppliers.memoize(() -> {
         try {
             Field unsafe = Unsafe.class.getDeclaredField("theUnsafe");
             unsafe.setAccessible(true);
@@ -34,6 +39,17 @@ public class UnsafeInternals {
             }
         }
     });
+
+    private static final Supplier<MethodHandles.Lookup> TRUSTED_LOOKUP = Suppliers.memoize(() -> supply(() -> UnsafeUtils.getReference(MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP"), null)));
+    private static final Supplier<MethodHandle> DEFINE_CLASS = Suppliers.memoize(() -> supply(() -> TRUSTED_LOOKUP.get().findVirtual(ClassLoader.class, "defineClass", MethodType.methodType(Class.class, String.class, byte[].class, int.class, int.class, ProtectionDomain.class))));
+
+    public static MethodHandles.Lookup lookupIn(Class<?> cls) {
+        return TRUSTED_LOOKUP.get().in(cls);
+    }
+
+    public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, ProtectionDomain domain) {
+        return (Class<?>) supply(() -> DEFINE_CLASS.get().invoke(loader, name, bytes, domain));
+    }
 
     public static void setReference(Field field, Object o, Object value) {
         boolean isStatic = Modifier.isStatic(field.getModifiers());
@@ -71,25 +87,5 @@ public class UnsafeInternals {
 
     public static Unsafe getUnsafe() {
         return UNSAFE.get();
-    }
-
-    @Deprecated(forRemoval = true)
-    private static final Lazy<Object> internalUnsafe = Lazy.of(() -> () -> getReference(Unsafe.class.getDeclaredField("theInternalUnsafe"), null));
-
-    @Deprecated(forRemoval = true)
-    public static @Nullable Object internalUnsafe() {
-        return internalUnsafe.get();
-    }
-
-    @Deprecated(forRemoval = true)
-    private static final Lazy<MethodHandle> objectFieldOffset = Lazy.of(() -> () -> ReflectionInternals.trustedLookup().findVirtual(internalUnsafe().getClass(), "objectFieldOffset", MethodType.methodType(long.class, Class.class, String.class)));
-
-    @Deprecated(forRemoval = true)
-    public static long getObjectFieldOffset(Class<?> clazz, String name) {
-        try {
-            return (long) objectFieldOffset.get().invokeWithArguments(internalUnsafe(), clazz, name);
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
     }
 }

@@ -4,7 +4,6 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Lifecycle;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import me.melontini.dark_matter.api.minecraft.client.events.AfterFirstReload;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;

@@ -41,7 +41,7 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
     @Override
     public final void onLoad(String mixinPackage) {
         this.mixinPackage = mixinPackage;
-        this.plugins.forEach(plugin -> plugin.onPluginLoad(mixinPackage));
+        this.plugins.forEach(plugin -> plugin.onPluginLoad(this, mixinPackage));
         this.onPluginLoad(mixinPackage);
     }
 
@@ -166,11 +166,6 @@ public class ExtendablePlugin implements IMixinConfigPlugin {
 
         public static IPluginPlugin mixinPredicatePlugin() {
             return new MixinPredicatePlugin();
-        }
-
-        @ApiStatus.Obsolete(since = "2.0.0")
-        public static IPluginPlugin shouldApplyPlugin() {
-            return new ShouldApplyPlugin();
         }
 
         public static IPluginPlugin publicizePlugin() {

@@ -8,7 +8,7 @@ import java.util.Set;
 
 public interface IPluginPlugin {
 
-    default void onPluginLoad(String mixinPackage) {
+    default void onPluginLoad(ExtendablePlugin owner, String mixinPackage) {
 
     }
 

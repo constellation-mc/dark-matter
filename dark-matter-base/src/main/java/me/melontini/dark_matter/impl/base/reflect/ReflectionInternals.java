@@ -1,16 +1,11 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.reflect.UnsafeAccess;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.classes.Lazy;
 import org.apache.commons.lang3.ClassUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.VarHandle;
 import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -93,46 +88,13 @@ public class ReflectionInternals {
         return traverse && clazz.getSuperclass() != null ? findField(clazz.getSuperclass(), true, name) : null;
     }
 
-    private static final Lazy<VarHandle> override = Lazy.of(() -> () -> trustedLookup().findVarHandle(AccessibleObject.class, "override", boolean.class));
-
     public static <T extends AccessibleObject> T setAccessible(T member, boolean set) {
         MakeSure.notNull(member, "Tried to setAccessible a null constructor");
         try {
             member.setAccessible(set);
         } catch (Exception e) {
-            override.get().set(member, set);
-        }
-        return member;
-    }
-
-    private static final Lazy<MethodHandles.Lookup> trustedLookup = Lazy.of(() -> () -> (MethodHandles.Lookup) UnsafeAccess.getReference(MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP"), null));
-
-    public static MethodHandles.Lookup trustedLookup() throws Exception {
-        return trustedLookup.getExc();
-    }
-
-    public static Field getField(Class<?> clazz, String name, boolean accessible) {
-        try {
-            return Reflect.findField(clazz, name).map(field -> accessible ? setAccessible(field, true) : field)
-                    .orElseThrow(() -> new NoSuchFieldException(name));
-        } catch (NoSuchFieldException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public static Object getField(Field field, Object o) {
-        try {
-            return trustedLookup().unreflectGetter(field).invoke(o);
-        } catch (Throwable e) {
-            return UnsafeAccess.getReference(field, o);
-        }
-    }
-
-    public static void setField(Field field, Object o, Object value) {
-        try {
-            MiscReflectionInternals.tryRemoveFinal(setAccessible(field, true)).set(o, value);
-        } catch (Throwable e) {
-            UnsafeAccess.putReference(field, o, value);
-        }
+        return member;
     }
 }

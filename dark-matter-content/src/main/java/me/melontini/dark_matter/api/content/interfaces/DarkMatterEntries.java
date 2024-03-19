@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.content.interfaces;
 
-import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
@@ -37,7 +37,7 @@ public interface DarkMatterEntries {
     default void appendStacks(Collection<ItemStack> list, boolean lineBreak) {
         if (list == null || list.isEmpty()) return; //we shouldn't add line breaks if there are no items.
 
-        int rows = MathStuff.fastCeil(list.size() / 9d);
+        int rows = MathUtil.fastCeil(list.size() / 9d);
         this.addAll(list, DarkMatterEntries.Visibility.TAB);
         int left = (rows * 9) - list.size();
         for (int i = 0; i < left; i++) {

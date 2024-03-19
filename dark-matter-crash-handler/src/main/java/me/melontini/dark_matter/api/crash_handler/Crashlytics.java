@@ -1,8 +1,10 @@
 package me.melontini.dark_matter.api.crash_handler;
 
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.classes.Context;
+import me.melontini.dark_matter.api.base.util.Context;
 import me.melontini.dark_matter.impl.crash_handler.CrashlyticsInternals;
+import net.minecraft.util.crash.CrashReport;
+import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 @UtilityClass
 public final class Crashlytics {
@@ -23,10 +25,10 @@ public final class Crashlytics {
      * Optional keys that may be attached to a crash report.
      */
     public static class Keys {
-        public static String CRASH_REPORT = "crash_report";
-        public static String LATEST_LOG = "latest_log";
-        public static String MIXIN_INFO = "mixin_info";
-        public static String MIXIN_STAGE = "mixin_stage";
+        public static Context.Key<CrashReport> CRASH_REPORT = Context.key("crash_report");
+        public static Context.Key<String> LATEST_LOG = Context.key("latest_log");
+        public static Context.Key<IMixinInfo> MIXIN_INFO = Context.key("mixin_info");
+        public static Context.Key<String> MIXIN_STAGE = Context.key("mixin_stage");
     }
 
     @FunctionalInterface
