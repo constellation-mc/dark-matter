@@ -4,6 +4,7 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Streams;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import me.melontini.dark_matter.api.data.loading.ReloaderType;
 import me.melontini.dark_matter.impl.data.loading.ContextImpl;
 import me.melontini.dark_matter.api.data.loading.DataPackContentsAccessor;
 import me.melontini.dark_matter.api.data.loading.ServerReloadersEvent;
@@ -37,7 +38,7 @@ abstract class DataPackContentsMixin implements DataPackContentsAccessor {
     @Inject(at = @At("TAIL"), method = "<init>")
     private void dark_matter$addReloaders(DynamicRegistryManager.Immutable dynamicRegistryManager, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, int functionPermissionLevel, CallbackInfo ci) {
         List<IdentifiableResourceReloadListener> list = new ArrayList<>();
-        ServerReloadersEvent.EVENT.invoker().register(new ContextImpl(dynamicRegistryManager, enabledFeatures, list::add));
+        ServerReloadersEvent.EVENT.invoker().register(new ContextImpl(dynamicRegistryManager, enabledFeatures, list::add, this::dm$getReloader));
         this.reloaders = ImmutableList.copyOf(list);
 
         var cls = IdentifiableResourceReloadListener.class;
@@ -46,8 +47,8 @@ abstract class DataPackContentsMixin implements DataPackContentsAccessor {
     }
 
     @Override
-    public <T extends IdentifiableResourceReloadListener> T dm$getReloader(Identifier identifier) {
-        return (T) Objects.requireNonNull(this.reloadersMap.get(identifier), () -> "Missing reloader %s".formatted(identifier));
+    public <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type) {
+        return (T) Objects.requireNonNull(this.reloadersMap.get(type.identifier()), () -> "Missing reloader %s".formatted(type.identifier()));
     }
 
     @ModifyReturnValue(at = @At("RETURN"), method = "getContents")

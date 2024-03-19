@@ -1,9 +1,9 @@
 package me.melontini.dark_matter.impl.data.mixin.loading;
 
 import me.melontini.dark_matter.api.data.loading.DataPackContentsAccessor;
-import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
+import me.melontini.dark_matter.api.data.loading.ReloaderType;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.Identifier;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
@@ -14,7 +14,7 @@ abstract class MinecraftServerMixin implements DataPackContentsAccessor {
     private MinecraftServer.ResourceManagerHolder resourceManagerHolder;
 
     @Override
-    public <T extends IdentifiableResourceReloadListener> T dm$getReloader(Identifier identifier) {
-        return ((DataPackContentsAccessor) this.resourceManagerHolder.dataPackContents()).dm$getReloader(identifier);
+    public <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type) {
+        return ((DataPackContentsAccessor)resourceManagerHolder.dataPackContents()).dm$getReloader(type);
     }
 }

@@ -4,6 +4,7 @@ import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 
 /**
@@ -24,9 +25,9 @@ public interface ServerReloadersEvent {
 
     interface Context {
         DynamicRegistryManager registryManager();
-
         FeatureSet enabledFeatures();
 
         void register(IdentifiableResourceReloadListener reloadListener);
+        <T extends ResourceReloader> T reloader(ReloaderType<T> type);
     }
 }
