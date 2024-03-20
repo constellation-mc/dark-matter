@@ -9,11 +9,7 @@ import net.minecraft.recipe.Recipe;
 import net.minecraft.recipe.RecipeType;
 import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 /**
  * Allows you to map a recipe to a group.
@@ -27,10 +23,5 @@ public interface RecipeGroupLookupEvent<T extends Recipe<?>> {
 
     static <T extends Recipe<?>> Event<RecipeGroupLookupEvent<T>> forType(RecipeType<T> type) {
         return ClientRecipeBookUtils.forType(type, true);
-    }
-
-    @Deprecated
-    static void legacy(RecipeType<?> type, @NotNull BiFunction<Recipe<?>, @Nullable DynamicRegistryManager, @Nullable RecipeBookGroup> lookup) {
-        forType(type).register((id, recipe, registryManager) -> lookup.apply(recipe, registryManager));
     }
 }

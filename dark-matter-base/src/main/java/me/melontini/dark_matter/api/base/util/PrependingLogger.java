@@ -12,40 +12,44 @@ public class PrependingLogger {
     public static final Function<Logger, String> LOGGER_NAME = PrependingLogger::getNameOrEmpty;
 
     public static final Function<Logger, String> METHOD_CALLER = logger -> {
-        String[] caller = Utilities.getCallerName(3).split("\\.");
+        String[] caller = Utilities.getCallerName(3).map(PrependingLogger::split).orElseThrow();
         return "[" + caller[caller.length - 1] + "] ";
     };
     public static final Function<Logger, String> METHOD_CALLER_WRAPPED = logger -> {
-        String[] caller = Utilities.getCallerName(4).split("\\.");
+        String[] caller = Utilities.getCallerName(4).map(PrependingLogger::split).orElseThrow();
         return "[" + caller[caller.length - 1] + "] ";
     };
 
     public static final Function<Logger, String> NAME_METHOD_MIX = logger -> {
-        String[] caller = Utilities.getCallerName(3).split("\\.");
+        String[] caller = Utilities.getCallerName(3).map(PrependingLogger::split).orElseThrow();
         return getNameOrEmpty(logger) + "[" + caller[caller.length - 1] + "] ";
     };
     public static final Function<Logger, String> NAME_METHOD_MIX_WRAPPED = logger -> {
-        String[] caller = Utilities.getCallerName(4).split("\\.");
+        String[] caller = Utilities.getCallerName(4).map(PrependingLogger::split).orElseThrow();
         return getNameOrEmpty(logger) + "[" + caller[caller.length - 1] + "] ";
     };
 
     public static final Function<Logger, String> CALLING_CLASS = logger -> {
-        String[] cls = Utilities.getCallerClass(3).getName().split("\\.");
+        String[] cls = Utilities.getCallerClass(3).map(Class::getName).map(PrependingLogger::split).orElseThrow();
         return "[" + cls[cls.length - 1] + "] ";
     };
     public static final Function<Logger, String> CALLING_CLASS_WRAPPED = logger -> {
-        String[] cls = Utilities.getCallerClass(4).getName().split("\\.");
+        String[] cls = Utilities.getCallerClass(4).map(Class::getName).map(PrependingLogger::split).orElseThrow();
         return "[" + cls[cls.length - 1] + "] ";
     };
 
     public static final Function<Logger, String> NAME_CLASS_MIX = logger -> {
-        String[] cls = Utilities.getCallerClass(3).getName().split("\\.");
+        String[] cls = Utilities.getCallerClass(3).map(Class::getName).map(PrependingLogger::split).orElseThrow();
         return getNameOrEmpty(logger) + "[" + cls[cls.length - 1] + "] ";
     };
     public static final Function<Logger, String> NAME_CLASS_MIX_WRAPPED = logger -> {
-        String[] cls = Utilities.getCallerClass(4).getName().split("\\.");
+        String[] cls = Utilities.getCallerClass(4).map(Class::getName).map(PrependingLogger::split).orElseThrow();
         return getNameOrEmpty(logger) +  "[" + cls[cls.length - 1] + "] ";
     };
+
+    private static String[] split(String s) {
+        return s.split("\\.");
+    }
 
     private static final Function<Logger, String> DEFAULT = logger -> "";
     @Getter
@@ -62,7 +66,7 @@ public class PrependingLogger {
     }
 
     public static PrependingLogger get() {
-        String[] cls = Utilities.getCallerClass(2).getName().split("\\.");
+        String[] cls = Utilities.getCallerClass(2).map(Class::getName).map(PrependingLogger::split).orElseThrow();
         return new PrependingLogger(LogManager.getLogger(cls[cls.length - 1]), LOGGER_NAME);
     }
 

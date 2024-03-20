@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.api.base.reflect.wrappers;
 
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.util.Utilities;
+import me.melontini.dark_matter.api.base.util.Exceptions;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -20,7 +20,7 @@ public interface GenericConstructor<O> {
         return new GenericConstructor<>() {
             @Override
             public O construct(Object... args) {
-                return Utilities.supplyUnchecked(() -> ctx.newInstance(args));
+                return Exceptions.supply(() -> ctx.newInstance(args));
             }
 
             @Override

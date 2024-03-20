@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.api.base.reflect.wrappers;
 
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.util.Utilities;
+import me.melontini.dark_matter.api.base.util.Exceptions;
 
 import java.lang.reflect.Method;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public interface GenericMethod<O, R> {
         return new GenericMethod<>() {
             @Override
             public R invoke(O obj, Object... args) {
-                return (R) Utilities.supplyUnchecked(() -> method.invoke(obj, args));
+                return (R) Exceptions.supply(() -> method.invoke(obj, args));
             }
 
             @Override

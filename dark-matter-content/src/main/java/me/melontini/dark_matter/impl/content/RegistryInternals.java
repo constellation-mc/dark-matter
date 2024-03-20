@@ -6,7 +6,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.block.entity.BlockEntityType;
 import net.minecraft.registry.Registries;
-import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
@@ -19,7 +18,7 @@ import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 @ApiStatus.Internal
 public class RegistryInternals {
 
-    private static final Map<Block, BlockEntityType<?>> BLOCK_ENTITY_LOOKUP = Utilities.consume(new HashMap<>(), map -> {
+    private static final Map<Block, BlockEntityType<?>> BLOCK_ENTITY_LOOKUP = Utilities.supply(new HashMap<>(), map -> {
         Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
             for (Block block : beType.blocks) {
                 map.putIfAbsent(block, beType);
