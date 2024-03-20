@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.mixin;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericField;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericMethod;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.FabricUtil;
@@ -29,7 +30,7 @@ import java.util.function.Consumer;
 @ApiStatus.Experimental
 public class VirtualMixins {
 
-    private static final ThreadLocal<InputStream> CONFIG = ThreadLocal.withInitial(() -> null);
+    private static final ThreadLocal<Tuple<String, InputStream>> CONFIG = ThreadLocal.withInitial(() -> null);
 
     private static final GenericMethod<?, MixinService> GET_INSTANCE = GenericMethod.of(MixinService.class, "getInstance");
     private static final GenericField<MixinService, IMixinService> SERVICE = GenericField.of(MixinService.class, "service");
@@ -44,7 +45,7 @@ public class VirtualMixins {
             });
 
             try {
-                CONFIG.set(stream);
+                CONFIG.set(Tuple.of(configName, stream));
                 Mixins.addConfiguration(configName);
             } finally {
                 CONFIG.remove();
@@ -57,8 +58,9 @@ public class VirtualMixins {
         IMixinService service = (IMixinService) Proxy.newProxyInstance(VirtualMixins.class.getClassLoader(), new Class[]{IMixinService.class}, (proxy, method, args) -> {
             if (method.getName().equals("getResourceAsStream")) {
                 if (args[0] instanceof String s) {
-                    if (s.startsWith("virtual$$")) {
-                        return CONFIG.get();
+                    var tuple = CONFIG.get();
+                    if (tuple.left().equals(s)) {
+                        return tuple.right();
                     }
                 }
             }
