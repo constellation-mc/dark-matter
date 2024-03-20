@@ -15,7 +15,7 @@ import java.lang.reflect.Proxy;
 import java.util.function.Consumer;
 
 /**
- * Allows adding new "virtual" mixin configs. This temporarily replaces the mixin service and injects the configs using a ThreadLocal. This <b>MUST</b> be run at preLaunch, while no classes are transformed! Virtual configs get the {@code 'virtual$$'} prefix.
+ * Allows adding new "virtual" mixin configs. This temporarily replaces the mixin service and injects the configs using a ThreadLocal. This <b>MUST</b> be run at preLaunch, while no classes are transformed!
  * <p>
  * I recommend decorating your configs with {@code 'fabric-modId'} to help with debugging.
  * </p>
@@ -39,15 +39,13 @@ public class VirtualMixins {
         injectService(service);
         consumer.accept((configName, stream) -> {
             MakeSure.notNulls(configName, stream);
-            String virtName = "virtual$$" + configName;
-
-            Mixins.getConfigs().stream().filter(config -> config.getName().equals(virtName)).findFirst().ifPresent(config -> {
+            Mixins.getConfigs().stream().filter(config -> config.getName().equals(configName)).findFirst().ifPresent(config -> {
                 throw new IllegalStateException("Config name %s is already in use by %s!".formatted(config.getName(), FabricUtil.getModId(config.getConfig())));
             });
 
             try {
                 CONFIG.set(stream);
-                Mixins.addConfiguration(virtName);
+                Mixins.addConfiguration(configName);
             } finally {
                 CONFIG.remove();
             }
