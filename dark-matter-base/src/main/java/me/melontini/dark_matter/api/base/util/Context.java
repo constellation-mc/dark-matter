@@ -20,20 +20,7 @@ public interface Context {
     record Key<T>(String id) { }
 
     static Context of() {
-        return new Context() {
-            @Override
-            public <T> Optional<T> get(Key<T> key) {
-                return Optional.empty();
-            }
-
-            @Override
-            public void forEach(BiConsumer<Key<?>, Object> consumer) {}
-
-            @Override
-            public String toString() {
-                return Collections.emptyMap().toString();
-            }
-        };
+        return Holder.EMPTY;
     }
 
     static Context of(Map<Key<?>, Object> map) {
@@ -71,5 +58,22 @@ public interface Context {
         public Context build() {
             return Context.of(map);
         }
+    }
+
+    final class Holder {
+        private static final Context EMPTY = new Context() {
+            @Override
+            public <T> Optional<T> get(Key<T> key) {
+                return Optional.empty();
+            }
+
+            @Override
+            public void forEach(BiConsumer<Key<?>, Object> consumer) {}
+
+            @Override
+            public String toString() {
+                return Collections.emptyMap().toString();
+            }
+        };
     }
 }
