@@ -59,7 +59,7 @@ public class VirtualMixins {
             if (method.getName().equals("getResourceAsStream")) {
                 if (args[0] instanceof String s) {
                     var tuple = CONFIG.get();
-                    if (tuple.left().equals(s)) {
+                    if (tuple != null && tuple.left().equals(s)) {
                         return tuple.right();
                     }
                 }
