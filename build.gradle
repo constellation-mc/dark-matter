@@ -51,6 +51,13 @@ allprojects {
         }
     }
 
+    sourcesJar {
+        exclude {
+            sourceSets.main.allSource.contains it.file
+        }
+        from delombok
+    }
+
     clean {
         doLast {
             delete "$rootProject.layout.buildDirectory/all_output"
