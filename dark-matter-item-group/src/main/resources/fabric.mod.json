@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-item-group",
+  "version": "${version}",
+  "name": "Dark Matter Item Group",
+  "description": "Items in groups...",
+  "authors": [
+    "melontini"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/dark-matter-item-group/icon.png",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-item-group.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": ">=${minecraft_version}",
+    "dark-matter-base": "*"
+  },
+  "provides": [
+    "dark_matter_item_group"
+  ],
+  "custom": {
+    "modmenu": {
+      "parent": "dark-matter",
+      "badges": [ "library" ]
+    }
+  }
+}

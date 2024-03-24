@@ -1,11 +1,13 @@
 package me.melontini.dark_matter.api.base.util;
 
 import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.functions.ThrowingConsumer;
 import me.melontini.dark_matter.api.base.util.functions.ThrowingFunction;
 import me.melontini.dark_matter.api.base.util.functions.ThrowingRunnable;
 import me.melontini.dark_matter.api.base.util.functions.ThrowingSupplier;
 
+@UtilityClass
 public class Exceptions {
 
     @SneakyThrows

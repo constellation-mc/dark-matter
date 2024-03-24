@@ -1,7 +1,0 @@
-dependencies {
-    darkMatter(project, ["minecraft"])
-
-    fabric(project, [
-            "fabric-registry-sync-v0"
-    ])
-}
