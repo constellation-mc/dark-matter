@@ -1,4 +1,4 @@
-package me.melontini.dark_matter.impl.minecraft.mixin.world;
+package me.melontini.dark_matter.impl.data.mixin.states;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;

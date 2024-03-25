@@ -17,7 +17,7 @@ public class MinecraftClientMixin {
                 AfterFirstReload.EVENT.invoker().afterFirstReload();
             } catch (Throwable t) {
                 CrashReport report = CrashReport.create(t, "Running event");
-                MinecraftClient.printCrashReport(report);
+                MinecraftClient.getInstance().printCrashReport(report);
             }
         });
     }
