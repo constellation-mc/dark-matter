@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums.auto;
 
-import me.melontini.dark_matter.api.base.util.mixin.annotations.AsmTransformers;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
+import me.melontini.dark_matter.api.mixin.annotations.AsmTransformers;
 import me.melontini.dark_matter.impl.enums.transformers.StaticEnumTransformer;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;

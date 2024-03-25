@@ -26,6 +26,10 @@ public interface ExtendableEnum {
         }
     }
 
+    default <T extends Enum<?>> T dark_matter$extend(Class<T> cls, String internalName, Object... params) {
+        return dark_matter$extend(internalName, params);
+    }
+
     @ApiStatus.Internal
     default void dark_matter$init(Object... args) {}
 }

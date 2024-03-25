@@ -15,11 +15,13 @@ void module(String name) {
 }
 
 module("base")
-module("content")
 module("crash-handler")
-module("danger")
+module("data")
 module("enums")
 module("glitter")
+module("instrumentation")
+module("item-group")
 module("minecraft")
 module("mirage")
+module("mixin")
 module("recipe-book")

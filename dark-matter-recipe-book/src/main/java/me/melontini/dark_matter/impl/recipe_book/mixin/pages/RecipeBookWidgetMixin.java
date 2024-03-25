@@ -4,7 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalIntRef;
-import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathUtil;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.interfaces.PaginatedRecipeBookWidget;
@@ -106,7 +106,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
 
     @Inject(at = @At("TAIL"), method = "refreshTabButtons")
     private void dark_matter$refresh$tail(CallbackInfo ci, @Share("wc") LocalIntRef wc) {
-        this.dm$pages = MathStuff.fastCeil(wc.get() / 6f);
+        this.dm$pages = MathUtil.fastCeil(wc.get() / 6f);
         this.dm$updatePages();
         this.dm$updatePageSwitchButtons();
     }

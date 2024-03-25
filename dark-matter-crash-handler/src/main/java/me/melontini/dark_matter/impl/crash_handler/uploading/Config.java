@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.crash_handler.uploading;
 
 import me.melontini.dark_matter.api.base.config.ConfigManager;
+import me.melontini.dark_matter.api.base.util.Context;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -26,8 +27,8 @@ public class Config {
             }
         }
 
-        RawConfig config = CONFIG_MANAGER.load(cd);
-        CONFIG_MANAGER.save(FabricLoader.getInstance().getConfigDir(), config);
+        RawConfig config = CONFIG_MANAGER.load(cd, Context.of());
+        CONFIG_MANAGER.save(FabricLoader.getInstance().getConfigDir(), config, Context.of());
 
         return new ReadConfig(config.enabled);
     }

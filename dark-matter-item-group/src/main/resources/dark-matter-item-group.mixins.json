@@ -1,0 +1,15 @@
+{
+  "required": false,
+  "minVersion": "0.8",
+  "package": "me.melontini.dark_matter.impl.item_group.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+  ],
+  "client": [
+    "animated_groups.CreativeInventoryScreenMixin",
+    "animated_groups.ItemGroupMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

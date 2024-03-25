@@ -7,50 +7,15 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.ItemStack;
-import net.minecraft.recipe.Recipe;
-import net.minecraft.recipe.RecipeEntry;
-import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
-import net.minecraft.registry.DynamicRegistryManager;
 import net.minecraft.util.Identifier;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 
 @UtilityClass
 public final class RecipeBookHelper {
-
-    /**
-     * Allows you to map a recipe to a group.
-     * <p>
-     * This supports adding multiple lookups for the same type. So, multiple mods can map their recipes of the same type.
-     * <p>
-     * It's recommended to keep this simple, as it will be run for every recipe.
-     * @param lookup The lookup function. Please note, the function must return null if the recipe doesn't match.
-     */
-    @Environment(EnvType.CLIENT)
-    public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull Function<RecipeEntry<?>, @Nullable RecipeBookGroup> lookup) {
-        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
-    }
-
-    /**
-     * Allows you to map a recipe to a group, but with a dynamic registry manager.
-     * <p>
-     * Please, use the above method if you don't need this, since the registry might be null if {@link RecipeBookGroup#getGroups(RecipeBookCategory)} wasn't called by {@link net.minecraft.client.recipebook.ClientRecipeBook#reload(Iterable, DynamicRegistryManager)}
-     * <p>
-     * This supports adding multiple lookups for the same type. So, multiple mods can map their recipes of the same type.
-     * <p>
-     * It's recommended to keep this simple, as it will be run for every recipe.
-     * @param lookup The lookup function. Please note, the function must return null if the recipe doesn't match.
-     */
-    @Environment(EnvType.CLIENT)
-    public static void registerGroupLookup(@NotNull RecipeType<?> type, @NotNull BiFunction<RecipeEntry<?>, @Nullable DynamicRegistryManager, @Nullable RecipeBookGroup> lookup) {
-        ClientRecipeBookUtils.registerGroupLookup(type, lookup);
-    }
 
     //
     // Register groups.
@@ -212,51 +177,4 @@ public final class RecipeBookHelper {
     public static boolean isSearchGroup(@NotNull RecipeBookGroup group) {
         return RecipeBookGroup.SEARCH_MAP.containsKey(group);
     }
-
-    //
-    // Old, deprecated code.
-    //
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addRecipePredicate(RecipeType<?> type, Function<RecipeEntry<?>, RecipeBookGroup> function) {
-        registerGroupLookup(type, function);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, RecipeBookGroup group) {
-        registerGroups(category, group);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, int index, RecipeBookGroup group) {
-        registerGroups(category, index, group);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
-        registerGroups(category, groups);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToGetGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
-        registerGroups(category, index, groups);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToSearchMap(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
-        addToSearchGroup(searchGroup, groups);
-    }
-
-    @Deprecated(since = "2.0.0")
-    @Environment(EnvType.CLIENT)
-    public static void addToSearchMap(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
-        addToSearchGroup(searchGroup, index, groups);
-    }
-
 }

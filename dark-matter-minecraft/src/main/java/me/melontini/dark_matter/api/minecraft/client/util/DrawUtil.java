@@ -32,9 +32,6 @@ import java.util.Optional;
 @Environment(EnvType.CLIENT)
 public class DrawUtil {
 
-    @Deprecated
-    public static final Screen FAKE_SCREEN = getFakeScreen();
-
     public static Screen getFakeScreen() {
         return DrawInternals.getFakeScreen();
     }

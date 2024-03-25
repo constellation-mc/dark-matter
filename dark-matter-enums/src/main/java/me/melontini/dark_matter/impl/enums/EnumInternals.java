@@ -1,13 +1,11 @@
 package me.melontini.dark_matter.impl.enums;
 
-import me.melontini.dark_matter.api.base.reflect.MiscReflection;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.reflect.UnsafeAccess;
+import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ArrayUtils;
-import org.jetbrains.annotations.ApiStatus;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.invoke.MethodHandles;
@@ -17,7 +15,6 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
-import static me.melontini.dark_matter.api.base.util.Utilities.runUnchecked;
 
 public class EnumInternals {
 
@@ -45,7 +42,7 @@ public class EnumInternals {
             ENUM_TO_FIELD.putIfAbsent(enumClass, MakeSure.notNull(enumValues, "(reflection) couldn't find enum's $VALUES"));
             enumClass.getMethod("values").invoke(enumClass);//we need to init enumClass to access its fields, duh.
 
-            T[] entries = cast(UnsafeAccess.getReference(enumValues, enumClass));//ReflectionUtil.getField(enumValues, enumClass)
+            T[] entries = cast(UnsafeUtils.getReference(enumValues, enumClass));//ReflectionUtil.getField(enumValues, enumClass)
             T last = entries[entries.length - 1];
 
             Object[] list = ArrayUtils.addAll(new Object[]{internalName, last.ordinal() + 1}, params);
@@ -61,7 +58,7 @@ public class EnumInternals {
             MakeSure.notNull(entry, "(reflection) Couldn't create new enum instance");
             T[] tempArray = ArrayUtils.add(entries, entry);
 
-            UnsafeAccess.putReference(enumValues, enumClass, tempArray);
+            UnsafeUtils.putReference(enumValues, enumClass, tempArray);
             clearEnumCache(enumClass);
             return entry;
         } catch (Throwable e) {
@@ -71,15 +68,13 @@ public class EnumInternals {
 
     public static synchronized void clearEnumCache(Class<? extends Enum<?>> cls) {
         try {
-            Reflect.findField(Class.class, "enumConstants").ifPresent(field ->
-                    runUnchecked(() -> MiscReflection.unreflectVarHandle(field).set(cls, null)));
+            Reflect.findField(Class.class, "enumConstants").ifPresent(field -> UnsafeUtils.putReference(field, cls, null));
         } catch (Exception e) {
             DarkMatterLog.error("Couldn't clear enumConstants. This shouldn't really happen", e);
         }
 
         try {
-            Reflect.findField(Class.class, "enumConstantDirectory").ifPresent(field ->
-                    runUnchecked(() -> MiscReflection.unreflectVarHandle(field).set(cls, null)));
+            Reflect.findField(Class.class, "enumConstantDirectory").ifPresent(field -> UnsafeUtils.putReference(field, cls, null));
         } catch (Exception e) {
             DarkMatterLog.error("Couldn't clear enumConstantDirectory. This shouldn't really happen", e);
         }

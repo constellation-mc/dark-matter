@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.mirage.mixin;
 
-import com.llamalad7.mixinextras.injector.WrapWithCondition;
+import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import me.melontini.dark_matter.impl.mirage.FakeWorld;
 import net.minecraft.registry.RegistryBuilder;
 import org.spongepowered.asm.mixin.Mixin;

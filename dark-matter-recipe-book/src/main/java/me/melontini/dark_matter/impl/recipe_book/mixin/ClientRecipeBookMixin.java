@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.recipe_book.mixin;
 
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.impl.recipe_book.ClientRecipeBookUtils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
@@ -13,23 +14,17 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.Optional;
-import java.util.function.BiFunction;
 
 @Mixin(ClientRecipeBook.class)
 public class ClientRecipeBookMixin {
 
     @Inject(at = @At("HEAD"), method = "getGroupForRecipe", cancellable = true)
     private static void dark_matter$getGroupForRecipe(RecipeEntry<?> recipe, CallbackInfoReturnable<RecipeBookGroup> cir) {
-        var rm = Optional.ofNullable(MinecraftClient.getInstance().getNetworkHandler())
-                .map(ClientPlayNetworkHandler::getRegistryManager).orElse(null);
-        ClientRecipeBookUtils.getLookups(recipe.value().getType()).map(functions -> {
-            RecipeBookGroup result;
-            for (BiFunction<RecipeEntry<?>, DynamicRegistryManager, RecipeBookGroup> function : functions) {
-                if ((result = function.apply(recipe, rm)) != null) {
-                    return result;
-                }
-            }
-            return null;
-        }).ifPresent(cir::setReturnValue);
+        var e = ClientRecipeBookUtils.forType(recipe.value().getType(), false);
+        if (e == null) return;
+
+        Optional<DynamicRegistryManager> registryManager = Optional.ofNullable(MinecraftClient.getInstance().getNetworkHandler()).map(ClientPlayNetworkHandler::getRegistryManager);
+        RecipeBookGroup group = e.invoker().lookup(recipe.id(), Utilities.cast(recipe.value()), registryManager.orElse(null));
+        if (group != null) cir.setReturnValue(group);
     }
 }

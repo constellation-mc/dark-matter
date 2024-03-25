@@ -2,6 +2,7 @@ package me.melontini.dark_matter.api.crash_handler.uploading;
 
 import com.google.gson.JsonObject;
 import me.melontini.dark_matter.api.crash_handler.Prop;
+import me.melontini.dark_matter.api.crash_handler.Props;
 import me.melontini.dark_matter.impl.crash_handler.uploading.MixpanelAPI;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,7 @@ public interface Mixpanel extends Uploader<Void, Mixpanel.Context> {
     }
 
     default String getPropName(Prop prop) {
-        if (prop == Prop.OS) {
+        if (prop == Props.OS) {
             return "$os";
         }
         return prop.name().toLowerCase();

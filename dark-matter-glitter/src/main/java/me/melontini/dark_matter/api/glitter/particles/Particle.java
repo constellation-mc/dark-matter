@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.api.glitter.particles;
 
-import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.util.math.MatrixStack;
@@ -32,6 +32,6 @@ public class Particle extends AbstractScreenParticle {
     protected void tick() {
         x += velX;
         y += velY;
-        velX += wind * MathStuff.nextDouble(RANDOM, -0.5, 1);
+        velX += wind * MathUtil.nextDouble(RANDOM, -0.5, 1);
     }
 }

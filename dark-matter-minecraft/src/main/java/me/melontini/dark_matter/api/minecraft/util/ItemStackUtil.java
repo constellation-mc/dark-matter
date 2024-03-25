@@ -2,7 +2,7 @@ package me.melontini.dark_matter.api.minecraft.util;
 
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.MathStuff;
+import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemConvertible;
@@ -39,7 +39,7 @@ public class ItemStackUtil {
     public static void spawnVelocity(@NotNull BlockPos pos, ItemStack stack, World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
         MakeSure.notNulls(pos, stack, world);
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
-                MathStuff.nextDouble(minX, maxX), MathStuff.nextDouble(minY, maxY), MathStuff.nextDouble(minZ, maxZ));
+                MathUtil.nextDouble(minX, maxX), MathUtil.nextDouble(minY, maxY), MathUtil.nextDouble(minZ, maxZ));
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
@@ -47,7 +47,7 @@ public class ItemStackUtil {
     public static void spawnVelocity(@NotNull Vec3d pos, ItemStack stack, World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
         MakeSure.notNulls(pos, stack, world);
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
-                MathStuff.nextDouble(minX, maxX), MathStuff.nextDouble(minY, maxY), MathStuff.nextDouble(minZ, maxZ));
+                MathUtil.nextDouble(minX, maxX), MathUtil.nextDouble(minY, maxY), MathUtil.nextDouble(minZ, maxZ));
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
