@@ -6,10 +6,11 @@ plugins {
 }
 
 def targetJavaVersion = 17
+def local = !System.getenv().containsKey("GITHUB_RUN_NUMBER");
 
 allprojects {
     group = project.maven_group
-    version = project.mod_version
+    version = version = "${project.mod_version}-${local ? 'local' : "build.${System.getenv("GITHUB_RUN_NUMBER")}"}"
 
     repositories {
         maven {
@@ -87,6 +88,17 @@ allprojects {
         publications {
             mavenJava(MavenPublication) {
                 from(components["java"])
+            }
+        }
+
+        repositories {
+            maven {
+                name = "GitHubPackages"
+                url = "https://maven.pkg.github.com/constellation-mc/dark-matter"
+                credentials {
+                    username = System.getenv("GITHUB_ACTOR")
+                    password = System.getenv("GITHUB_TOKEN")
+                }
             }
         }
 
