@@ -22,7 +22,7 @@ import java.util.function.Function;
 @UtilityClass
 public class ExtraCodecs {
 
-    public static final Codec<Integer> COLOR = Codec.either(Codec.INT, Codec.intRange(0, 255).listOf())
+    public static final Codec<Integer> COLOR = either(Codec.INT, Codec.intRange(0, 255).listOf())
             .comapFlatMap(e -> e.map(DataResult::success, integers -> {
                 if (integers.size() != 3) return DataResult.error(() -> "colors array must contain exactly 3 colors (RGB)");
                 return DataResult.success(ColorUtil.toColor(integers.get(0), integers.get(1), integers.get(2)));
@@ -55,14 +55,14 @@ public class ExtraCodecs {
      * A list codec which accepts both lists and singular entries.
      */
     public static <T> Codec<List<T>> list(Codec<T> codec) {
-        return Codec.either(codec, codec.listOf()).xmap(e -> e.map(ImmutableList::of, Function.identity()), Either::right);
+        return either(codec, codec.listOf()).xmap(e -> e.map(ImmutableList::of, Function.identity()), Either::right);
     }
 
     /**
      * A weighted list codec which accepts both lists and singular entries.
      */
     public static <T> Codec<WeightedList<T>> weightedList(Codec<T> codec) {
-        return Codec.either(codec, WeightedList.createCodec(codec)).xmap(e -> e.map(entry -> {
+        return either(codec, WeightedList.createCodec(codec)).xmap(e -> e.map(entry -> {
             WeightedList<T> list = new WeightedList<>();
             list.add(entry, 1);
             return list;
