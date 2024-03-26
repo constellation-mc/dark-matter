@@ -7,6 +7,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
+import me.melontini.dark_matter.impl.data.codecs.SafeEitherCodec;
+import me.melontini.dark_matter.impl.data.codecs.SafeEitherMapCodec;
 import me.melontini.dark_matter.impl.data.codecs.SafeOptionalCodec;
 import net.minecraft.util.collection.WeightedList;
 import org.jetbrains.annotations.Contract;
@@ -25,6 +27,14 @@ public class ExtraCodecs {
                 if (integers.size() != 3) return DataResult.error(() -> "colors array must contain exactly 3 colors (RGB)");
                 return DataResult.success(ColorUtil.toColor(integers.get(0), integers.get(1), integers.get(2)));
             }), Either::left);
+
+    public static <F, S> Codec<Either<F, S>> either(final Codec<F> first, final Codec<S> second) {
+        return new SafeEitherCodec<>(first, second);
+    }
+
+    public static <F, S> MapCodec<Either<F, S>> either(final MapCodec<F> first, final MapCodec<S> second) {
+        return new SafeEitherMapCodec<>(first, second);
+    }
 
     /**
      * Unlike the vanilla alternative, ({@link Codec#optionalField(String, Codec)}) this codec does not ignore exceptions.
