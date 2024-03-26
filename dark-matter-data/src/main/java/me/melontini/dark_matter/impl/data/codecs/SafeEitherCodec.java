@@ -25,7 +25,7 @@ public final class SafeEitherCodec<F, S> implements Codec<Either<F, S>> {
         if (firstRead.result().isPresent()) return firstRead;
         final DataResult<Pair<Either<F, S>, T>> secondRead = second.decode(ops, input).map(vo -> vo.mapFirst(Either::right));
         if (secondRead.result().isPresent()) return secondRead;
-        return secondRead.mapError(string -> "first: " + firstRead.error().orElseThrow().message() + "\n\tsecond:" + string);
+        return secondRead.mapError(string -> "\n\tfirst: [" + firstRead.error().orElseThrow().message() + "] second: [" + string + "]");
     }
 
     @Override

@@ -23,7 +23,7 @@ public final class SafeEitherMapCodec<F, S> extends MapCodec<Either<F, S>> {
         if (firstRead.result().isPresent()) return firstRead;
         final DataResult<Either<F, S>> secondRead = second.decode(ops, input).map(Either::right);
         if (secondRead.result().isPresent()) return secondRead;
-        return secondRead.mapError(string -> "first: " + firstRead.error().orElseThrow().message() + "\n\tsecond:" + string);
+        return secondRead.mapError(string -> "\n\tfirst: [" + firstRead.error().orElseThrow().message() + "] second: [" + string + "]");
     }
 
     @Override
