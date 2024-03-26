@@ -7,6 +7,8 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
+import me.melontini.dark_matter.impl.data.codecs.SafeEitherCodec;
+import me.melontini.dark_matter.impl.data.codecs.SafeEitherMapCodec;
 import me.melontini.dark_matter.impl.data.codecs.SafeOptionalCodec;
 import net.minecraft.util.collection.WeightedList;
 import org.jetbrains.annotations.Contract;
@@ -20,11 +22,19 @@ import java.util.function.Function;
 @UtilityClass
 public class ExtraCodecs {
 
-    public static final Codec<Integer> COLOR = Codec.either(Codec.INT, Codec.intRange(0, 255).listOf())
+    public static final Codec<Integer> COLOR = either(Codec.INT, Codec.intRange(0, 255).listOf())
             .comapFlatMap(e -> e.map(DataResult::success, integers -> {
                 if (integers.size() != 3) return DataResult.error(() -> "colors array must contain exactly 3 colors (RGB)");
                 return DataResult.success(ColorUtil.toColor(integers.get(0), integers.get(1), integers.get(2)));
             }), Either::left);
+
+    public static <F, S> Codec<Either<F, S>> either(final Codec<F> first, final Codec<S> second) {
+        return new SafeEitherCodec<>(first, second);
+    }
+
+    public static <F, S> MapCodec<Either<F, S>> either(final MapCodec<F> first, final MapCodec<S> second) {
+        return new SafeEitherMapCodec<>(first, second);
+    }
 
     /**
      * Unlike the vanilla alternative, ({@link Codec#optionalField(String, Codec)}) this codec does not ignore exceptions.
@@ -45,14 +55,14 @@ public class ExtraCodecs {
      * A list codec which accepts both lists and singular entries.
      */
     public static <T> Codec<List<T>> list(Codec<T> codec) {
-        return Codec.either(codec, codec.listOf()).xmap(e -> e.map(ImmutableList::of, Function.identity()), Either::right);
+        return either(codec, codec.listOf()).xmap(e -> e.map(ImmutableList::of, Function.identity()), Either::right);
     }
 
     /**
      * A weighted list codec which accepts both lists and singular entries.
      */
     public static <T> Codec<WeightedList<T>> weightedList(Codec<T> codec) {
-        return Codec.either(codec, WeightedList.createCodec(codec)).xmap(e -> e.map(entry -> {
+        return either(codec, WeightedList.createCodec(codec)).xmap(e -> e.map(entry -> {
             WeightedList<T> list = new WeightedList<>();
             list.add(entry, 1);
             return list;
