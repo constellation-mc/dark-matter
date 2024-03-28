@@ -6,6 +6,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.item.ItemGroup;
 
+import java.util.Optional;
+
 @FunctionalInterface
 @Environment(EnvType.CLIENT)
 public interface ItemGroupAnimaton {
@@ -13,6 +15,10 @@ public interface ItemGroupAnimaton {
     static ItemGroup setIconAnimation(ItemGroup group, ItemGroupAnimaton animation) {
         ((ItemGroupExtensions)group).dm$setIconAnimation(animation);
         return group;
+    }
+
+    static Optional<ItemGroupAnimaton> getIconAnimation(ItemGroup group) {
+        return Optional.ofNullable(((ItemGroupExtensions) group).dm$getIconAnimation());
     }
 
     /**
