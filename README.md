@@ -10,3 +10,8 @@ The invisible force that holds galaxies together.
 See [the wiki](https://github.com/melontini/dark-matter/wiki) for a detailed explanation of each module.
 
 You can find all the tags and modules here: https://jitpack.io/#me.melontini/dark-matter
+
+### Credits
+
+- [KubeJS](https://github.com/KubeJS-Mods/KubeJS) for their versioning and Actions configs.
+- [Lib39](https://git.sleeping.town/unascribed-mods/Lib39) for the removed `gesundheit` module, which inspired `glitter`.
