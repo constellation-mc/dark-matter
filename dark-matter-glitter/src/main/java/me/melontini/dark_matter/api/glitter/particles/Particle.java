@@ -3,6 +3,7 @@ package me.melontini.dark_matter.api.glitter.particles;
 import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.util.math.MathHelper;
 
@@ -16,11 +17,12 @@ public class Particle extends AbstractScreenParticle {
     public Particle(double x, double y, double velX, double velY, int color) {
         super(x, y, velX, velY);
         this.color = color;
-        this.deathAge += RANDOM.nextInt(120);
+        this.deathAge += MathUtil.threadRandom().nextInt(120);
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        MatrixStack matrices = context.getMatrices();
         matrices.push();
         float x = (float) MathHelper.lerp(delta, prevX, this.x);
         float y = (float) MathHelper.lerp(delta, prevY, this.y);
@@ -32,6 +34,6 @@ public class Particle extends AbstractScreenParticle {
     protected void tick() {
         x += velX;
         y += velY;
-        velX += wind * MathUtil.nextDouble(RANDOM, -0.5, 1);
+        velX += wind * MathUtil.nextDouble(-0.5, 1);
     }
 }

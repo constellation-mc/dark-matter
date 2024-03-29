@@ -4,6 +4,7 @@ import lombok.experimental.UtilityClass;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
 
+import java.lang.invoke.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BooleanSupplier;
@@ -67,5 +68,11 @@ public final class Utilities {
 
     public static Optional<Class<?>> getCallerClass(int depth) {
         return STACK_WALKER.walk(s -> s.skip(depth).findFirst().map(StackWalker.StackFrame::getDeclaringClass));
+    }
+
+    public static <T> T makeLambda(MethodHandles.Lookup lookup, Class<T> type, MethodHandle h) {
+        CallSite site = Exceptions.supply(() -> LambdaMetafactory.metafactory(lookup, "invoke",
+                MethodType.methodType(type), h.type(), h, h.type()));
+        return Exceptions.supply(() -> (T) site.getTarget().invoke());
     }
 }

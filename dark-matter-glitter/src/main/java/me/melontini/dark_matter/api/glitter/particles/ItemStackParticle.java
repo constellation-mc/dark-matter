@@ -4,6 +4,7 @@ import me.melontini.dark_matter.api.base.util.MathUtil;
 import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
@@ -21,9 +22,10 @@ public class ItemStackParticle extends AbstractScreenParticle {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-        float x = (float) MathHelper.lerp(delta, prevX, this.x);
-        float y = (float) MathHelper.lerp(delta, prevY, this.y);
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        MatrixStack matrices = context.getMatrices();
+        float x = (float) MathHelper.lerp(delta, this.prevX, this.x);
+        float y = (float) MathHelper.lerp(delta, this.prevY, this.y);
         matrices.push();
         matrices.translate(x, y, 500);
         float angle = (float) Math.toDegrees(Math.atan2(velY, velX) * 0.5);
@@ -37,7 +39,7 @@ public class ItemStackParticle extends AbstractScreenParticle {
     protected void tick() {
         x += velX *= 0.99;
         y += velY * 0.99;
-        velY += MathUtil.nextDouble(RANDOM, 0.4, 0.9);
+        velY += MathUtil.nextDouble(0.4, 0.9);
     }
 
     @Override

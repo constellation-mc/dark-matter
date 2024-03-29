@@ -6,14 +6,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.Drawable;
 import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.util.math.MatrixStack;
 import org.jetbrains.annotations.ApiStatus;
-
-import java.util.Random;
 
 @Environment(EnvType.CLIENT)
 public abstract class AbstractScreenParticle implements Drawable {
-    protected static final Random RANDOM = new Random();
     public double x, y, velX, velY;
     public double prevX, prevY;
     public int age = 0, deathAge = 200;
@@ -31,19 +27,23 @@ public abstract class AbstractScreenParticle implements Drawable {
         this.client = MinecraftClient.getInstance();
     }
 
+    @Override
+    public abstract void render(DrawContext context, int mouseX, int mouseY, float delta);
+
+    protected abstract void tick();
+
+    protected boolean checkRemoval() {
+        return age >= deathAge;
+    }
+
+    public void bindToScreen(Screen screen) {
+        this.screen = screen;
+    }
+
     @ApiStatus.Internal
     public final void renderInternal(DrawContext context, int mouseX, int mouseY, float delta) {
         if (removed || (screen != null && client.currentScreen != screen)) return;
         render(context, mouseX, mouseY, delta);
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.render(context.getMatrices(), mouseX, mouseY, delta);
-    }
-
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
-
     }
 
     @ApiStatus.Internal
@@ -53,23 +53,7 @@ public abstract class AbstractScreenParticle implements Drawable {
 
         tick();
         age++;
-        removed = checkRemoval();
+        this.removed = checkRemoval();
         if (screen != null && client.currentScreen != screen) removed = true;
-    }
-
-    protected void tick() {
-        tickLogic();
-    }
-
-    @Deprecated(forRemoval = true)
-    protected void tickLogic() {
-    }
-
-    protected boolean checkRemoval() {
-        return age >= deathAge;
-    }
-
-    public void bindToScreen(Screen screen) {
-        this.screen = screen;
     }
 }
