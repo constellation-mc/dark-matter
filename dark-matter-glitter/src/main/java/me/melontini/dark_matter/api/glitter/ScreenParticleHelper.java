@@ -3,9 +3,11 @@ package me.melontini.dark_matter.api.glitter;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.glitter.particles.AbstractScreenParticle;
 import me.melontini.dark_matter.impl.glitter.ScreenParticleInternals;
+import me.melontini.dark_matter.impl.glitter.particles.VanillaParticle;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.particle.Particle;
 import net.minecraft.particle.ParticleEffect;
 
 import java.util.List;
@@ -20,10 +22,6 @@ import static me.melontini.dark_matter.impl.glitter.ScreenParticleInternals.curr
 public final class ScreenParticleHelper {
 
     public static void addParticle(AbstractScreenParticle particle) {
-        ScreenParticleInternals.addScreenParticle(null, particle);
-    }
-
-    public static void addParticle(Supplier<AbstractScreenParticle> particle) {
         ScreenParticleInternals.addScreenParticle(null, particle);
     }
 
@@ -57,10 +55,6 @@ public final class ScreenParticleHelper {
         ScreenParticleInternals.addScreenParticle(current(), particle);
     }
 
-    public static void addScreenParticle(Supplier<AbstractScreenParticle> particle) {
-        ScreenParticleInternals.addScreenParticle(current(), particle);
-    }
-
     public static void addScreenParticle(ParticleEffect parameters, double x, double y, double velX, double velY) {
         ScreenParticleInternals.addScreenParticle(current(), parameters, x, y, velX, velY);
     }
@@ -91,10 +85,6 @@ public final class ScreenParticleHelper {
         ScreenParticleInternals.addScreenParticle(screen, particle);
     }
 
-    public static void addScreenParticle(Screen screen, Supplier<AbstractScreenParticle> particle) {
-        ScreenParticleInternals.addScreenParticle(screen, particle);
-    }
-
     public static void addScreenParticle(Screen screen, ParticleEffect parameters, double x, double y, double velX, double velY) {
         ScreenParticleInternals.addScreenParticle(screen, parameters, x, y, velX, velY);
     }
@@ -117,5 +107,15 @@ public final class ScreenParticleHelper {
 
     public static void addScreenParticles(Screen screen, ParticleEffect parameters, double x, double y, double deltaX, double deltaY, double speed, int count) {
         ScreenParticleInternals.addScreenParticles(screen, parameters, x, y, deltaX, deltaY, speed, count);
+    }
+
+    /////////////////////////////
+
+    public static AbstractScreenParticle ofVanilla(Particle particle) {
+        return new VanillaParticle(particle);
+    }
+
+    public static Supplier<AbstractScreenParticle> ofVanilla(Supplier<Particle> supplier) {
+        return () -> new VanillaParticle(supplier.get());
     }
 }

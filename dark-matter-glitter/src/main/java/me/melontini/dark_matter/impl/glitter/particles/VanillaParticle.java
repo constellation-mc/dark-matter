@@ -7,6 +7,7 @@ import me.melontini.dark_matter.impl.glitter.mixin.ParticleManagerAccessor;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Camera;
@@ -63,7 +64,8 @@ public class VanillaParticle extends AbstractScreenParticle {
     }
 
     @Override
-    public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+        MatrixStack matrices = context.getMatrices();
         RenderSystem.disableCull();
         RenderSystem.enableDepthTest();
 

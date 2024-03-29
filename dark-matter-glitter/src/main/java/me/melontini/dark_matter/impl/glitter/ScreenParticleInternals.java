@@ -31,12 +31,6 @@ public class ScreenParticleInternals {
         SCREEN_PARTICLES.add(particle);
     }
 
-    public static void addScreenParticle(Screen screen, Supplier<AbstractScreenParticle> particle) {
-        AbstractScreenParticle particle1 = particle.get();
-        particle1.bindToScreen(screen);
-        SCREEN_PARTICLES.add(particle1);
-    }
-
     public static void addScreenParticle(Screen screen, ParticleEffect parameters, double x, double y, double velX, double velY) {
         MakeSure.notNull(parameters, "Tried to add a screen particle with null parameters");
         VanillaParticle particle = new VanillaParticle(parameters, x, y, velX, velY);
