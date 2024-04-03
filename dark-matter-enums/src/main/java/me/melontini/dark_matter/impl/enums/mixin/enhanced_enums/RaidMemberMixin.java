@@ -17,7 +17,7 @@ public abstract class RaidMemberMixin implements ExtendableEnum<Raid.Member, Par
     private static Raid.Member[] VALUES;
 
     @Override
-    public void dark_matter$init(Object[] args) {
+    public void dark_matter$init(Parameters.RaidMember args) {
         VALUES = Raid.Member.values();
     }
 }

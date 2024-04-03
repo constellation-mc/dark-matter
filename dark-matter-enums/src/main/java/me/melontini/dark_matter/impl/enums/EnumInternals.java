@@ -1,8 +1,10 @@
 package me.melontini.dark_matter.impl.enums;
 
+import lombok.Synchronized;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.MakeSure;
+import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ArrayUtils;
@@ -13,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
+import java.util.function.Supplier;
 
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
@@ -66,6 +69,17 @@ public class EnumInternals {
         }
     }
 
+    @Synchronized
+    public static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<T, C>> T extend(Class<T> cls, String internalName, C params) {
+        try {
+            T r = EnumUtils.callEnumInvoker(cls, internalName, params.get());
+            r.dark_matter$init(params);
+            return r;
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public static synchronized void clearEnumCache(Class<? extends Enum<?>> cls) {
         try {
             Reflect.findField(Class.class, "enumConstants").ifPresent(field -> UnsafeUtils.putReference(field, cls, null));
@@ -91,5 +105,4 @@ public class EnumInternals {
                 .orElseThrow(() -> new IllegalStateException("%s doesn't have a dark_matter$extendEnum method".formatted(cls.getName())))
                 .invoke(cls, params);
     }
-
 }

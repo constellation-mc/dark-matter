@@ -62,10 +62,4 @@ public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget,
     public void dark_matter$setPredicate(Predicate<Item> predicate) {
         this.dark_matter$predicate = predicate;
     }
-
-
-    @Override
-    public EnchantmentTarget dm$extend(String internalName, Parameters.EnchantmentTarget params) {
-        return dark_matter$extendEnum(internalName, params.predicate());
-    }
 }
