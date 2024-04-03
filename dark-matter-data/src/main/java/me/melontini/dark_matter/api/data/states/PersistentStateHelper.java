@@ -5,6 +5,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.function.BiFunction;
@@ -16,7 +17,7 @@ import java.util.function.Supplier;
 @ApiStatus.Experimental
 public final class PersistentStateHelper {
 
-    public static <T extends PersistentState> T getOrCreate(ServerWorld world, Function<NbtCompound, T> readFunction, Supplier<T> supplier, String id) {
+    public static <T extends PersistentState> T getOrCreate(@NotNull ServerWorld world, Function<NbtCompound, T> readFunction, Supplier<T> supplier, String id) {
         return world.getPersistentStateManager().getOrCreate(readFunction, supplier, id);
     }
 
@@ -28,7 +29,7 @@ public final class PersistentStateHelper {
         }, supplier, id);
     }
 
-    public static boolean isStateLoaded(ServerWorld world, String id) {
+    public static boolean isStateLoaded(@NotNull ServerWorld world, String id) {
         return world.getPersistentStateManager().loadedStates.containsKey(id);
     }
 
