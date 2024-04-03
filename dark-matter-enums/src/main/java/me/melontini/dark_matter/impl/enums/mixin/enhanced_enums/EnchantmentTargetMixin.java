@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.enums.mixin.enhanced_enums;
 
 import me.melontini.dark_matter.api.enums.EnumUtils;
+import me.melontini.dark_matter.api.enums.Parameters;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.api.mixin.annotations.AsmTransformers;
 import me.melontini.dark_matter.api.mixin.annotations.Publicize;
@@ -21,7 +22,7 @@ import java.util.function.Predicate;
 @Pseudo
 @AsmTransformers(EnchantmentTargetTransformer.class)
 @Mixin(value = EnchantmentTarget.class, priority = 1001)
-public class EnchantmentTargetMixin implements ExtendableEnum, EnchantmentTargetHack {
+public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget, Parameters.EnchantmentTarget>, EnchantmentTargetHack {
     @Shadow
     @Final
     @Mutable
@@ -64,7 +65,7 @@ public class EnchantmentTargetMixin implements ExtendableEnum, EnchantmentTarget
 
 
     @Override
-    public <T extends Enum<?>> T dark_matter$extend(String internalName, Object... params) {
-        return (T) dark_matter$extendEnum(internalName, (Predicate<Item>) params[0]);
+    public EnchantmentTarget dm$extend(String internalName, Parameters.EnchantmentTarget params) {
+        return dark_matter$extendEnum(internalName, params.predicate());
     }
 }

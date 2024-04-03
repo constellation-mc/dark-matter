@@ -21,7 +21,7 @@ public class StaticEnumTransformer implements IAsmTransformer {
     private static final Type OBJECT_ARRAY = Type.getType(Object[].class);
     private static final Type STRING = Type.getType(String.class);
 
-    private static final String METHOD_NAME = "dark_matter$extendEnum";
+    private static final String METHOD_NAME = "dm$extendEnum";
     private static final String INIT_NAME = "dark_matter$init";
     private static final String INIT_DESC = "(" + OBJECT_ARRAY.getDescriptor() + ")V";
 

@@ -3,7 +3,9 @@ package me.melontini.dark_matter.api.enums.interfaces;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import org.jetbrains.annotations.ApiStatus;
 
-public interface ExtendableEnum {
+import java.util.function.Supplier;
+
+public interface ExtendableEnum<T extends Enum<T>, C extends Supplier<Object[]>> {
     /**
      * Extends an enum with a new element.
      *
@@ -18,16 +20,20 @@ public interface ExtendableEnum {
      * @return the newly created enum element
      * @throws IllegalStateException if the `extend` method is not implemented by the enum class
      */
-    default <T extends Enum<?>> T dark_matter$extend(String internalName, Object... params) {
+    default T dm$extend(String internalName, C params) {
         try {
-            return (T) EnumUtils.callEnumInvoker(((T) this).getDeclaringClass(), internalName, params);
+            return EnumUtils.callEnumInvoker(((T) this).getDeclaringClass(), internalName, params.get());
         } catch (Throwable e) {
             throw new RuntimeException(e);
         }
     }
 
-    default <T extends Enum<?>> T dark_matter$extend(Class<T> cls, String internalName, Object... params) {
-        return dark_matter$extend(internalName, params);
+    static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<T, C>> T extend(Class<T> cls, String internalName, C params) {
+        try {
+            return EnumUtils.callEnumInvoker(cls, internalName, params.get());
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @ApiStatus.Internal

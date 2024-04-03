@@ -11,6 +11,8 @@ import net.minecraft.util.Rarity;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 
+import java.util.function.Supplier;
+
 @Pseudo
 @AsmTransformers(StaticEnumTransformer.class)
 @Mixin(value = {
@@ -20,5 +22,5 @@ import org.spongepowered.asm.mixin.Pseudo;
         BoatEntity.Type.class,
         AbstractMinecartEntity.Type.class
 }, priority = 1100)
-public class StaticEnums implements ExtendableEnum {
+public class StaticEnums<T extends Enum<T>, C extends Supplier<Object[]>> implements ExtendableEnum<T, C> {
 }
