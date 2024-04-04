@@ -13,9 +13,9 @@ import java.util.function.Supplier;
  * In particular, switch statements and maps or lists that use enums as keys or values may fail when new elements are added.
  * </p>
  */
-public interface ExtendableEnum<T extends Enum<T>, C extends Supplier<Object[]>> {
+public interface ExtendableEnum<C extends Supplier<Object[]>> {
 
-    static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<T, C>> T extend(Class<T> cls, String internalName, C params) {
+    static <T extends Enum<T> & ExtendableEnum<C>, C extends Supplier<Object[]>> T extend(Class<T> cls, String internalName, C params) {
         return EnumInternals.extend(cls, internalName, params);
     }
 

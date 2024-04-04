@@ -12,5 +12,5 @@ import java.util.function.Supplier;
 @Pseudo
 @AsmTransformers(StaticEnumTransformer.class)
 @Mixin(value = RecipeBookGroup.class, priority = 1100)
-public class ClientEnums<T extends Enum<T>, C extends Supplier<Object[]>> implements ExtendableEnum<T, C> {
+public class ClientEnums<C extends Supplier<Object[]>> implements ExtendableEnum<C> {
 }

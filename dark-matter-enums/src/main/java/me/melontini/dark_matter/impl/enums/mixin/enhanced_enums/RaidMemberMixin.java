@@ -10,7 +10,7 @@ import org.spongepowered.asm.mixin.*;
 @Pseudo
 @AsmTransformers(StaticEnumTransformer.class)
 @Mixin(value = Raid.Member.class, priority = 1001)
-public abstract class RaidMemberMixin implements ExtendableEnum<Raid.Member, Parameters.RaidMember> {
+public abstract class RaidMemberMixin implements ExtendableEnum<Parameters.RaidMember> {
     @Shadow
     @Final
     @Mutable

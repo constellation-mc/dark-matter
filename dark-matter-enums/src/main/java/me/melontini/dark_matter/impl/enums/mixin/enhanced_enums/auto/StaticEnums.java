@@ -22,5 +22,5 @@ import java.util.function.Supplier;
         BoatEntity.Type.class,
         AbstractMinecartEntity.Type.class
 }, priority = 1100)
-public class StaticEnums<T extends Enum<T>, C extends Supplier<Object[]>> implements ExtendableEnum<T, C> {
+public class StaticEnums<C extends Supplier<Object[]>> implements ExtendableEnum<C> {
 }

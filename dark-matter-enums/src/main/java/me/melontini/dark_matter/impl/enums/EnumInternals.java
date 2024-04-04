@@ -4,16 +4,13 @@ import lombok.Synchronized;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ArrayUtils;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.invoke.MethodHandles;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 import java.util.function.Supplier;
 
@@ -22,6 +19,40 @@ import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 public class EnumInternals {
 
     private static final Map<Class<?>, Field> ENUM_TO_FIELD = new HashMap<>();//Store the field in case someone tries to call this method a bunch of times
+    private static final Map<Class<?>, Map<String, Enum<?>>> CACHE = new HashMap<>();
+
+    public static <T extends Enum<T>> T getEnumConstant(String name, Class<T> cls) {
+        var directory = CACHE.get(cls);
+        if (directory == null) {
+            synchronized (CACHE) {
+                directory = new HashMap<>();
+                CACHE.put(cls, directory);
+            }
+        }
+
+        T cnst = (T) directory.get(name);
+        if (cnst == null) {
+            synchronized (CACHE) {
+                directory.clear();
+
+                T[] entries = getValues(cls);
+                for (T entry : entries) {
+                    directory.put(entry.name(), entry);
+                }
+                return (T) directory.get(name);
+            }
+        }
+        return cnst;
+    }
+
+    private static <T extends Enum<T>> T[] getValues(Class<T> cls) {
+        try {
+            Method method = cls.getMethod("values");
+            return (T[]) method.invoke(cls);
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new IllegalStateException("Enum class %s does not follow the enum spec.".formatted(cls.getName()), e);
+        }
+    }
 
     /*probably a good idea to make this synchronized*/
     public static synchronized <T extends Enum<?>> T extendByReflecting(boolean reflectOnly, Class<T> enumClass, String internalName, Object... params) {
@@ -70,9 +101,9 @@ public class EnumInternals {
     }
 
     @Synchronized
-    public static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<T, C>> T extend(Class<T> cls, String internalName, C params) {
+    public static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<C>> T extend(Class<T> cls, String internalName, C params) {
         try {
-            T r = EnumUtils.callEnumInvoker(cls, internalName, params.get());
+            T r = callEnumInvoker(cls, internalName, params.get());
             r.dark_matter$init(params);
             return r;
         } catch (Throwable e) {

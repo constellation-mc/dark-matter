@@ -76,7 +76,7 @@ public class Parameters {
         }
     }
 
-    public record Formatting(String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue) {
+    public record Formatting(String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue) implements Base {
 
         public Formatting(String name, char code, int colorIndex, @Nullable Integer colorValue) {
             this(name, code, false, colorIndex, colorValue);
@@ -84,6 +84,11 @@ public class Parameters {
 
         public Formatting(String name, char code, boolean modifier) {
             this(name, code, modifier, -1, null);
+        }
+
+        @Override
+        public Object[] get() {
+            return new Object[] { name(), code(), modifier(), colorIndex(), colorValue() };
         }
     }
 

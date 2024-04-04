@@ -2,6 +2,7 @@ package me.melontini.dark_matter.api.enums;
 
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.impl.enums.EnumInternals;
+import org.jetbrains.annotations.Nullable;
 
 @UtilityClass
 public class EnumUtils {
@@ -29,6 +30,10 @@ public class EnumUtils {
 
     public static synchronized <T extends Enum<?>> T extendByReflecting(Class<T> enumClass, String internalName, Object... params) {
         return extendByReflecting(false, enumClass, internalName, params);
+    }
+
+    public static <T extends Enum<T>> @Nullable T getEnumConstant(String name, Class<T> cls) {
+        return EnumInternals.getEnumConstant(name, cls);
     }
 
     /**

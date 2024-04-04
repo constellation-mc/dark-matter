@@ -22,7 +22,7 @@ import java.util.function.Predicate;
 @Pseudo
 @AsmTransformers(EnchantmentTargetTransformer.class)
 @Mixin(value = EnchantmentTarget.class, priority = 1001)
-public class EnchantmentTargetMixin implements ExtendableEnum<EnchantmentTarget, Parameters.EnchantmentTarget>, EnchantmentTargetHack {
+public class EnchantmentTargetMixin implements ExtendableEnum<Parameters.EnchantmentTarget>, EnchantmentTargetHack {
     @Shadow
     @Final
     @Mutable

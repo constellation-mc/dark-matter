@@ -30,14 +30,14 @@
       "badges": [ "library" ]
     },
     "loom:injected_interfaces": {
-      "net/minecraft/class_1814": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_1814;Lme/melontini/dark_matter/api/enums/Parameters\u0024Rarity;>"],
-      "net/minecraft/class_5421": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_5421;Lme/melontini/dark_matter/api/enums/Parameters\u0024Empty;>"],
-      "net/minecraft/class_314": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_314;Lme/melontini/dark_matter/api/enums/Parameters\u0024RecipeBookGroup;>"],
-      "net/minecraft/class_124": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_124;Lme/melontini/dark_matter/api/enums/Parameters\u0024Formatting;>"],
-      "net/minecraft/class_1688\u0024class_1689": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_1688\u0024class_1689;Lme/melontini/dark_matter/api/enums/Parameters\u0024Empty;>"],
-      "net/minecraft/class_1690\u0024class_1692": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_1690\u0024class_1692;Lme/melontini/dark_matter/api/enums/Parameters\u0024BoatEntityType;>"],
-      "net/minecraft/class_1886": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_1886;Lme/melontini/dark_matter/api/enums/Parameters\u0024EnchantmentTarget;>"],
-      "net/minecraft/class_3765\u0024class_3766": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lnet/minecraft/class_3765\u0024class_3766;Lme/melontini/dark_matter/api/enums/Parameters\u0024RaidMember;>"]
+      "net/minecraft/class_1814": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024Rarity;>"],
+      "net/minecraft/class_5421": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024Empty;>"],
+      "net/minecraft/class_314": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024RecipeBookGroup;>"],
+      "net/minecraft/class_124": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024Formatting;>"],
+      "net/minecraft/class_1688\u0024class_1689": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024Empty;>"],
+      "net/minecraft/class_1690\u0024class_1692": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024BoatEntityType;>"],
+      "net/minecraft/class_1886": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024EnchantmentTarget;>"],
+      "net/minecraft/class_3765\u0024class_3766": ["me/melontini/dark_matter/api/enums/interfaces/ExtendableEnum<Lme/melontini/dark_matter/api/enums/Parameters\u0024RaidMember;>"]
     }
   }
 }
