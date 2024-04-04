@@ -32,6 +32,10 @@ jobs:
           cache: gradle
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
+      - name: run testmod
+        uses: modmuss50/xvfb-action@v1
+        with:
+          run: ./gradlew runAutoTest --stacktrace --warning-mode=fail
       - name: build and publish
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
