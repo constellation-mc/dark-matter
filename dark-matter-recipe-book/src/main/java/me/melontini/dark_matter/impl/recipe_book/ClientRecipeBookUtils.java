@@ -39,7 +39,7 @@ public class ClientRecipeBookUtils {
             return Utilities.cast(EVENTS.computeIfAbsent(type, type1 -> EventFactory.createArrayBacked(RecipeGroupLookupEvent.class, recipeGroupLookupEvents -> (id, recipe, registryManager) -> {
                 RecipeBookGroup group;
                 for (RecipeGroupLookupEvent<T> event : recipeGroupLookupEvents) {
-                    if ((group = event.lookup(id, (T) recipe, registryManager)) != null) {
+                    if ((group = event.onRecipeBookGroupLookup(id, (T) recipe, registryManager)) != null) {
                         return group;
                     }
                 }

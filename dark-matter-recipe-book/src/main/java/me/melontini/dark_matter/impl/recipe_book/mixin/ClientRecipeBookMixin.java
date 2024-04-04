@@ -24,7 +24,7 @@ public class ClientRecipeBookMixin {
         if (e == null) return;
 
         Optional<DynamicRegistryManager> registryManager = Optional.ofNullable(MinecraftClient.getInstance().getNetworkHandler()).map(ClientPlayNetworkHandler::getRegistryManager);
-        RecipeBookGroup group = e.invoker().lookup(recipe.getId(), Utilities.cast(recipe), registryManager.orElse(null));
+        RecipeBookGroup group = e.invoker().onRecipeBookGroupLookup(recipe.getId(), Utilities.cast(recipe), registryManager.orElse(null));
         if (group != null) cir.setReturnValue(group);
     }
 }

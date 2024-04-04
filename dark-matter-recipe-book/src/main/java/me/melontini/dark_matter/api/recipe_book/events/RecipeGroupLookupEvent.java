@@ -19,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 @Environment(EnvType.CLIENT)
 public interface RecipeGroupLookupEvent<T extends Recipe<?>> {
 
-    RecipeBookGroup lookup(Identifier id, T recipe, @Nullable DynamicRegistryManager registryManager);
+    RecipeBookGroup onRecipeBookGroupLookup(Identifier id, T recipe, @Nullable DynamicRegistryManager registryManager);
 
     static <T extends Recipe<?>> Event<RecipeGroupLookupEvent<T>> forType(RecipeType<T> type) {
         return ClientRecipeBookUtils.forType(type, true);
