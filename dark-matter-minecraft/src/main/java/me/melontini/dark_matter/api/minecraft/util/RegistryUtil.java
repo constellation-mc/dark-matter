@@ -18,6 +18,7 @@ import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -51,7 +52,7 @@ public class RegistryUtil {
         return register(true, registry, id, entry);
     }
 
-    public <V, T extends V> @Nullable T register(BooleanSupplier condition, Registry<V> registry, Identifier id, Supplier<T> entry) {
+    public <V, T extends V> @Nullable T register(@NotNull BooleanSupplier condition, Registry<V> registry, Identifier id, Supplier<T> entry) {
         return register(condition.getAsBoolean(), registry, id, entry);
     }
 

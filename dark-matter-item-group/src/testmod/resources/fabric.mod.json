@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-item-group-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.melontini.dark_matter.test.item_group.GroupBuilderTest"
+    ],
+    "client": [
+      "me.melontini.dark_matter.test.item_group.GroupAnimationTest"
+    ]
+  }
+}
