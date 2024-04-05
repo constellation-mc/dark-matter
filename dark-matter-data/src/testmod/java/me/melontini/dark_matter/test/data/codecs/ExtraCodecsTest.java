@@ -17,6 +17,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.JsonSerializableType;
 
 import java.lang.reflect.Type;
+import java.util.Objects;
 
 public class ExtraCodecsTest implements ModInitializer {
     @Override
@@ -39,6 +40,9 @@ public class ExtraCodecsTest implements ModInitializer {
         JsonPrimitive value = new JsonPrimitive(345);
         colorResult = parse(ExtraCodecs.COLOR, value);
         MakeSure.isTrue(colorResult == 345);
+
+        JsonElement encode = encode(ExtraCodecs.COLOR, ColorUtil.toColor(23, 45, 0));
+        MakeSure.isTrue(Objects.equals(new JsonPrimitive(ColorUtil.toColor(23, 45, 0)), encode));
     }
 
     private static void testMapLookupCodec() {
@@ -53,6 +57,9 @@ public class ExtraCodecsTest implements ModInitializer {
         JsonPrimitive identifier = new JsonPrimitive("dark_matter:two");
         int integer = parse(codec, identifier);
         MakeSure.isTrue(integer == 2);
+
+        JsonElement encode = encode(codec, 3);
+        MakeSure.isTrue(Objects.equals(encode.getAsString(), "dark_matter:three"));
     }
 
     private static void testEnumCodec() {
@@ -60,6 +67,9 @@ public class ExtraCodecsTest implements ModInitializer {
         JsonPrimitive constant = new JsonPrimitive("first");
         TestEnum testEnum = parse(codec, constant);
         MakeSure.isTrue(testEnum == TestEnum.FIRST);
+
+        JsonElement encode = encode(codec, TestEnum.SECOND);
+        MakeSure.isTrue(Objects.equals(encode.getAsString(), "second"));
     }
 
     private static void testDispatchSerializer() {
@@ -71,10 +81,19 @@ public class ExtraCodecsTest implements ModInitializer {
                       }""");
         LootCondition condition = parse(codec, element);
         MakeSure.isTrue(condition instanceof RandomChanceLootCondition);
+
+        JsonElement encode = encode(codec, condition);
+        MakeSure.isTrue(Objects.equals(element, encode));
     }
 
     private static <T> T parse(Codec<T> codec, JsonElement element) {
         return codec.parse(JsonOps.INSTANCE, element).getOrThrow(false, string -> {
+            throw new JsonParseException(string);
+        });
+    }
+
+    private static <T> JsonElement encode(Codec<T> codec, T object) {
+        return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow(false, string -> {
             throw new JsonParseException(string);
         });
     }
