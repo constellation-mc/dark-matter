@@ -6,7 +6,7 @@ import org.jetbrains.annotations.ApiStatus;
 import java.util.function.Supplier;
 
 /**
- * Enums marked with interface all extension using {@link ExtendableEnum#extend(Class, String, Supplier)}.
+ * Enums marked with this interface support extension using {@link ExtendableEnum#extend(Class, String, Supplier)}.
  *
  * <p>
  * This should only be used if absolutely necessary, as extending enums can cause unpredictable behavior and can break code that relies on a fixed set of enum values.
