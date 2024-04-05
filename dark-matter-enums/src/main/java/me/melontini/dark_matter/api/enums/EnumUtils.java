@@ -44,8 +44,4 @@ public class EnumUtils {
     public static synchronized void clearEnumCache(Class<? extends Enum<?>> cls) {
         EnumInternals.clearEnumCache(cls);
     }
-
-    public static <T extends Enum<?>> T callEnumInvoker(Class<T> cls, String internalName, Object... params) throws Throwable {
-        return EnumInternals.callEnumInvoker(cls, internalName, params);
-    }
 }
