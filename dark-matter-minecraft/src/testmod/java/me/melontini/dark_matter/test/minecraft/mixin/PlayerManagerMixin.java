@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.test.minecraft.mixin;
 
+import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.server.PlayerManager;
@@ -19,6 +20,7 @@ public class PlayerManagerMixin {
     @Inject(at = @At("TAIL"), method = "onPlayerConnect")
     private void dark_matter$shutdownTest(ClientConnection connection, ServerPlayerEntity player, ConnectedClientData clientData, CallbackInfo ci) {
         Executors.newSingleThreadScheduledExecutor().schedule(() -> MinecraftClient.getInstance().execute(() -> {
+            DarkMatterLog.info("Shutting down test");
             MinecraftClient.getInstance().scheduleStop();
         }), 7, TimeUnit.SECONDS);
     }
