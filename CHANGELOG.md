@@ -53,6 +53,12 @@ Most modules now depend on Fabric API modules.
 
 * Added AfterFirstReload event.
 
+### Enums
+
+* Added proper generic types to extendable enums. All supported enums must be extended using `ExtendableEnum#extend`.
+* Removed EnumWrapper as it's no longer necessary.
+* Removed internal `callEnumInvoker` from EnumUtils.
+
 ### Recipe Book
 
 * Moved group lookup to a Fabric event.

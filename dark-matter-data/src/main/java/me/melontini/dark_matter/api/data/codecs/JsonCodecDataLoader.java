@@ -11,13 +11,16 @@ import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 import java.util.function.BiConsumer;
 
 public abstract class JsonCodecDataLoader<T> extends JsonDataLoader implements IdentifiableResourceReloadListener {
 
-    public static <T> JsonCodecDataLoader<T> simple(Identifier identifier, Codec<T> codec, BiConsumer<Identifier, T> consumer) {
+    @Contract("_, _, _ -> new")
+    public static <T> @NotNull JsonCodecDataLoader<T> simple(Identifier identifier, Codec<T> codec, BiConsumer<Identifier, T> consumer) {
         return new JsonCodecDataLoader<T>(identifier, codec) {
             @Override
             protected void apply(Map<Identifier, T> parsed, ResourceManager manager) {

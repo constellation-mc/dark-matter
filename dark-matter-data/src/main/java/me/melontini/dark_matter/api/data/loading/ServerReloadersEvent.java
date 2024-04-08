@@ -17,11 +17,11 @@ public interface ServerReloadersEvent {
 
     Event<ServerReloadersEvent> EVENT = EventFactory.createArrayBacked(ServerReloadersEvent.class, events -> (c) -> {
         for (ServerReloadersEvent event : events) {
-            event.register(c);
+            event.onServerReloaders(c);
         }
     });
 
-    void register(Context context);
+    void onServerReloaders(Context context);
 
     interface Context {
         DynamicRegistryManager registryManager();

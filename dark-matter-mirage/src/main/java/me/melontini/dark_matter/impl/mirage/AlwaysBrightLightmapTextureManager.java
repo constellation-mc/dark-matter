@@ -15,5 +15,4 @@ public class AlwaysBrightLightmapTextureManager extends LightmapTextureManager {
     public void update(float delta) {
         //no updates for you
     }
-
 }

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-data-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.melontini.dark_matter.test.data.codecs.ExtraCodecsTest"
+    ]
+  }
+}

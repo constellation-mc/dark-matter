@@ -3,7 +3,7 @@ package me.melontini.dark_matter.impl.recipe_book;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
-import me.melontini.dark_matter.api.enums.EnumWrapper;
+import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -40,7 +40,7 @@ public class ClientRecipeBookUtils {
             return Utilities.cast(EVENTS.computeIfAbsent(type, type1 -> EventFactory.createArrayBacked(RecipeGroupLookupEvent.class, recipeGroupLookupEvents -> (id, recipe, registryManager) -> {
                 RecipeBookGroup group;
                 for (RecipeGroupLookupEvent<T> event : recipeGroupLookupEvents) {
-                    if ((group = event.lookup(id, (T) recipe, registryManager)) != null) {
+                    if ((group = event.onRecipeBookGroupLookup(id, (T) recipe, registryManager)) != null) {
                         return group;
                     }
                 }
@@ -102,7 +102,7 @@ public class ClientRecipeBookUtils {
         MakeSure.notEmpty(stacks, "Tried to create a RecipeBookGroup with no icons.");
         MakeSure.isTrue(stacks.length <= 2, "Tried to create a RecipeBookGroup with too many icons!");
 
-        return EnumWrapper.RecipeBookGroup.extend(internalName, stacks);
+        return ExtendableEnum.extend(RecipeBookGroup.class, internalName, () -> stacks);
     }
 
     public static Optional<List<RecipeBookGroup>> getGroups(RecipeBookCategory category) {

@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-minecraft-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+  },
+  "mixins": [
+    "dark-matter-minecraft-testmod.mixins.json"
+  ]
+}

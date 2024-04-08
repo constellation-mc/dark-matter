@@ -6,9 +6,10 @@ import org.apache.commons.lang3.ArrayUtils;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
-import org.objectweb.asm.tree.*;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.FieldNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
-import org.spongepowered.asm.util.Bytecode;
 
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -22,17 +23,6 @@ public class StaticEnumTransformer implements IAsmTransformer {
     private static final Type STRING = Type.getType(String.class);
 
     private static final String METHOD_NAME = "dark_matter$extendEnum";
-    private static final String INIT_NAME = "dark_matter$init";
-    private static final String INIT_DESC = "(" + OBJECT_ARRAY.getDescriptor() + ")V";
-
-    private static boolean loadsArray(InsnList insnList) {
-        for (AbstractInsnNode ins : insnList) {
-            if (ins instanceof VarInsnNode varinsn) {
-                if (varinsn.getOpcode() == Opcodes.ALOAD && varinsn.var == 1) return true;
-            }
-        }
-        return false;
-    }
 
     @Override
     public void afterApply(ClassNode targetClass, IMixinInfo mixinInfo) {
@@ -41,9 +31,6 @@ public class StaticEnumTransformer implements IAsmTransformer {
         for (MethodNode method : targetClass.methods) {
             if (METHOD_NAME.equals(method.name)) return;
         }
-
-        MethodNode init = targetClass.methods.stream().filter(method -> INIT_NAME.equals(method.name) && INIT_DESC.equals(method.desc)).findFirst().orElse(null);
-        boolean passArgs = init != null && loadsArray(init.instructions);
 
         int mod = Modifier.PRIVATE | Modifier.STATIC | Opcodes.ACC_SYNTHETIC;
         String desc = "[L" + targetClass.name + ";";
@@ -129,28 +116,6 @@ public class StaticEnumTransformer implements IAsmTransformer {
 
                 ia.aconst(target);
                 ia.invokestatic("me/melontini/dark_matter/api/enums/EnumUtils", "clearEnumCache", "(Ljava/lang/Class;)V", false);
-
-                if (init != null) {
-                    ia.load(a + 1, OBJECT);
-                    if (passArgs) {
-                        ia.iconst(a);
-                        ia.newarray(OBJECT);
-                        for (int i = 0; i < a; i++) {
-                            ia.dup();
-                            ia.iconst(i);
-                            ia.load(i, args[i]);
-                            String boxed = Bytecode.getBoxingType(args[i]);
-                            if (boxed != null) {
-                                ia.invokestatic(boxed, "valueOf", "(" + args[i].getDescriptor() + ")" + Type.getObjectType(boxed).getDescriptor(), false);
-                            }
-                            ia.astore(OBJECT);
-                        }
-                    } else {
-                        ia.aconst(null);
-                    }
-                    ia.checkcast(OBJECT_ARRAY);
-                    ia.invokevirtual(target.getInternalName(), INIT_NAME, INIT_DESC, false);
-                }
 
                 ia.aconst("Extended enum {}");
                 ia.iconst(1);

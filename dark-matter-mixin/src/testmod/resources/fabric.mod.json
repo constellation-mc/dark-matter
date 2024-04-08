@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-mixin-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "preLaunch": [
+      "me.melontini.dark_matter.test.mixin.VirtualMixinsTest::onPreLaunch"
+    ],
+    "main": [
+      "me.melontini.dark_matter.test.mixin.VirtualMixinsTest::onInitialize"
+    ]
+  }
+}

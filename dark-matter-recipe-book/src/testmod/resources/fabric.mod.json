@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-recipe-book-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "me.melontini.dark_matter.test.recipe_book.RecipeBookHelperTest"
+    ]
+  }
+}

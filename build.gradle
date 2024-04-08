@@ -32,6 +32,34 @@ allprojects {
         withSourcesJar()
     }
 
+    sourceSets {
+        testmod {
+            compileClasspath += main.compileClasspath
+            runtimeClasspath += main.runtimeClasspath
+        }
+    }
+
+    loom {
+        runs {
+            testmod {
+                client()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod"
+                source sourceSets.testmod
+            }
+        }
+    }
+
+    allprojects.forEach { p ->
+        loom.mods.register(p.name) {
+            sourceSet p.sourceSets.main
+        }
+
+        loom.mods.register(p.name + "-testmod") {
+            sourceSet p.sourceSets.testmod
+        }
+    }
+
     processResources {
         var input = [
                 "version"          : project.version,
@@ -69,12 +97,8 @@ allprojects {
         minecraft("com.mojang:minecraft:${project.minecraft_version}")
         mappings("net.fabricmc:yarn:${project.yarn_mappings}:v2")
         modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
-    }
 
-    allprojects.forEach { p ->
-        loom.mods.register(p.name) {
-            sourceSet p.sourceSets.main
-        }
+        testmodImplementation sourceSets.main.output
     }
 
     sourceSets {
@@ -101,9 +125,6 @@ allprojects {
                 }
             }
         }
-
-        repositories {
-        }
     }
 }
 
@@ -111,6 +132,15 @@ subprojects {
     dependencies {
         if (project.name != "dark-matter-base") {
             api(project(path: ':dark-matter-base', configuration: 'namedElements'))
+        }
+    }
+}
+
+loom {
+    runs {
+        autotest {
+            inherit(testmod)
+            programArgs("--quickPlaySingleplayer", "dm_test_world")
         }
     }
 }
@@ -135,6 +165,7 @@ dependencies {
     afterEvaluate {
         subprojects.each {
             api(project(path: "${it.path}", configuration: "namedElements"))
+            testmodImplementation project("${it.path}:").sourceSets.testmod.output
         }
     }
 }

@@ -1,15 +1,15 @@
 {
   "schemaVersion": 1,
-  "id": "dark-matter-danger",
+  "id": "dark-matter-instrumentation",
   "version": "${version}",
-  "name": "Dark Matter Danger",
+  "name": "Dark Matter Instrumentation",
   "description": "Things that nobody should use",
   "authors": [
     "melontini"
   ],
   "contact": {},
   "license": "MIT",
-  "icon": "assets/dark-matter-danger/icon.png",
+  "icon": "assets/dark-matter-instrumentation/icon.png",
   "environment": "*",
   "entrypoints": {
   },
@@ -19,7 +19,7 @@
     "dark-matter-base": "*"
   },
   "provides": [
-    "dark_matter_danger"
+    "dark_matter_instrumentation"
   ],
   "custom": {
     "modmenu": {

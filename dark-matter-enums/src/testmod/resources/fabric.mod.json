@@ -1,0 +1,13 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-enums-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "me.melontini.dark_matter.test.enums.ExtendableEnumTest",
+      "me.melontini.dark_matter.test.enums.EnumUtilsTest"
+    ]
+  }
+}
