@@ -25,7 +25,7 @@ public class QuickPlayMixin {
                     new LevelInfo("dm_test_world", GameMode.CREATIVE, false, Difficulty.EASY, true,
                             new GameRules(), DataConfiguration.SAFE_MODE),
                     new GeneratorOptions(0, true, false),
-                    registryManager -> registryManager.get(RegistryKeys.WORLD_PRESET).entryOf(WorldPresets.FLAT).value().createDimensionsRegistryHolder());
+                    registryManager -> registryManager.get(RegistryKeys.WORLD_PRESET).entryOf(WorldPresets.FLAT).value().createDimensionsRegistryHolder(), null);
             ci.cancel();
         }
     }

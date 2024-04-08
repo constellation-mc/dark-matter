@@ -9,12 +9,7 @@ import me.melontini.dark_matter.api.base.util.ColorUtil;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.data.codecs.ExtraCodecs;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.loot.LootGsons;
-import net.minecraft.loot.condition.LootCondition;
-import net.minecraft.loot.condition.RandomChanceLootCondition;
-import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.JsonSerializableType;
 
 import java.lang.reflect.Type;
 import java.util.Objects;
@@ -25,7 +20,6 @@ public class ExtraCodecsTest implements ModInitializer {
         testColorCodec();
         testMapLookupCodec();
         testEnumCodec();
-        testDispatchSerializer();
     }
 
     private static void testColorCodec() {
@@ -70,20 +64,6 @@ public class ExtraCodecsTest implements ModInitializer {
 
         JsonElement encode = encode(codec, TestEnum.SECOND);
         MakeSure.isTrue(Objects.equals(encode.getAsString(), "second"));
-    }
-
-    private static void testDispatchSerializer() {
-        Codec<LootCondition> codec = ExtraCodecs.jsonSerializerDispatch("condition", Registries.LOOT_CONDITION_TYPE.getCodec(), LootCondition::getType, JsonSerializableType::getJsonSerializer, new GsonContextImpl(LootGsons.getConditionGsonBuilder().create()));
-        JsonElement element = JsonParser.parseString("""
-                {
-                        "condition": "minecraft:random_chance",
-                        "chance": 0.5
-                      }""");
-        LootCondition condition = parse(codec, element);
-        MakeSure.isTrue(condition instanceof RandomChanceLootCondition);
-
-        JsonElement encode = encode(codec, condition);
-        MakeSure.isTrue(Objects.equals(element, encode));
     }
 
     private static <T> T parse(Codec<T> codec, JsonElement element) {

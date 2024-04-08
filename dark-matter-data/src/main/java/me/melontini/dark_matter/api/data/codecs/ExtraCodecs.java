@@ -2,22 +2,16 @@ package me.melontini.dark_matter.api.data.codecs;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableList;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
 import com.mojang.datafixers.util.Either;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.MapCodec;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
-import me.melontini.dark_matter.impl.data.codecs.ExtraCodecsImpl;
 import me.melontini.dark_matter.impl.data.codecs.SafeEitherCodec;
 import me.melontini.dark_matter.impl.data.codecs.SafeEitherMapCodec;
 import me.melontini.dark_matter.impl.data.codecs.SafeOptionalCodec;
-import net.minecraft.util.JsonSerializer;
 import net.minecraft.util.collection.WeightedList;
-import net.minecraft.util.dynamic.Codecs;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -100,36 +94,5 @@ public class ExtraCodecs {
                 return DataResult.error(() -> "No such enum constant %s!".formatted(string));
             }
         }, t -> t.name().toLowerCase(Locale.ROOT));
-    }
-
-    @ApiStatus.Experimental
-    public static <T, C extends JsonSerializationContext & JsonDeserializationContext> @NotNull Codec<T> fromJsonSerializer(JsonSerializer<T> serializer, C context) {
-        return fromJsonSerializer(serializer, context, context);
-    }
-
-    @ApiStatus.Experimental
-    public static <T> @NotNull Codec<T> fromJsonSerializer(JsonSerializer<T> serializer, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
-        Codec<T> codec = Codecs.JSON_ELEMENT.flatXmap(element -> {
-            if (!element.isJsonObject()) return DataResult.error(() -> "Not a JsonObject %s".formatted(element));
-            return DataResult.success(serializer.fromJson(element.getAsJsonObject(), deserializationContext));
-        }, t -> {
-            JsonObject object = new JsonObject();
-            serializer.toJson(object, t, serializationContext);
-            return DataResult.success(object);
-        });
-        return Codecs.exceptionCatching(codec);
-    }
-
-    public static <K, V, C extends JsonSerializationContext & JsonDeserializationContext> @NotNull Codec<V> jsonSerializerDispatch(final String typeKey, Codec<K> keyCodec, final Function<? super V, ? extends K> type, final Function<? super K, ? extends JsonSerializer<? extends V>> codec, C context) {
-        return jsonSerializerDispatch(typeKey, keyCodec, type, codec, context, context);
-    }
-
-    public static <K, V> @NotNull Codec<V> jsonSerializerDispatch(final String typeKey, Codec<K> keyCodec, final Function<? super V, ? extends K> type, final Function<? super K, ? extends JsonSerializer<? extends V>> codec, JsonSerializationContext serializationContext, JsonDeserializationContext deserializationContext) {
-        return ExtraCodecsImpl.jsonSerializerDispatch(typeKey, keyCodec, type, codec, serializationContext, deserializationContext);
-    }
-
-    @ApiStatus.Experimental
-    public static <T> @NotNull JsonSerializer<T> toJsonSerializer(Codec<T> codec) {
-        return ExtraCodecsImpl.toJsonSerializer(codec);
     }
 }
