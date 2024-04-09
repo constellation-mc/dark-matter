@@ -1,20 +1,20 @@
 package me.melontini.dark_matter.test.instrumentation;
 
 import lombok.SneakyThrows;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.instrumentation.InstrumentationAccess;
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
-public class InstrumentationAccessTest implements PreLaunchEntrypoint {
+public class InstrumentationAccessTest {
 
+    @Test
     @SneakyThrows
-    @Override
-    public void onPreLaunch() {
-        MakeSure.isTrue(Test.get() == 4);
+    public void testInstrumentation() {
+        Assertions.assertEquals(TestClass.get(), 4);
 
         InstrumentationAccess.getOrEmpty().orElseThrow();
         InstrumentationAccess.retransform(node -> {
@@ -29,12 +29,12 @@ public class InstrumentationAccessTest implements PreLaunchEntrypoint {
                 }
             }
             throw new IllegalStateException();
-        }, Test.class);
+        }, TestClass.class);
 
-        MakeSure.isTrue(Test.get() == 1);
+        Assertions.assertEquals(TestClass.get(), 1);
     }
 
-    public static class Test {
+    public static class TestClass {
         public static int get() {
             return 4;
         }

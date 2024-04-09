@@ -6,8 +6,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.melontini.dark_matter.test.enums.ExtendableEnumTest",
-      "me.melontini.dark_matter.test.enums.EnumUtilsTest"
+      "me.melontini.dark_matter.test.enums.ExtendableEnumTest"
     ]
   }
 }

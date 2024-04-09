@@ -57,17 +57,14 @@ public class ClientRecipeBookUtils {
 
     private static List<RecipeBookGroup> getGroupsForCategory(RecipeBookCategory category) {
         if (isVanillaCategory(category)) {
-            VANILLA_CATEGORIES.get(category).get();
+            return VANILLA_CATEGORIES.get(category).get();
         }
         return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
     }
 
     public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(category, groups);
-
-        List<RecipeBookGroup> groupList = getGroupsForCategory(category);
-        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
-        groupList.addAll(groups);
+        getGroupsForCategory(category).addAll(groups);
     }
 
     public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
@@ -75,23 +72,19 @@ public class ClientRecipeBookUtils {
         MakeSure.isTrue(index >= 0, "Index can't be below 0!");
 
         List<RecipeBookGroup> groupList = getGroupsForCategory(category);
-        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
-
         if (index >= groupList.size()) groupList.addAll(groups);
         else groupList.addAll(index, groups);
     }
 
     public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(searchGroup, groups);
-        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
-        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(searchGroup, group -> new ArrayList<>());
         groupList.addAll(groups);
     }
 
     public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
         MakeSure.notNulls(searchGroup, groups);
-        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(MakeSure.notNull(searchGroup), group -> new ArrayList<>());
-        (groups = new ArrayList<>(groups)).removeIf(groupList::contains); //Convert to ArrayList to keep mutability
+        List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(searchGroup, group -> new ArrayList<>());
 
         if (index >= groupList.size()) groupList.addAll(groups);
         else groupList.addAll(index, groups);
@@ -106,6 +99,6 @@ public class ClientRecipeBookUtils {
     }
 
     public static Optional<List<RecipeBookGroup>> getGroups(RecipeBookCategory category) {
-        return GROUPS_FOR_CATEGORY.containsKey(category) ? Optional.of(Collections.unmodifiableList(GROUPS_FOR_CATEGORY.get(category))) : Optional.empty();
+        return Optional.ofNullable(GROUPS_FOR_CATEGORY.get(category)).map(Collections::unmodifiableList);
     }
 }

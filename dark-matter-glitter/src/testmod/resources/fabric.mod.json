@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-glitter-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "dark-matter:client_test": [
+      "me.melontini.dark_matter.test.glitter.ScreenParticleHelperTest"
+    ]
+  }
+}
