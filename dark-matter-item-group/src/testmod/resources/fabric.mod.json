@@ -10,6 +10,9 @@
     ],
     "client": [
       "me.melontini.dark_matter.test.item_group.GroupAnimationTest"
+    ],
+    "dark-matter:client_test" : [
+      "me.melontini.dark_matter.test.item_group.GroupAnimationTest"
     ]
   }
 }

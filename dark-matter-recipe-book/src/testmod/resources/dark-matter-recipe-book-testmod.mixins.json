@@ -1,12 +1,12 @@
 {
   "required": false,
   "minVersion": "0.8",
-  "package": "me.melontini.dark_matter.test.minecraft.mixin",
+  "package": "me.melontini.dark_matter.test.recipe_book.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
   ],
   "client": [
-    "QuickPlayMixin"
+    "InventoryScreenMixin"
   ],
   "injectors": {
     "defaultRequire": 0

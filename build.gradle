@@ -1,3 +1,5 @@
+import net.fabricmc.loom.api.RemapConfigurationSettings
+
 plugins {
     id 'java-library'
     id 'fabric-loom' version "${loom_version}" apply false
@@ -40,11 +42,26 @@ allprojects {
     }
 
     loom {
+        addRemapConfiguration("testmodRemapImplementation", (RemapConfigurationSettings configuration) -> {
+            configuration.getTargetConfigurationName().convention("testmodImplementation")
+            configuration.getOnCompileClasspath().convention(true)
+            configuration.getOnRuntimeClasspath().convention(true)
+            configuration.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME)
+        })
+    }
+
+    loom {
         runs {
             testmod {
-                client()
+                server()
                 ideConfigGenerated project.rootProject == project
                 name = "Testmod"
+                source sourceSets.testmod
+            }
+            testmodClient {
+                client()
+                ideConfigGenerated project.rootProject == project
+                name = "Testmod Client"
                 source sourceSets.testmod
             }
         }
@@ -96,16 +113,16 @@ allprojects {
     dependencies {
         minecraft("com.mojang:minecraft:${project.minecraft_version}")
         mappings("net.fabricmc:yarn:${project.yarn_mappings}:v2")
-        modImplementation("net.fabricmc:fabric-loader:${project.loader_version}")
+        modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
+
+        testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+        testImplementation sourceSets.testmod.output
     }
 
-    sourceSets {
-        main {
-            compileClasspath += main.compileClasspath
-            runtimeClasspath += main.runtimeClasspath
-        }
+    test {
+        useJUnitPlatform()
     }
 
     publishing {
@@ -133,15 +150,8 @@ subprojects {
         if (project.name != "dark-matter-base") {
             api(project(path: ':dark-matter-base', configuration: 'namedElements'))
         }
-    }
-}
 
-loom {
-    runs {
-        autotest {
-            inherit(testmod)
-            programArgs("--quickPlaySingleplayer", "dm_test_world")
-        }
+        testmodImplementation sourceSets.main.output
     }
 }
 
@@ -151,11 +161,47 @@ static def fabric(Project project, List<String> modules) {
     }
 }
 
+static def fabricTest(Project project, List<String> modules) {
+    for (final def module in modules) {
+        project.dependencies.testmodRemapImplementation(project.fabricApi.module(module, project.fabric_api_version))
+    }
+}
+
 static def darkMatter(Project project, List<String> modules) {
     for (final def module in modules) {
         project.dependencies.api(project.dependencies.project(path: ":dark-matter-${module}", configuration: 'namedElements'))
     }
 }
+
+allprojects {
+    dependencies {
+        fabricTest(project, ["fabric-gametest-api-v1", "fabric-resource-loader-v0", "fabric-registry-sync-v0"])
+    }
+}
+
+dependencies {//gradle doesn't believe in transitive test dependencies.
+    fabricTest(project, ["fabric-item-group-api-v1"])
+}
+
+loom {
+    runs {
+        gametest {
+            inherit testmod
+
+            name "Game Test"
+
+            // Enable the gametest runner
+            vmArg "-Dfabric-api.gametest"
+            runDir "build/gametest"
+        }
+
+        autotest {
+            inherit(testmodClient)
+            programArgs("--quickPlaySingleplayer", "dm_test_world")
+        }
+    }
+}
+test.dependsOn runGametest
 
 subprojects.each {
     remapJar.dependsOn("${it.path}:remapJar")

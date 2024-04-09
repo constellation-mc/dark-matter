@@ -1,3 +1,5 @@
 dependencies {
     darkMatter(project, ["minecraft"])
+
+    fabricTest(project, ["fabric-item-group-api-v1"])
 }

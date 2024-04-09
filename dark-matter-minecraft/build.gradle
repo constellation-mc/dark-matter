@@ -1,8 +1,7 @@
 dependencies {
     fabric(project, [
             "fabric-api-base",
-            "fabric-resource-loader-v0",
-            "fabric-registry-sync-v0"
+            "fabric-resource-loader-v0"
     ])
 }
 

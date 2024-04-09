@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "dark-matter-base-testmod",
+  "version": "1.0.0",
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "fabric-gametest": [
+      "me.melontini.dark_matter.test.base.DarkMatterBaseGameTest"
+    ]
+  }
+}
