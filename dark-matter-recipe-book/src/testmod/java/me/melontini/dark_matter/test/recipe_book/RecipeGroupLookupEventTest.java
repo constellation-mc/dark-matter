@@ -22,7 +22,7 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, DarkMat
         RecipeBookHelper.registerGroups(RecipeBookCategory.CRAFTING, 1, group);
 
         RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
-            if (recipe.getOutput(registryManager).isIn(ItemTags.PLANKS)) {
+            if (recipe.getResult(registryManager).isIn(ItemTags.PLANKS)) {
                 return group;
             }
             return null;
@@ -38,7 +38,7 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, DarkMat
         FabricClientTestHelper.submitAndWait(client -> client.player.getRecipeBook()
                 .getResultsForGroup(group)
                 .stream().filter(rrc -> rrc.getAllRecipes().stream()
-                        .anyMatch(recipe -> recipe.getOutput(client.world.getRegistryManager())
+                        .anyMatch(recipe -> recipe.value().getResult(client.world.getRegistryManager())
                                 .isIn(ItemTags.PLANKS)))).findFirst().orElseThrow();
     }
 }

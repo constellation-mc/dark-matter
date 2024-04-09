@@ -19,10 +19,10 @@ package me.melontini.dark_matter.impl.minecraft.util.test;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.GameMenuScreen;
-import net.minecraft.client.gui.screen.LevelLoadingScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import net.minecraft.client.gui.screen.world.LevelLoadingScreen;
 import net.minecraft.client.option.Perspective;
 import net.minecraft.client.util.ScreenshotRecorder;
 
@@ -133,7 +133,7 @@ public final class FabricClientTestHelper {
 
     public static void enableDebugHud() {
         submitAndWait(client -> {
-            client.options.debugEnabled = true;
+            client.getDebugHud().toggleDebugHud();
             return null;
         });
     }
