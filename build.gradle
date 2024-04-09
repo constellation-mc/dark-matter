@@ -197,7 +197,6 @@ loom {
 
         autotest {
             inherit(testmodClient)
-            programArgs("--quickPlaySingleplayer", "dm_test_world")
         }
     }
 }
