@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.enums.interfaces;
 
+import me.melontini.dark_matter.api.enums.Parameters;
 import me.melontini.dark_matter.impl.enums.EnumInternals;
 import org.jetbrains.annotations.ApiStatus;
 
@@ -17,6 +18,10 @@ public interface ExtendableEnum<C extends Supplier<Object[]>> {
 
     static <T extends Enum<T> & ExtendableEnum<C>, C extends Supplier<Object[]>> T extend(Class<T> cls, String internalName, C params) {
         return EnumInternals.extend(cls, internalName, params);
+    }
+
+    static <T extends Enum<T> & ExtendableEnum<Parameters.Empty>> T extend(Class<T> cls, String internalName) {
+        return EnumInternals.extend(cls, internalName, Parameters.EMPTY);
     }
 
     @ApiStatus.Internal
