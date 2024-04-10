@@ -17,7 +17,7 @@ import net.minecraft.util.Rarity;
 public class ExtendableEnumTest implements ModInitializer {
     @Override
     public void onInitialize() {
-        AbstractMinecartEntity.Type category = ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME", Parameters.EMPTY);
+        AbstractMinecartEntity.Type category = ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME");
         MakeSure.notNull(category);
 
         Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", () -> Formatting.BOLD);
