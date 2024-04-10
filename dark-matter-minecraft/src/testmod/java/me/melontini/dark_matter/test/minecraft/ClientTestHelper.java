@@ -31,9 +31,9 @@ public class ClientTestHelper implements ClientModInitializer {
                         new LevelInfo("dm_test_world", GameMode.CREATIVE, false, Difficulty.EASY, true,
                                 new GameRules(), DataConfiguration.SAFE_MODE),
                         new GeneratorOptions(0, true, false),
-                        registryManager -> registryManager.get(RegistryKeys.WORLD_PRESET).entryOf(WorldPresets.FLAT).value().createDimensionsRegistryHolder(), null);
+                        registryManager -> registryManager.get(RegistryKeys.WORLD_PRESET).entryOf(WorldPresets.FLAT).value().createDimensionsRegistryHolder());
             } else {
-                client.createIntegratedServerLoader().start("dm_test_world", () -> client.setScreen(new TitleScreen()));
+                client.createIntegratedServerLoader().start(new TitleScreen(), "dm_test_world");
             }
         });
 
