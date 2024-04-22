@@ -50,7 +50,7 @@ allprojects {
             configuration.getSourceSet().convention(sourceSets.testmod)
             configuration.getOnCompileClasspath().convention(true)
             configuration.getOnRuntimeClasspath().convention(true)
-            configuration.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME)
+            configuration.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.NONE)
         })
     }
 
@@ -120,7 +120,9 @@ allprojects {
         modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
-        testmodRemapImplementation "me.melontini:handy-tests:0.1.0-1.20.1-build.4"
+        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.1-build.4") {
+            exclude(group: "net.fabricmc", module: "fabric-loader")
+        }
 
         testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
         testImplementation sourceSets.testmod.output
