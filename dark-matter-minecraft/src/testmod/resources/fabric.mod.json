@@ -5,6 +5,12 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
+    "main": [
+      "me.melontini.dark_matter.test.minecraft.RegistryUtilTest"
+    ],
+    "handy:client_test": [
+      "me.melontini.dark_matter.test.minecraft.ValueTrackerTest"
+    ]
   },
   "mixins": [
     "dark-matter-minecraft-testmod.mixins.json"
