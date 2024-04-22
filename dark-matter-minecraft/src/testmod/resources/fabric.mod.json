@@ -5,9 +5,6 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "me.melontini.dark_matter.test.minecraft.ClientTestHelper"
-    ]
   },
   "mixins": [
     "dark-matter-minecraft-testmod.mixins.json"

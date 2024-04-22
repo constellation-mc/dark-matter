@@ -14,6 +14,9 @@ allprojects {
     group = project.maven_group
     version = "${project.mod_version}-${project.minecraft_version}-${local ? 'local' : "build.${System.getenv("GITHUB_RUN_NUMBER")}"}"
 
+    apply from: "https://raw.githubusercontent.com/constellation-mc/artifacts/main/artifacts.groovy"
+    constellationRepo(project, "handy-tests")
+
     repositories {
         maven {
             url 'https://jitpack.io'
@@ -44,6 +47,7 @@ allprojects {
     loom {
         addRemapConfiguration("testmodRemapImplementation", (RemapConfigurationSettings configuration) -> {
             configuration.getTargetConfigurationName().convention("testmodImplementation")
+            configuration.getSourceSet().convention(sourceSets.testmod)
             configuration.getOnCompileClasspath().convention(true)
             configuration.getOnRuntimeClasspath().convention(true)
             configuration.getPublishingMode().convention(RemapConfigurationSettings.PublishingMode.COMPILE_AND_RUNTIME)
@@ -116,6 +120,7 @@ allprojects {
         modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
+        testmodRemapImplementation "me.melontini:handy-tests:0.1.0-1.20.1-build.4"
 
         testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
         testImplementation sourceSets.testmod.output
@@ -132,13 +137,15 @@ allprojects {
             }
         }
 
-        repositories {
-            maven {
-                name = "GitHubPackages"
-                url = "https://maven.pkg.github.com/constellation-mc/dark-matter"
-                credentials {
-                    username = System.getenv("GITHUB_ACTOR")
-                    password = System.getenv("GITHUB_TOKEN")
+        if (!local) {
+            repositories {
+                maven {
+                    name = "GitHubPackages"
+                    url = "https://maven.pkg.github.com/constellation-mc/dark-matter"
+                    credentials {
+                        username = System.getenv("GITHUB_ACTOR")
+                        password = System.getenv("GITHUB_TOKEN")
+                    }
                 }
             }
         }

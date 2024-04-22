@@ -4,8 +4,8 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
-import me.melontini.dark_matter.impl.minecraft.util.test.DarkMatterClientTest;
-import me.melontini.dark_matter.impl.minecraft.util.test.FabricClientTestHelper;
+import me.melontini.handytests.client.ClientTestContext;
+import me.melontini.handytests.client.ClientTestEntrypoint;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.Items;
@@ -14,7 +14,7 @@ import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
-public class RecipeGroupLookupEventTest implements ClientModInitializer, DarkMatterClientTest {
+public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientTestEntrypoint {
 
     @Override
     public void onInitializeClient() {
@@ -30,12 +30,12 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, DarkMat
     }
 
     @Override
-    public void onDarkMatterClientTest() {
+    public void onClientTest(ClientTestContext context) {
         RecipeBookGroup group = EnumUtils.getEnumConstant(new Identifier("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
 
         MakeSure.isTrue(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group));
 
-        FabricClientTestHelper.submitAndWait(client -> client.player.getRecipeBook()
+        context.submitAndWait(client -> client.player.getRecipeBook()
                 .getResultsForGroup(group)
                 .stream().filter(rrc -> rrc.getAllRecipes().stream()
                         .anyMatch(recipe -> recipe.getOutput(client.world.getRegistryManager())
