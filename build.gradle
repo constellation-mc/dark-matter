@@ -120,7 +120,7 @@ allprojects {
         modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
-        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.1-build.4") {
+        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.4-build.5") {
             exclude(group: "net.fabricmc", module: "fabric-loader")
         }
 

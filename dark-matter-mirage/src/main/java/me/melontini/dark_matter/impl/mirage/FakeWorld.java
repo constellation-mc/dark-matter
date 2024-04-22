@@ -39,10 +39,12 @@ public class FakeWorld {
             LOADING.set(true);
             var regs = FakeWorld.getRegistries();
 
-            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), null, new ClientConnection(NetworkSide.CLIENTBOUND), null, new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null);
-            networkHandler.combinedDynamicRegistries = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+            var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
 
-            INSTANCE = new ClientWorld(networkHandler,
+            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), new ClientConnection(NetworkSide.CLIENTBOUND), new ClientConnectionState(
+                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null, immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null));
+
+            return new ClientWorld(networkHandler,
                     new ClientWorld.Properties(Difficulty.EASY, false, false),
                     World.OVERWORLD,
                     regs.getPrecedingRegistryManagers(ServerDynamicRegistryType.DIMENSIONS).get(RegistryKeys.DIMENSION_TYPE).entryOf(DimensionTypes.OVERWORLD),
