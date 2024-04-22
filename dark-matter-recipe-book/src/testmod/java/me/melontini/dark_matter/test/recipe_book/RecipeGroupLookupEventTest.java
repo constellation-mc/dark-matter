@@ -19,12 +19,15 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientT
     @Override
     public void onInitializeClient() {
         RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
-        RecipeBookHelper.registerGroups(RecipeBookCategory.CRAFTING, 1, group);
+        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, 1, group);
+
+        RecipeBookGroup group1 = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
+        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, group);
 
         RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
-            if (recipe.getOutput(registryManager).isIn(ItemTags.PLANKS)) {
-                return group;
-            }
+            var o = recipe.getOutput(registryManager);
+            if (o.isIn(ItemTags.PLANKS)) return group;
+            if (o.isIn(ItemTags.LOGS)) return group1;
             return null;
         });
     }
