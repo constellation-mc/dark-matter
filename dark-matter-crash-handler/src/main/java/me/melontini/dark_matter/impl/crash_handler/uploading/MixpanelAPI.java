@@ -20,7 +20,7 @@ public class MixpanelAPI implements Mixpanel {
 
     private static final String BASE_URL = "https://api.mixpanel.com";
     private static final String EU_URL = "https://api-eu.mixpanel.com";
-    private static final HttpClient CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofMillis(2000)).proxy(ProxySelector.getDefault()).build();
+    private static final HttpClient CLIENT = HttpClient.newBuilder().followRedirects(HttpClient.Redirect.NORMAL).connectTimeout(Duration.ofSeconds(2)).proxy(ProxySelector.getDefault()).build();
     private final Holder holder;
 
     public MixpanelAPI(boolean eu, String projectToken) {

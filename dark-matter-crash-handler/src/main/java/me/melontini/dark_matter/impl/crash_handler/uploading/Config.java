@@ -8,12 +8,13 @@ import net.fabricmc.loader.api.FabricLoader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Locale;
 
 public class Config {
 
     private static final ConfigManager<RawConfig> CONFIG_MANAGER = ConfigManager.of(RawConfig.class, "dark-matter/crash_upload", RawConfig::new)
             .exceptionHandler((e, stage, path) -> {
-                throw new RuntimeException("Failed to %s %s!".formatted(stage.toString().toLowerCase(), FabricLoader.getInstance().getGameDir().relativize(path)));
+                throw new RuntimeException("Failed to %s %s!".formatted(stage.toString().toLowerCase(Locale.ROOT), FabricLoader.getInstance().getGameDir().relativize(path)));
             });
     private static final ReadConfig CONFIG = loadConfig();
 

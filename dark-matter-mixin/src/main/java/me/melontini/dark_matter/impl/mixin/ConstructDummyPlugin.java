@@ -38,7 +38,7 @@ public class ConstructDummyPlugin implements IPluginPlugin {
             String owner = cast(values.get("owner"));
             String name = cast(values.get("name"));
             String desc = cast(values.get("desc"));
-            int access = cast(values.getOrDefault("access", Opcodes.ACC_PUBLIC));
+            int access = (Integer) values.getOrDefault("access", Opcodes.ACC_PUBLIC);
 
             Type descType = Type.getType(desc);
 

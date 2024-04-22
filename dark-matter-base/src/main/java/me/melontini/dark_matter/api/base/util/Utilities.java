@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.base.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.NotNull;
@@ -16,9 +17,6 @@ public final class Utilities {
 
     private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-    private static final BooleanSupplier TRUTH = () -> true;
-    private static final BooleanSupplier FALSE = () -> false;
-
     public static <T> T pickAtRandom(@NotNull T[] list) {
         MakeSure.notEmpty(list);
         return list[MathUtil.threadRandom().nextInt(list.length)];
@@ -30,11 +28,11 @@ public final class Utilities {
     }
 
     public static BooleanSupplier getTruth() {
-        return TRUTH;
+        return () -> true;
     }
 
     public static BooleanSupplier getFalse() {
-        return FALSE;
+        return () -> false;
     }
 
     public static <F, U> U cast(F o) {
@@ -70,9 +68,14 @@ public final class Utilities {
         return STACK_WALKER.walk(s -> s.skip(depth).findFirst().map(StackWalker.StackFrame::getDeclaringClass));
     }
 
-    public static <T> T makeLambda(MethodHandles.Lookup lookup, Class<T> type, MethodHandle h) {
-        CallSite site = Exceptions.supply(() -> LambdaMetafactory.metafactory(lookup, "invoke",
-                MethodType.methodType(type), h.type(), h, h.type()));
-        return Exceptions.supply(() -> (T) site.getTarget().invoke());
+    public static <T> T makeLambda(MethodHandles.Lookup lookup, Class<T> type, MethodHandle handle) {
+        return makeLambda(lookup, type, "invoke", handle);
+    }
+
+    @SneakyThrows
+    public static <T> T makeLambda(MethodHandles.Lookup lookup, Class<T> type, String method, MethodHandle handle) {
+        CallSite site = LambdaMetafactory.metafactory(lookup, method,
+                MethodType.methodType(type), handle.type(), handle, handle.type());
+        return (T) site.getTarget().invoke();
     }
 }

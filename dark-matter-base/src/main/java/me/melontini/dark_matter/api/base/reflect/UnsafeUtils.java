@@ -23,7 +23,7 @@ public class UnsafeUtils {
         UnsafeInternals.setReference(field, o, value);
     }
 
-    public static <T> T getReference(Field field, Object o) {
+    public static <T> T getReference(Field field, @Nullable Object o) {
         return UnsafeInternals.getReference(field, o);
     }
 

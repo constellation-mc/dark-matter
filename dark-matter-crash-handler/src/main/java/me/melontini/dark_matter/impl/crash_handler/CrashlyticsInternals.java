@@ -1,9 +1,9 @@
 package me.melontini.dark_matter.impl.crash_handler;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.base.util.Context;
+import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.crash_handler.Crashlytics;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -43,18 +43,15 @@ public final class CrashlyticsInternals {
 
     private static final Map<String, Crashlytics.Handler> HANDLERS = new HashMap<>();
 
-    public static void addHandler(String id, Crashlytics.Handler handler) {
-        MakeSure.notEmpty(id, "Empty or null id provided!");
-        MakeSure.notNulls("Null arguments provided!", handler);
+    public static void addHandler(@NonNull String id, @NonNull Crashlytics.Handler handler) {
         HANDLERS.putIfAbsent(id, handler);
     }
 
-    public static void removeHandler(String id) {
-        MakeSure.notEmpty(id, "Empty or null id provided!");
+    public static void removeHandler(@NonNull String id) {
         HANDLERS.remove(id);
     }
 
-    public static boolean hasHandler(String id) {
+    public static boolean hasHandler(@NonNull String id) {
         return HANDLERS.containsKey(id);
     }
 

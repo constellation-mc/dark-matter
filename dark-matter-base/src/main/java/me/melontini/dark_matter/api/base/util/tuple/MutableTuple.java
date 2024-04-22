@@ -21,11 +21,13 @@ public final class MutableTuple<L, R> implements Tuple<L, R> {
         this.right = right;
     }
 
+    @Override
     public Tuple<L, R> left(L left) {
         this.left = left;
         return this;
     }
 
+    @Override
     public Tuple<L, R> right(R right) {
         this.right = right;
         return this;

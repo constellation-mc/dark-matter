@@ -34,7 +34,9 @@ import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 /**
- * @author //<a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
+ * <a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
+ *
+ * @author <a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
  */
 @ApiStatus.Internal
 @SuppressWarnings("unused")
@@ -170,7 +172,7 @@ public class InstrumentationInternals {
         }
 
         AtomicReference<Throwable> t = new AtomicReference<>();
-        ModuleLayer.boot().findModule("java.instrument").map(module -> {
+        var opt = ModuleLayer.boot().findModule("java.instrument").map(module -> {
             try {
                 Class<?> cls = Class.forName("sun.instrument.InstrumentationImpl");
                 MethodHandles.Lookup lookup = UnsafeUtils.lookupIn(cls);
@@ -182,7 +184,8 @@ public class InstrumentationInternals {
                 t.set(throwable);
             }
             return self;
-        }).orElseThrow(() -> new IllegalStateException("'java.instrument' module is not available!"));
+        });
+        if (opt.isEmpty()) throw new IllegalStateException("'java.instrument' module is not available!");
         if (t.get() != null) throw t.get();
 
         return (Instrumentation) Reflect.setAccessible(Reflect.findField(ap, "instrumentation").orElseThrow())

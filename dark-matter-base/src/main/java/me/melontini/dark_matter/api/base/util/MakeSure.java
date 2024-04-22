@@ -43,6 +43,7 @@ public final class MakeSure {
 
     @Contract(value = "null -> fail", pure = true)
     public static void notNulls(@Nullable Object... things) {
+        if (things == null) throw new NullPointerException();
         for (Object thing : things) {
             if (thing == null) throw new NullPointerException();
         }
@@ -50,6 +51,7 @@ public final class MakeSure {
 
     @Contract(value = "_, null -> fail", pure = true)
     public static void notNulls(String msg, @Nullable Object... things) {
+        if (things == null) throw new NullPointerException(msg);
         for (Object thing : things) {
             if (thing == null) throw new NullPointerException(msg);
         }

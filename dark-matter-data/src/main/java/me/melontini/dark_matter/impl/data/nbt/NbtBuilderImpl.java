@@ -1,6 +1,6 @@
 package me.melontini.dark_matter.impl.data.nbt;
 
-import me.melontini.dark_matter.api.base.util.MakeSure;
+import lombok.NonNull;
 import me.melontini.dark_matter.api.data.nbt.NbtBuilder;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -21,10 +21,15 @@ public class NbtBuilderImpl implements NbtBuilder {
         this.nbt = new NbtCompound();
     }
 
-    public NbtBuilder put(String key, NbtElement element) {
-        MakeSure.notNull(element, "Tried to put null NbtElement into NBT");
+    public NbtBuilder put(String key, @NonNull NbtElement element) {
         nbt.put(key, element);
         return this;
+    }
+
+    @Override
+    public NbtBuilder put(String key, @NonNull NbtBuilder builder) {
+        nbt.put(key, builder.build());
+        return null;
     }
 
     public NbtBuilder putByte(String key, byte value) {
@@ -47,9 +52,8 @@ public class NbtBuilderImpl implements NbtBuilder {
         return this;
     }
 
-    public NbtBuilder putUuid(String key, UUID value) {
-        MakeSure.notNull(value, "Tried to put null UUID into NBT");
-        nbt.putUuid(key, value);
+    public NbtBuilder putUuid(String key, @NonNull UUID uuid) {
+        nbt.putUuid(key, uuid);
         return this;
     }
 
@@ -63,39 +67,38 @@ public class NbtBuilderImpl implements NbtBuilder {
         return this;
     }
 
-    public NbtBuilder putString(String key, String value) {
-        MakeSure.notNull(value, "Tried to put null String into NBT");
-        nbt.putString(key, value);
+    public NbtBuilder putString(String key, @NonNull String string) {
+        nbt.putString(key, string);
         return this;
     }
 
-    public NbtBuilder putByteArray(String key, byte[] value) {
-        nbt.putByteArray(key, value);
+    public NbtBuilder putByteArray(String key, byte @NonNull [] bytes) {
+        nbt.putByteArray(key, bytes);
         return this;
     }
 
-    public NbtBuilder putByteArray(String key, List<Byte> value) {
-        nbt.putByteArray(key, value);
+    public NbtBuilder putByteArray(String key, @NonNull List<Byte> bytes) {
+        nbt.putByteArray(key, bytes);
         return this;
     }
 
-    public NbtBuilder putIntArray(String key, int[] value) {
-        nbt.putIntArray(key, value);
+    public NbtBuilder putIntArray(String key, int @NonNull [] ints) {
+        nbt.putIntArray(key, ints);
         return this;
     }
 
-    public NbtBuilder putIntArray(String key, List<Integer> value) {
-        nbt.putIntArray(key, value);
+    public NbtBuilder putIntArray(String key, @NonNull List<Integer> ints) {
+        nbt.putIntArray(key, ints);
         return this;
     }
 
-    public NbtBuilder putLongArray(String key, long[] value) {
-        nbt.putLongArray(key, value);
+    public NbtBuilder putLongArray(String key, long @NonNull [] longs) {
+        nbt.putLongArray(key, longs);
         return this;
     }
 
-    public NbtBuilder putLongArray(String key, List<Long> value) {
-        nbt.putLongArray(key, value);
+    public NbtBuilder putLongArray(String key, @NonNull List<Long> longs) {
+        nbt.putLongArray(key, longs);
         return this;
     }
 

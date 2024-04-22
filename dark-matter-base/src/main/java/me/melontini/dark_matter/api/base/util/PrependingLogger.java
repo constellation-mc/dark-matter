@@ -51,10 +51,9 @@ public class PrependingLogger {
         return s.split("\\.");
     }
 
-    private static final Function<Logger, String> DEFAULT = logger -> "";
     @Getter
     private final Logger backing;
-    protected volatile Function<Logger, String> prefixGetter = DEFAULT;
+    protected volatile Function<Logger, String> prefixGetter = logger -> "";
 
     public PrependingLogger(Logger backing, Function<Logger, String> prefixGetter) {
         this.backing = backing;

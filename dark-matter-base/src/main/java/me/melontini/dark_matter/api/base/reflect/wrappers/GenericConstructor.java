@@ -6,7 +6,6 @@ import me.melontini.dark_matter.api.base.util.Exceptions;
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
 
-@SuppressWarnings("unchecked")
 public interface GenericConstructor<O> {
     O construct(Object... args);
     GenericConstructor<O> accessible(boolean accessible);

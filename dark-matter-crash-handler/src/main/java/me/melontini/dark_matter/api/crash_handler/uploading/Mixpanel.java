@@ -7,6 +7,7 @@ import me.melontini.dark_matter.impl.crash_handler.uploading.MixpanelAPI;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 
 public interface Mixpanel extends Uploader<Void, Mixpanel.Context> {
@@ -38,11 +39,12 @@ public interface Mixpanel extends Uploader<Void, Mixpanel.Context> {
         return object;
     }
 
+    @Override
     default String getPropName(Prop prop) {
         if (prop == Props.OS) {
             return "$os";
         }
-        return prop.name().toLowerCase();
+        return prop.name().toLowerCase(Locale.ROOT);
     }
 
     record Context(String event, JsonObject props) { }

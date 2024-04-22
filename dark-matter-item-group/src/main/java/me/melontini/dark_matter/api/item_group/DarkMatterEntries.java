@@ -4,6 +4,7 @@ import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.minecraft.item.ItemConvertible;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.collection.DefaultedList;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Collection;
 
@@ -22,7 +23,7 @@ public interface DarkMatterEntries {
         this.add(new ItemStack(item), Visibility.TAB_AND_SEARCH);
     }
 
-    default void addAll(Collection<ItemStack> stacks, Visibility visibility) {
+    default void addAll(@NotNull Collection<ItemStack> stacks, Visibility visibility) {
         stacks.forEach(stack -> this.add(stack, visibility));
     }
 

@@ -3,7 +3,7 @@ package me.melontini.dark_matter.impl.mirage;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.LightmapTextureManager;
 
-public class AlwaysBrightLightmapTextureManager extends LightmapTextureManager {
+public final class AlwaysBrightLightmapTextureManager extends LightmapTextureManager {
 
     public static final AlwaysBrightLightmapTextureManager INSTANCE = new AlwaysBrightLightmapTextureManager();
 
