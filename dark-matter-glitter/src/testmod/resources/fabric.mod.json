@@ -5,7 +5,7 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "dark-matter:client_test": [
+    "handy:client_test": [
       "me.melontini.dark_matter.test.glitter.ScreenParticleHelperTest"
     ]
   }

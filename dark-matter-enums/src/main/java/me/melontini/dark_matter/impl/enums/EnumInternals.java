@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.enums;
 
+import lombok.NonNull;
 import lombok.Synchronized;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
@@ -7,6 +8,7 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import org.apache.commons.lang3.ArrayUtils;
+import org.jetbrains.annotations.NotNull;
 import org.objectweb.asm.Opcodes;
 
 import java.lang.invoke.MethodHandles;
@@ -101,7 +103,7 @@ public class EnumInternals {
     }
 
     @Synchronized
-    public static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<C>> T extend(Class<T> cls, String internalName, C params) {
+    public static <C extends Supplier<Object[]>, T extends Enum<T> & ExtendableEnum<C>> @NotNull T extend(@NonNull Class<T> cls, @NonNull String internalName, @NonNull C params) {
         try {
             T r = callEnumInvoker(cls, internalName, params.get());
             r.dark_matter$init(params);

@@ -1,41 +1,33 @@
 package me.melontini.dark_matter.test.recipe_book;
 
-import me.melontini.dark_matter.impl.minecraft.util.test.DarkMatterClientTest;
-import me.melontini.dark_matter.impl.minecraft.util.test.FabricClientTestHelper;
+import me.melontini.handytests.client.ClientTestContext;
+import me.melontini.handytests.client.ClientTestEntrypoint;
 import net.minecraft.client.gui.screen.ingame.InventoryScreen;
 
-public class PaginatedRecipeBookTest implements DarkMatterClientTest {
+public class PaginatedRecipeBookTest implements ClientTestEntrypoint {
+
     @Override
-    public void onDarkMatterClientTest() {
-        FabricClientTestHelper.submitAndWait(client -> {
-            client.player.networkHandler.sendCommand("gamemode survival");
-            client.player.networkHandler.sendCommand("recipe give @s *");
+    public void onClientTest(ClientTestContext context) {
+        context.sendCommand("gamemode survival");
+        context.sendCommand("recipe give @s *");
+        context.openInventory();
+        context.waitForWorldTicks(40);
+
+        context.executeForScreen(InventoryScreen.class, (client, screen) -> {
+            if (!screen.getRecipeBookWidget().isOpen()) {
+                ((InventoryScreenAccessor) screen).dark_matter$pressRecipeBookButton();
+            }
             return null;
         });
-        FabricClientTestHelper.openInventory();
-        FabricClientTestHelper.waitForWorldTicks(40);
-
-        FabricClientTestHelper.submitAndWait(client -> {
-            if (client.currentScreen instanceof InventoryScreen screen) {
-                if (!screen.getRecipeBookWidget().isOpen()) {
-                    ((InventoryScreenAccessor) screen).dark_matter$pressRecipeBookButton();
-                }
-                return null;
+        context.takeScreenshot("recipe-book-open");
+        context.executeForScreen(InventoryScreen.class, (client, screen) -> {
+            if (screen.getRecipeBookWidget().isOpen()) {
+                ((InventoryScreenAccessor) screen).dark_matter$pressRecipeBookButton();
             }
-            throw new IllegalStateException();
+            return null;
         });
-        FabricClientTestHelper.takeScreenshot("recipe-book-open");
-        FabricClientTestHelper.submitAndWait(client -> {
-            if (client.currentScreen instanceof InventoryScreen screen) {
-                if (screen.getRecipeBookWidget().isOpen()) {
-                    ((InventoryScreenAccessor) screen).dark_matter$pressRecipeBookButton();
-                }
-                return null;
-            }
-            throw new IllegalStateException();
-        });
-        FabricClientTestHelper.closeScreen();
-        FabricClientTestHelper.submitAndWait(client -> client.player.networkHandler.sendCommand("gamemode creative"));
-        FabricClientTestHelper.waitForWorldTicks(20);
+        context.closeScreen();
+        context.sendCommand("gamemode creative");
+        context.waitForWorldTicks(20);
     }
 }

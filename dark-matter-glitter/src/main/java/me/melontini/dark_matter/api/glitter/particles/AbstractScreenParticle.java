@@ -28,10 +28,13 @@ public abstract class AbstractScreenParticle implements Drawable {
     }
 
     @Override
+    @ApiStatus.OverrideOnly
     public abstract void render(DrawContext context, int mouseX, int mouseY, float delta);
 
+    @ApiStatus.OverrideOnly
     protected abstract void tick();
 
+    @ApiStatus.OverrideOnly
     protected boolean checkRemoval() {
         return age >= deathAge;
     }

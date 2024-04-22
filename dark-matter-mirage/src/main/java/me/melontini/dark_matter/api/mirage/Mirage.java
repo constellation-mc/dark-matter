@@ -10,7 +10,7 @@ import net.minecraft.client.world.ClientWorld;
 public class Mirage {
 
     public static ClientWorld getFakeWorld() {
-        return FakeWorld.INSTANCE;
+        return FakeWorld.INSTANCE.get();
     }
 
     public static LightmapTextureManager getAlwaysBrightLTM() {

@@ -51,6 +51,8 @@ public interface NbtBuilder {
 
     NbtBuilder put(String key, NbtElement element);
 
+    NbtBuilder put(String key, NbtBuilder builder);
+
     NbtBuilder putByte(String key, byte value);
 
     NbtBuilder putShort(String key, short value);

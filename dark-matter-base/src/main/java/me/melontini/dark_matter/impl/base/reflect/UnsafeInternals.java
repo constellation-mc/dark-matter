@@ -1,10 +1,13 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
 import com.google.common.base.Suppliers;
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import sun.misc.Unsafe;
 
 import java.lang.invoke.MethodHandle;
@@ -43,15 +46,15 @@ public class UnsafeInternals {
     private static final Supplier<MethodHandles.Lookup> TRUSTED_LOOKUP = Suppliers.memoize(() -> supply(() -> UnsafeUtils.getReference(MethodHandles.Lookup.class.getDeclaredField("IMPL_LOOKUP"), null)));
     private static final Supplier<MethodHandle> DEFINE_CLASS = Suppliers.memoize(() -> supply(() -> TRUSTED_LOOKUP.get().findVirtual(ClassLoader.class, "defineClass", MethodType.methodType(Class.class, String.class, byte[].class, int.class, int.class, ProtectionDomain.class))));
 
-    public static MethodHandles.Lookup lookupIn(Class<?> cls) {
+    public static MethodHandles.@NotNull Lookup lookupIn(Class<?> cls) {
         return TRUSTED_LOOKUP.get().in(cls);
     }
 
-    public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, ProtectionDomain domain) {
+    public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, @Nullable ProtectionDomain domain) {
         return (Class<?>) supply(() -> DEFINE_CLASS.get().invoke(loader, name, bytes, domain));
     }
 
-    public static void setReference(Field field, Object o, Object value) {
+    public static void setReference(@NonNull Field field, Object o, Object value) {
         boolean isStatic = Modifier.isStatic(field.getModifiers());
         boolean isVolatile = Modifier.isVolatile(field.getModifiers()) || Modifier.isFinal(field.getModifiers());
         if (isVolatile) {
@@ -67,7 +70,7 @@ public class UnsafeInternals {
         }
     }
 
-    public static <T> T getReference(Field field, Object o) {
+    public static <T> T getReference(@NonNull Field field, @Nullable Object o) {
         boolean isStatic = Modifier.isStatic(field.getModifiers());
         boolean isVolatile = Modifier.isVolatile(field.getModifiers()) || Modifier.isFinal(field.getModifiers());
         if (isVolatile) {
@@ -81,7 +84,7 @@ public class UnsafeInternals {
         }
     }
 
-    public static <T> T allocateInstance(Class<T> cls) throws InstantiationException {
+    public static <T> T allocateInstance(@NonNull Class<T> cls) throws InstantiationException {
         return Utilities.cast(getUnsafe().allocateInstance(cls));
     }
 

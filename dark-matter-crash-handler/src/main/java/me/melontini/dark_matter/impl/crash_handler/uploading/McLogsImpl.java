@@ -1,7 +1,5 @@
 package me.melontini.dark_matter.impl.crash_handler.uploading;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import me.melontini.dark_matter.api.crash_handler.uploading.McLogs;
@@ -21,7 +19,6 @@ public enum McLogsImpl implements McLogs {
     INSTANCE;
 
     private static final HttpClient CLIENT = HttpClient.newHttpClient();
-    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static final String MCLO_GS_API = "https://api.mclo.gs/1/log";
 
     public static CompletableFuture<String> uploadToMclo_gs(String log) {

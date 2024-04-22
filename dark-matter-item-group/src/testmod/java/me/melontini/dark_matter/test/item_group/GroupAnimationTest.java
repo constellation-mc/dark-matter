@@ -2,8 +2,8 @@ package me.melontini.dark_matter.test.item_group;
 
 import me.melontini.dark_matter.api.item_group.ItemGroupAnimaton;
 import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
-import me.melontini.dark_matter.impl.minecraft.util.test.DarkMatterClientTest;
-import me.melontini.dark_matter.impl.minecraft.util.test.FabricClientTestHelper;
+import me.melontini.handytests.client.ClientTestContext;
+import me.melontini.handytests.client.ClientTestEntrypoint;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.impl.client.itemgroup.CreativeGuiExtensions;
 import net.minecraft.client.MinecraftClient;
@@ -13,7 +13,7 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Util;
 import net.minecraft.util.math.RotationAxis;
 
-public class GroupAnimationTest implements ClientModInitializer, DarkMatterClientTest {
+public class GroupAnimationTest implements ClientModInitializer, ClientTestEntrypoint {
     @Override
     public void onInitializeClient() {
         var stack = Items.SPRUCE_SIGN.getDefaultStack();
@@ -32,14 +32,14 @@ public class GroupAnimationTest implements ClientModInitializer, DarkMatterClien
     }
 
     @Override
-    public void onDarkMatterClientTest() {
-        FabricClientTestHelper.setScreen(client -> new CreativeInventoryScreen(client.player, client.world.getEnabledFeatures(), false));
-        FabricClientTestHelper.waitForWorldTicks(10);
-        FabricClientTestHelper.submitAndWait(client -> {
-            ((CreativeGuiExtensions)client.currentScreen).fabric_nextPage();
+    public void onClientTest(ClientTestContext context) {
+        context.setScreen(client -> new CreativeInventoryScreen(client.player, client.world.getEnabledFeatures(), false));
+        context.waitForWorldTicks(10);
+        context.executeForScreen(CreativeInventoryScreen.class, (client, screen) -> {
+            ((CreativeGuiExtensions)screen).fabric_nextPage();
             return null;
         });
-        FabricClientTestHelper.takeScreenshot("item-group-animation");
-        FabricClientTestHelper.closeScreen();
+        context.takeScreenshot("item-group-animation");
+        context.closeScreen();
     }
 }

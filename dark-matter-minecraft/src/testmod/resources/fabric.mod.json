@@ -5,8 +5,11 @@
   "license": "MIT",
   "environment": "*",
   "entrypoints": {
-    "client": [
-      "me.melontini.dark_matter.test.minecraft.ClientTestHelper"
+    "main": [
+      "me.melontini.dark_matter.test.minecraft.RegistryUtilTest"
+    ],
+    "handy:client_test": [
+      "me.melontini.dark_matter.test.minecraft.ValueTrackerTest"
     ]
   },
   "mixins": [

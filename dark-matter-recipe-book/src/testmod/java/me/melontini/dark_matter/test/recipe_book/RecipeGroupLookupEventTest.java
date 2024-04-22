@@ -4,8 +4,8 @@ import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
-import me.melontini.dark_matter.impl.minecraft.util.test.DarkMatterClientTest;
-import me.melontini.dark_matter.impl.minecraft.util.test.FabricClientTestHelper;
+import me.melontini.handytests.client.ClientTestContext;
+import me.melontini.handytests.client.ClientTestEntrypoint;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.recipebook.RecipeBookGroup;
 import net.minecraft.item.Items;
@@ -14,28 +14,31 @@ import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
 
-public class RecipeGroupLookupEventTest implements ClientModInitializer, DarkMatterClientTest {
+public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientTestEntrypoint {
 
     @Override
     public void onInitializeClient() {
         RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
-        RecipeBookHelper.registerGroups(RecipeBookCategory.CRAFTING, 1, group);
+        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, 1, group);
+
+        RecipeBookGroup group1 = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
+        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, group);
 
         RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
-            if (recipe.getResult(registryManager).isIn(ItemTags.PLANKS)) {
-                return group;
-            }
+            var o = recipe.getResult(registryManager);
+            if (o.isIn(ItemTags.PLANKS)) return group;
+            if (o.isIn(ItemTags.LOGS)) return group1;
             return null;
         });
     }
 
     @Override
-    public void onDarkMatterClientTest() {
+    public void onClientTest(ClientTestContext context) {
         RecipeBookGroup group = EnumUtils.getEnumConstant(new Identifier("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
 
         MakeSure.isTrue(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group));
 
-        FabricClientTestHelper.submitAndWait(client -> client.player.getRecipeBook()
+        context.submitAndWait(client -> client.player.getRecipeBook()
                 .getResultsForGroup(group)
                 .stream().filter(rrc -> rrc.getAllRecipes().stream()
                         .anyMatch(recipe -> recipe.value().getResult(client.world.getRegistryManager())

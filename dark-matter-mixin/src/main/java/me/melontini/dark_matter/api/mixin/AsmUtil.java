@@ -1,7 +1,9 @@
 package me.melontini.dark_matter.api.mixin;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.impl.mixin.AsmImpl;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.commons.InstructionAdapter;
@@ -34,7 +36,7 @@ public class AsmUtil {
         return AsmImpl.emptyAnnotationList();
     }
 
-    public static void insAdapter(MethodVisitor mv, Consumer<InstructionAdapter> consumer) {
+    public static void insAdapter(MethodVisitor mv, @NonNull Consumer<InstructionAdapter> consumer) {
         consumer.accept(new InstructionAdapter(mv));
     }
 
@@ -46,7 +48,7 @@ public class AsmUtil {
         insAdapter(cv, access, name, descriptor, signature, null, consumer);
     }
 
-    public static void insAdapter(ClassVisitor cv, int access, String name, String descriptor, String signature, String[] exceptions, Consumer<InstructionAdapter> consumer) {
+    public static void insAdapter(@NonNull ClassVisitor cv, int access, String name, String descriptor, @Nullable String signature, @Nullable String[] exceptions, @NonNull Consumer<InstructionAdapter> consumer) {
         consumer.accept(new InstructionAdapter(cv.visitMethod(access, name, descriptor, signature, exceptions)));
     }
 }

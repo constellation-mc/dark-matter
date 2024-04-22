@@ -12,6 +12,8 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 /**
+ * <a href="https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass">source</a>
+ *
  * @author <a href="https://stackoverflow.com/questions/55918972/unable-to-find-method-sun-misc-unsafe-defineclass">source</a>
  */
 @UtilityClass
@@ -74,7 +76,7 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static <T> Field findField(Class<T> clazz, boolean traverse, String name) {
+    public static <T> @Nullable Field findField(@NotNull Class<T> clazz, boolean traverse, String name) {
         Field[] fields = clazz.getDeclaredFields();
         if (fields.length == 1) {
             return fields[0].getName().equals(name) ? fields[0] : null;

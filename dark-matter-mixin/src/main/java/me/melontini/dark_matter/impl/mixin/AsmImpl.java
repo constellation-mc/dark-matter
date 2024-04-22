@@ -62,8 +62,7 @@ public class AsmImpl {
             try {
                 Class<?> cls = Class.forName(enum0[0].replace("/", ".").substring(1, enum0[0].length() - 1));
                 if (Enum.class.isAssignableFrom(cls)) {
-                    value = Enum.valueOf(cast(cls), enum0[1]);
-                    return value;
+                    return Enum.valueOf(cast(cls), enum0[1]);
                 }
             } catch (ClassNotFoundException e) {
                 throw new RuntimeException(e);

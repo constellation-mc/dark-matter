@@ -12,7 +12,7 @@
       "me.melontini.dark_matter.test.recipe_book.RecipeBookHelperTest",
       "me.melontini.dark_matter.test.recipe_book.RecipeGroupLookupEventTest"
     ],
-    "dark-matter:client_test": [
+    "handy:client_test": [
       "me.melontini.dark_matter.test.recipe_book.RecipeGroupLookupEventTest",
       "me.melontini.dark_matter.test.recipe_book.PaginatedRecipeBookTest"
     ]
