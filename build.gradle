@@ -1,3 +1,4 @@
+import com.github.spotbugs.snom.SpotBugsTask
 import net.fabricmc.loom.api.RemapConfigurationSettings
 
 plugins {
@@ -5,6 +6,7 @@ plugins {
     id 'fabric-loom' version "${loom_version}" apply false
     id 'maven-publish'
     id 'io.freefair.lombok' version '8.3' apply false
+    id 'com.github.spotbugs-base' version '6.0.12'
 }
 
 def targetJavaVersion = 17
@@ -27,6 +29,7 @@ allprojects {
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'io.freefair.lombok'
+    apply plugin: 'com.github.spotbugs'
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = "UTF-8"
@@ -190,6 +193,22 @@ allprojects {
 
 dependencies {//gradle doesn't believe in transitive test dependencies.
     fabricTest(project, ["fabric-item-group-api-v1"])
+}
+
+tasks.register("spotbugs", SpotBugsTask) { task ->
+    subprojects.forEach {
+        it.sourceSets.findAll{!name.contains("test")}.each {
+            task.sourceDirs.from(task.sourceDirs.files, it.allSource.sourceDirectories)
+            task.classDirs.from(task.classDirs.files, it.output)
+            task.auxClassPaths.from(task.auxClassPaths.files, it.compileClasspath)
+        }
+    }
+    reports {
+        sarif {
+            required = true
+            outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.sarif")
+        }
+    }
 }
 
 loom {
