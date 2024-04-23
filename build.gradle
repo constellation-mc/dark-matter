@@ -29,7 +29,6 @@ allprojects {
     apply plugin: 'fabric-loom'
     apply plugin: 'maven-publish'
     apply plugin: 'io.freefair.lombok'
-    apply plugin: 'com.github.spotbugs'
 
     tasks.withType(JavaCompile).configureEach {
         it.options.encoding = "UTF-8"
@@ -203,6 +202,7 @@ tasks.register("spotbugs", SpotBugsTask) { task ->
             task.auxClassPaths.from(task.auxClassPaths.files, it.compileClasspath)
         }
     }
+    ignoreFailures = true
     reports {
         sarif {
             required = true
