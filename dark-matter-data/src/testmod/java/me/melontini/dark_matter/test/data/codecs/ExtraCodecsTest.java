@@ -3,13 +3,9 @@ package me.melontini.dark_matter.test.data.codecs;
 import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import me.melontini.dark_matter.api.base.util.MakeSure;
-import me.melontini.dark_matter.api.data.codecs.ExtraCodecs;
 import net.fabricmc.api.ModInitializer;
-import net.minecraft.util.Identifier;
 
 import java.lang.reflect.Type;
-import java.util.Objects;
 
 public class ExtraCodecsTest implements ModInitializer {
     @Override
