@@ -10,7 +10,6 @@ import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -31,6 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -163,7 +163,7 @@ public class InstrumentationInternals {
             ap = ClassLoader.getSystemClassLoader().loadClass(AgentProvider.class.getName());
         } catch (Throwable t) {
             try (var is = AgentProvider.class.getClassLoader().getResourceAsStream(AgentProvider.class.getName().replace('.', '/') + ".class")) {
-                ap = UnsafeUtils.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), MakeSure.notNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
+                ap = UnsafeUtils.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), Objects.requireNonNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
             } catch (Throwable t1) {
                 throw new RuntimeException("Failed to define " + AgentProvider.class.getName(), t1);
             }

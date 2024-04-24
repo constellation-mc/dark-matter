@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.item_group;
 
+import lombok.NonNull;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.item_group.DarkMatterEntries;
@@ -26,16 +27,13 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     private BooleanSupplier register = Utilities.getTruth();
     private Text displayName;
 
-    public ItemGroupBuilderImpl(Identifier id) {
-        MakeSure.notNull(id, "null identifier provided.");
-
-        if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", id);
-        this.identifier = id;
+    public ItemGroupBuilderImpl(@NonNull Identifier identifier) {
+        if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", identifier);
+        this.identifier = identifier;
     }
 
     @Override
-    public ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier) {
-        MakeSure.notNull(itemStackSupplier, "couldn't build: " + identifier);
+    public ItemGroupBuilder icon(@NonNull Supplier<ItemStack> itemStackSupplier) {
         this.icon = itemStackSupplier;
         return this;
     }
@@ -48,23 +46,20 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     }
 
     @Override
-    public ItemGroupBuilder entries(DarkMatterEntries.Collector collector) {
-        MakeSure.notNull(collector, "couldn't build: " + identifier);
+    public ItemGroupBuilder entries(@NonNull DarkMatterEntries.Collector collector) {
         this.entries = collector;
         return this;
     }
 
     @Override
-    public ItemGroupBuilder displayName(Text displayName) {
-        MakeSure.notNull(displayName, "couldn't build: " + identifier);
+    public ItemGroupBuilder displayName(@NonNull Text displayName) {
         this.displayName = displayName;
         return this;
     }
 
 
     @Override
-    public ItemGroupBuilder register(BooleanSupplier booleanSupplier) {
-        MakeSure.notNull(booleanSupplier, "couldn't build: " + identifier);
+    public ItemGroupBuilder register(@NonNull BooleanSupplier booleanSupplier) {
         this.register = booleanSupplier;
         return this;
     }

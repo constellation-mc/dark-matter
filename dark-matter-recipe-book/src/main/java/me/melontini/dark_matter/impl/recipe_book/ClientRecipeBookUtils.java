@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.recipe_book;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
@@ -61,13 +62,11 @@ public class ClientRecipeBookUtils {
         return GROUPS_FOR_CATEGORY.computeIfAbsent(category, category1 -> new ArrayList<>());
     }
 
-    public static void registerGroups(RecipeBookCategory category, List<RecipeBookGroup> groups) {
-        MakeSure.notNulls(category, groups);
+    public static void registerGroups(@NonNull RecipeBookCategory category, @NonNull List<RecipeBookGroup> groups) {
         getGroupsForCategory(category).addAll(groups);
     }
 
-    public static void registerGroups(RecipeBookCategory category, int index, List<RecipeBookGroup> groups) {
-        MakeSure.notNulls(category, groups);
+    public static void registerGroups(@NonNull RecipeBookCategory category, int index, @NonNull List<RecipeBookGroup> groups) {
         MakeSure.isTrue(index >= 0, "Index can't be below 0!");
 
         List<RecipeBookGroup> groupList = getGroupsForCategory(category);
@@ -75,14 +74,12 @@ public class ClientRecipeBookUtils {
         else groupList.addAll(index, groups);
     }
 
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, List<RecipeBookGroup> groups) {
-        MakeSure.notNulls(searchGroup, groups);
+    public static void addToSearchGroup(@NonNull RecipeBookGroup searchGroup, @NonNull List<RecipeBookGroup> groups) {
         List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(searchGroup, group -> new ArrayList<>());
         groupList.addAll(groups);
     }
 
-    public static void addToSearchGroup(RecipeBookGroup searchGroup, int index, List<RecipeBookGroup> groups) {
-        MakeSure.notNulls(searchGroup, groups);
+    public static void addToSearchGroup(@NonNull RecipeBookGroup searchGroup, int index, @NonNull List<RecipeBookGroup> groups) {
         List<RecipeBookGroup> groupList = RecipeBookGroup.SEARCH_MAP.computeIfAbsent(searchGroup, group -> new ArrayList<>());
 
         if (index >= groupList.size()) groupList.addAll(groups);

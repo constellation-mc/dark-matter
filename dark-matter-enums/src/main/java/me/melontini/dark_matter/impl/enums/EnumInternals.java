@@ -75,7 +75,7 @@ public class EnumInternals {
                 enumValues = Arrays.stream(enumClass.getDeclaredFields()).filter(field -> (field.getModifiers() & mod) == mod && field.getType() == enumArrayClass)
                         .findFirst().orElseThrow();
             }
-            ENUM_TO_FIELD.putIfAbsent(enumClass, MakeSure.notNull(enumValues, "(reflection) couldn't find enum's $VALUES"));
+            ENUM_TO_FIELD.putIfAbsent(enumClass, Objects.requireNonNull(enumValues, "(reflection) couldn't find enum's $VALUES"));
             enumClass.getMethod("values").invoke(enumClass);//we need to init enumClass to access its fields, duh.
 
             T[] entries = cast(UnsafeUtils.getReference(enumValues, enumClass));//ReflectionUtil.getField(enumValues, enumClass)
@@ -91,7 +91,7 @@ public class EnumInternals {
             } catch (Exception e) {
                 throw new ReflectiveOperationException("(reflection) Couldn't create new enum instance", e);
             }
-            MakeSure.notNull(entry, "(reflection) Couldn't create new enum instance");
+            Objects.requireNonNull(entry, "(reflection) Couldn't create new enum instance");
             T[] tempArray = ArrayUtils.add(entries, entry);
 
             UnsafeUtils.putReference(enumValues, enumClass, tempArray);

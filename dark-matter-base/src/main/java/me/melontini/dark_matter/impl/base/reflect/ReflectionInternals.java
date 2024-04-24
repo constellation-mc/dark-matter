@@ -1,9 +1,8 @@
 package me.melontini.dark_matter.impl.base.reflect;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import org.apache.commons.lang3.ClassUtils;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.AccessibleObject;
@@ -19,7 +18,7 @@ import java.lang.reflect.Method;
 @UtilityClass
 public class ReflectionInternals {
 
-    public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, Class<?>... classes) {
+    public static @Nullable <T> Constructor<T> findConstructor(@NonNull Class<T> clazz, Class<?>... classes) {
         Constructor<T>[] ctxs = (Constructor<T>[]) clazz.getDeclaredConstructors();
         if (ctxs.length == 1) {
             return checkCtx(ctxs[0], classes) ? ctxs[0] : null;
@@ -35,7 +34,7 @@ public class ReflectionInternals {
         return null;
     }
 
-    private static boolean checkCtx(Constructor<?> ctx, Class<?>[] classes) {
+    private static boolean checkCtx(@NonNull Constructor<?> ctx, Class<?>[] classes) {
         if (ctx.getParameterCount() != classes.length) return false;
 
         Class<?>[] pt = ctx.getParameterTypes();
@@ -47,7 +46,7 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static @Nullable <T> Method findMethod(@NotNull Class<T> clazz, boolean traverse, String name, Class<?>... classes) {
+    public static @Nullable <T> Method findMethod(@NonNull Class<T> clazz, boolean traverse, String name, Class<?>... classes) {
         Method[] methods = clazz.getDeclaredMethods();
         if (methods.length == 1) {
             return checkMethod(methods[0], name, classes) ? methods[0] : null;
@@ -63,7 +62,7 @@ public class ReflectionInternals {
         return traverse && clazz.getSuperclass() != null ? findMethod(clazz.getSuperclass(), true, name, classes) : null;
     }
 
-    private static boolean checkMethod(Method method, String name, Class<?>[] classes) {
+    private static boolean checkMethod(@NonNull Method method, String name, Class<?>[] classes) {
         if (!method.getName().equals(name)) return false;
         if (method.getParameterCount() != classes.length) return false;
 
@@ -76,7 +75,7 @@ public class ReflectionInternals {
         return true;
     }
 
-    public static <T> @Nullable Field findField(@NotNull Class<T> clazz, boolean traverse, String name) {
+    public static <T> @Nullable Field findField(@NonNull Class<T> clazz, boolean traverse, String name) {
         Field[] fields = clazz.getDeclaredFields();
         if (fields.length == 1) {
             return fields[0].getName().equals(name) ? fields[0] : null;
@@ -90,8 +89,7 @@ public class ReflectionInternals {
         return traverse && clazz.getSuperclass() != null ? findField(clazz.getSuperclass(), true, name) : null;
     }
 
-    public static <T extends AccessibleObject> T setAccessible(T member, boolean set) {
-        MakeSure.notNull(member, "Tried to setAccessible a null constructor");
+    public static <T extends AccessibleObject> T setAccessible(@NonNull T member, boolean set) {
         try {
             member.setAccessible(set);
         } catch (Exception e) {

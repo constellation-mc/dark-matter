@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.api.minecraft.util;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.MathUtil;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.item.Item;
@@ -22,46 +22,40 @@ public class ItemStackUtil {
         return Optional.ofNullable(item).map(ItemConvertible::asItem).map(Item::getDefaultStack).orElse(ItemStack.EMPTY);
     }
 
-    public static void spawn(@NotNull BlockPos pos, ItemStack stack, World world) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawn(@NonNull BlockPos pos, @NonNull ItemStack stack, @NonNull World world) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
 
-    public static void spawn(@NotNull Vec3d pos, ItemStack stack, World world) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawn(@NonNull Vec3d pos, @NonNull ItemStack stack, @NonNull World world) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack);
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
 
-    public static void spawnVelocity(@NotNull BlockPos pos, ItemStack stack, World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawnVelocity(@NonNull BlockPos pos, @NonNull ItemStack stack, @NonNull World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
                 MathUtil.nextDouble(minX, maxX), MathUtil.nextDouble(minY, maxY), MathUtil.nextDouble(minZ, maxZ));
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
 
-    public static void spawnVelocity(@NotNull Vec3d pos, ItemStack stack, World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawnVelocity(@NonNull Vec3d pos, @NonNull ItemStack stack, @NonNull World world, double minX, double maxX, double minY, double maxY, double minZ, double maxZ) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
                 MathUtil.nextDouble(minX, maxX), MathUtil.nextDouble(minY, maxY), MathUtil.nextDouble(minZ, maxZ));
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
 
-    public static void spawnVelocity(@NotNull BlockPos pos, ItemStack stack, World world, @NotNull Vec3d vec3d) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawnVelocity(@NotNull BlockPos pos, @NonNull ItemStack stack, @NonNull World world, @NotNull Vec3d vec3d) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
                 vec3d.x, vec3d.y, vec3d.z);
         itemEntity.setToDefaultPickupDelay();
         world.spawnEntity(itemEntity);
     }
 
-    public static void spawnVelocity(@NotNull Vec3d pos, ItemStack stack, World world, @NotNull Vec3d vec3d) {
-        MakeSure.notNulls(pos, stack, world);
+    public static void spawnVelocity(@NotNull Vec3d pos, @NonNull ItemStack stack, @NonNull World world, @NotNull Vec3d vec3d) {
         ItemEntity itemEntity = new ItemEntity(world, pos.getX(), pos.getY(), pos.getZ(), stack,
                 vec3d.x, vec3d.y, vec3d.z);
         itemEntity.setToDefaultPickupDelay();

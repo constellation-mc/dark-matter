@@ -1,8 +1,8 @@
 package me.melontini.dark_matter.impl.minecraft.debug;
 
 import com.google.common.base.Strings;
+import lombok.NonNull;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -23,26 +23,23 @@ public class ValueTrackerImpl {
     private static final Map<String, Tuple<Instant, Duration>> TIMERS = new HashMap<>();
     private static final Set<String> FOR_REMOVAL = new HashSet<>();
 
-    public static void removeTracker(String s) {
-        TRACKERS.remove(s);
-        TIMERS.remove(s);
+    public static void removeTracker(@NonNull String trackerName) {
+        TRACKERS.remove(trackerName);
+        TIMERS.remove(trackerName);
     }
 
-    public static void addTracker(String s, Supplier<?> supplier) {
-        MakeSure.notNulls(s, supplier);
-        TRACKERS.put(s, supplier);
+    public static void addTracker(@NonNull String trackerName, @NonNull Supplier<?> supplier) {
+        TRACKERS.put(trackerName, supplier);
     }
 
-    public static void addTracker(String s, Supplier<?> supplier, Duration duration) {
-        MakeSure.notNulls(s, supplier, duration);
-        TRACKERS.put(s, supplier);
-        TIMERS.put(s, Tuple.of(Instant.now(), duration));
+    public static void addTracker(@NonNull String trackerName, @NonNull Supplier<?> supplier, @NonNull Duration duration) {
+        TRACKERS.put(trackerName, supplier);
+        TIMERS.put(trackerName, Tuple.of(Instant.now(), duration));
     }
 
-    public static void addFieldTracker(String s, Field f, Object o) {
-        MakeSure.notNulls(s, f, o);
+    public static void addFieldTracker(@NonNull String trackerName, @NonNull Field f, @NonNull Object o) {
         Reflect.setAccessible(f);
-        TRACKERS.put(s, () -> {
+        TRACKERS.put(trackerName, () -> {
             try {
                 return f.get(o);
             } catch (IllegalAccessException e) {
@@ -51,23 +48,21 @@ public class ValueTrackerImpl {
         });
     }
 
-    public static void addFieldTracker(String s, Field f, Object o, Duration duration) {
-        MakeSure.notNulls(s, f, o, duration);
+    public static void addFieldTracker(@NonNull String trackerName, @NonNull Field f, @NonNull Object o, @NonNull Duration duration) {
         Reflect.setAccessible(f);
-        TRACKERS.put(s, () -> {
+        TRACKERS.put(trackerName, () -> {
             try {
                 return f.get(o);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         });
-        TIMERS.put(s, Tuple.of(Instant.now(), duration));
+        TIMERS.put(trackerName, Tuple.of(Instant.now(), duration));
     }
 
-    public static void addStaticFieldTracker(String s, Field f) {
-        MakeSure.notNulls(s, f);
+    public static void addStaticFieldTracker(@NonNull String trackerName, @NonNull Field f) {
         Reflect.setAccessible(f);
-        TRACKERS.put(s, () -> {
+        TRACKERS.put(trackerName, () -> {
             try {
                 return f.get(null);
             } catch (IllegalAccessException e) {
@@ -76,17 +71,16 @@ public class ValueTrackerImpl {
         });
     }
 
-    public static void addStaticFieldTracker(String s, Field f, Duration duration) {
-        MakeSure.notNulls(s, f, duration);
+    public static void addStaticFieldTracker(@NonNull String trackerName, @NonNull Field f, @NonNull Duration duration) {
         Reflect.setAccessible(f);
-        TRACKERS.put(s, () -> {
+        TRACKERS.put(trackerName, () -> {
             try {
                 return f.get(null);
             } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
         });
-        TIMERS.put(s, Tuple.of(Instant.now(), duration));
+        TIMERS.put(trackerName, Tuple.of(Instant.now(), duration));
     }
 
     public static void checkTimers() {
