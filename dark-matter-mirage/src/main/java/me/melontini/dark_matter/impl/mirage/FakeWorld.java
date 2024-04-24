@@ -1,6 +1,7 @@
 package me.melontini.dark_matter.impl.mirage;
 
 import com.google.common.base.Suppliers;
+import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Lifecycle;
 import lombok.experimental.UtilityClass;
@@ -32,7 +33,7 @@ public class FakeWorld {
 
     public static final ThreadLocal<Boolean> LOADING = ThreadLocal.withInitial(() -> false);
 
-    public static Supplier<ClientWorld> INSTANCE = Suppliers.memoize(() -> {
+    public static final Supplier<ClientWorld> INSTANCE = Suppliers.memoize(() -> {
         DarkMatterLog.info("Creating a fake ClientWorld. Hold tight!");
 
         try {
@@ -73,7 +74,7 @@ public class FakeWorld {
 
         List<? extends RegistryKey<? extends Registry<?>>> keys = RegistryLoader.DYNAMIC_REGISTRIES.stream().map(RegistryLoader.Entry::key).toList();
 
-        List<SimpleRegistry<Object>> regs = new ArrayList<>();
+        List<SimpleRegistry<Object>> regs = new ArrayList<>(keys.size());
         for (RegistryKey<? extends Registry<?>> key : keys) {
             SimpleRegistry<Object> registry = new SimpleRegistry<>(Utilities.cast(key), Lifecycle.stable());
 
@@ -82,11 +83,11 @@ public class FakeWorld {
             registry.freeze();
             regs.add(registry);
         }
-        DynamicRegistryManager.Immutable immutable1 = new DynamicRegistryManager.ImmutableImpl(regs).toImmutable();
+        DynamicRegistryManager.Immutable immutable1 = new DynamicRegistryManager.ImmutableImpl(ImmutableList.copyOf(regs)).toImmutable();
         return cdr.with(ServerDynamicRegistryType.WORLDGEN, immutable1);
     }
 
     public static void init() {
-        AfterFirstReload.EVENT.register(() -> INSTANCE.get());
+        AfterFirstReload.EVENT.register(INSTANCE::get);
     }
 }

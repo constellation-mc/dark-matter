@@ -22,7 +22,7 @@ import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
 public class MixinPredicatePlugin implements IPluginPlugin {
 
-    private static final String PREDICATE_DESC = "L" + MixinPredicate.class.getName().replace(".", "/") + ";";
+    private static final String PREDICATE_DESC = 'L' + MixinPredicate.class.getName().replace('.', '/') + ';';
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName, ClassNode mixinNode) {

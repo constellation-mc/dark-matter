@@ -1,11 +1,10 @@
 package me.melontini.dark_matter.api.mixin;
 
+import lombok.NonNull;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericField;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericMethod;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
 import org.spongepowered.asm.mixin.FabricUtil;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.service.IMixinService;
@@ -38,20 +37,21 @@ public class VirtualMixins {
     public static void addMixins(Consumer<Acceptor> consumer) {
         IMixinService service = MixinService.getService();
         injectService(service);
-        consumer.accept((configName, stream) -> {
-            MakeSure.notNulls(configName, stream);
-            Mixins.getConfigs().stream().filter(config -> config.getName().equals(configName)).findFirst().ifPresent(config -> {
-                throw new IllegalStateException("Config name %s is already in use by %s!".formatted(config.getName(), FabricUtil.getModId(config.getConfig())));
-            });
-
-            try {
-                CONFIG.set(Tuple.of(configName, stream));
-                Mixins.addConfiguration(configName);
-            } finally {
-                CONFIG.remove();
-            }
-        });
+        consumer.accept(VirtualMixins::add);
         dejectService(service);
+    }
+
+    private static void add(@NonNull String configName, @NonNull InputStream stream) {
+        Mixins.getConfigs().stream().filter(config -> config.getName().equals(configName)).findFirst().ifPresent(config -> {
+            throw new IllegalStateException("Config name %s is already in use by %s!".formatted(config.getName(), FabricUtil.getModId(config.getConfig())));
+        });
+
+        try {
+            CONFIG.set(Tuple.of(configName, stream));
+            Mixins.addConfiguration(configName);
+        } finally {
+            CONFIG.remove();
+        }
     }
 
     private static void injectService(IMixinService currentService) {
@@ -77,6 +77,6 @@ public class VirtualMixins {
     }
 
     public interface Acceptor {
-        void add(@NotNull String configName, @NotNull InputStream stream);
+        void add(String configName, InputStream stream);
     }
 }

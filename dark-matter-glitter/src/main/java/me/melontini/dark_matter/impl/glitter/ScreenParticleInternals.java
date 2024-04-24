@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.glitter;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.glitter.particles.AbstractScreenParticle;
@@ -26,33 +27,31 @@ public class ScreenParticleInternals {
     private static final Set<AbstractScreenParticle> SCREEN_PARTICLES = new LinkedHashSet<>();
     private static final Set<AbstractScreenParticle> SCREEN_PARTICLES_REMOVAL = new HashSet<>();
 
-    public static void addScreenParticle(Screen screen, AbstractScreenParticle particle) {
+    public static void addScreenParticle(Screen screen, @NonNull AbstractScreenParticle particle) {
         particle.bindToScreen(screen);
         SCREEN_PARTICLES.add(particle);
     }
 
-    public static void addScreenParticle(Screen screen, ParticleEffect parameters, double x, double y, double velX, double velY) {
-        MakeSure.notNull(parameters, "Tried to add a screen particle with null parameters");
+    public static void addScreenParticle(Screen screen, @NonNull ParticleEffect parameters, double x, double y, double velX, double velY) {
         VanillaParticle particle = new VanillaParticle(parameters, x, y, velX, velY);
         particle.bindToScreen(screen);
         SCREEN_PARTICLES.add(particle);
     }
 
-    public static void addScreenParticle(Screen screen, ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
-        MakeSure.notNull(parameters, "Tried to add a screen particle with null parameters");
+    public static void addScreenParticle(Screen screen, @NonNull ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
         VanillaParticle particle = new VanillaParticle(parameters, x, y, velX, velY, velZ);
         particle.bindToScreen(screen);
         SCREEN_PARTICLES.add(particle);
     }
 
-    public static void addScreenParticles(Screen screen, AbstractScreenParticle... particle) {
-        for (AbstractScreenParticle abstractScreenParticle : particle) {
-            abstractScreenParticle.bindToScreen(screen);
+    public static void addScreenParticles(Screen screen, AbstractScreenParticle @NonNull ... particles) {
+        for (AbstractScreenParticle particle : particles) {
+            particle.bindToScreen(screen);
         }
-        SCREEN_PARTICLES.addAll(List.of(particle));
+        SCREEN_PARTICLES.addAll(List.of(particles));
     }
 
-    public static void addScreenParticles(Screen screen, List<AbstractScreenParticle> particle) {
+    public static void addScreenParticles(Screen screen, @NonNull List<AbstractScreenParticle> particle) {
         for (AbstractScreenParticle abstractScreenParticle : particle) {
             abstractScreenParticle.bindToScreen(screen);
         }
@@ -67,8 +66,7 @@ public class ScreenParticleInternals {
         }
     }
 
-    public static void addScreenParticles(Screen screen, ParticleEffect parameters, double x, double y, double deltaX, double deltaY, double speed, int count) {
-        MakeSure.notNull(parameters, "Tried to add screen particles with null parameters");
+    public static void addScreenParticles(Screen screen, @NonNull ParticleEffect parameters, double x, double y, double deltaX, double deltaY, double speed, int count) {
         MakeSure.isTrue(count >= 0, "Count can't be below 0!");
 
         for (int i = 0; i < count; i++) {

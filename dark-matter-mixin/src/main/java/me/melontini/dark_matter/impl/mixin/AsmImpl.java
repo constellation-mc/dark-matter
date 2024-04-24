@@ -60,7 +60,7 @@ public class AsmImpl {
             }
         } else if (value instanceof String[] enum0 && loadEnums) {
             try {
-                Class<?> cls = Class.forName(enum0[0].replace("/", ".").substring(1, enum0[0].length() - 1));
+                Class<?> cls = Class.forName(enum0[0].replace('/', '.').substring(1, enum0[0].length() - 1));
                 if (Enum.class.isAssignableFrom(cls)) {
                     return Enum.valueOf(cast(cls), enum0[1]);
                 }

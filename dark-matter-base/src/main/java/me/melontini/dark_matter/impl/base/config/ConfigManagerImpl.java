@@ -80,7 +80,8 @@ public class ConfigManagerImpl<T> implements ConfigManager<T> {
         save.forEach(listener -> listener.accept(config, path));
 
         try {
-            Files.createDirectories(path.getParent());
+            var parent = path.getParent();
+            if (parent != null) Files.createDirectories(parent);
             byte[] cfg = gson.toJson(config).getBytes(StandardCharsets.UTF_8);
             if (Files.exists(path) && Arrays.equals(Files.readAllBytes(path), cfg)) {
                 return;

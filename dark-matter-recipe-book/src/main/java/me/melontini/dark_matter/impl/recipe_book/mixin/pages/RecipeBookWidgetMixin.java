@@ -40,14 +40,10 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
     @Shadow @Final public static int field_32409;
 
     @Shadow @Nullable private RecipeGroupButtonWidget currentTab;
-    @Unique
-    private int dm$page = 0;
-    @Unique
-    private int dm$pages;
-    @Unique
-    private RecipeBookPageButton dm$nextPageButton;
-    @Unique
-    private RecipeBookPageButton dm$prevPageButton;
+    @Unique private int dm$page = 0;
+    @Unique private int dm$pages;
+    @Unique private RecipeBookPageButton dm$nextPageButton;
+    @Unique private RecipeBookPageButton dm$prevPageButton;
 
     @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/recipebook/RecipeGroupButtonWidget;setToggled(Z)V", shift = At.Shift.BEFORE), method = "reset")
     private void dark_matter$reset(CallbackInfo ci) {
@@ -111,26 +107,22 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         this.dm$updatePageSwitchButtons();
     }
 
-    @Unique
-    private static int dm$horizontalOffset() {
+    @Unique private static int dm$horizontalOffset() {
         return field_32408;
     }
 
-    @Unique
-    private static int dm$verticalOffset() {
+    @Unique private static int dm$verticalOffset() {
         return field_32409;
     }
 
-    @Unique
-    @Override
+    @Unique @Override
     public void dm$updatePages() {
         for (RecipeGroupButtonWidget widget : this.tabButtons) {
             widget.visible = widget.dm$getPage() == this.dm$page;
         }
     }
 
-    @Unique
-    @Override
+    @Unique @Override
     public void dm$updatePageSwitchButtons() {
         if (this.dm$nextPageButton != null) {
             this.dm$nextPageButton.visible = this.dm$getPageCount() > 1;
@@ -142,14 +134,12 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         }
     }
 
-    @Unique
-    @Override
+    @Unique @Override
     public int dm$getPage() {
         return this.dm$page;
     }
 
-    @Unique
-    @Override
+    @Unique @Override
     public void dm$setPage(int page) {
         if (page < 0) page = 0;
         if (page > dm$pages - 1) page = dm$pages - 1;
@@ -159,8 +149,7 @@ public abstract class RecipeBookWidgetMixin implements PaginatedRecipeBookWidget
         dm$updatePageSwitchButtons();
     }
 
-    @Unique
-    @Override
+    @Unique @Override
     public int dm$getPageCount() {
         return this.dm$pages;
     }

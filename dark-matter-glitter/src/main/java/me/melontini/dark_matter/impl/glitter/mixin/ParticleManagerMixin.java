@@ -12,7 +12,8 @@ public class ParticleManagerMixin {
 
     @ModifyExpressionValue(at = @At(value = "FIELD", target = "Lnet/minecraft/client/particle/ParticleManager;world:Lnet/minecraft/client/world/ClientWorld;"), method = "createParticle")
     private ClientWorld dark_matter$modifyWorld(ClientWorld value) {
-        if (VanillaParticle.WORLD.get() != null) return VanillaParticle.WORLD.get();
+        var w = VanillaParticle.WORLD.get();
+        if (w != null) return w;
         return value;
     }
 }

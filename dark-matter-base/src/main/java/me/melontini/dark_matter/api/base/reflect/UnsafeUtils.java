@@ -15,7 +15,7 @@ public class UnsafeUtils {
         return UnsafeInternals.lookupIn(cls);
     }
 
-    public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, @Nullable ProtectionDomain domain) throws Throwable {
+    public static Class<?> defineClass(ClassLoader loader, String name, byte[] bytes, @Nullable ProtectionDomain domain) {
         return UnsafeInternals.defineClass(loader, name, bytes, domain);
     }
 

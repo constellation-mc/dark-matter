@@ -7,9 +7,9 @@
 package me.melontini.dark_matter.impl.instrumentation;
 
 import lombok.Getter;
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
@@ -30,6 +30,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -39,11 +40,8 @@ import java.util.stream.Collectors;
  * @author <a href="https://github.com/Devan-Kerman/GrossFabricHacks/blob/master/src/main/java/net/devtech/grossfabrichacks/instrumentation/InstrumentationApi.java">Devan-Kerman/GrossFabricHacks</a>
  */
 @ApiStatus.Internal
-@SuppressWarnings("unused")
+@UtilityClass
 public class InstrumentationInternals {
-    private InstrumentationInternals() {
-        throw new UnsupportedOperationException();
-    }
 
     public static final Path GAME_DIR = FabricLoader.getInstance().getGameDir();
     public static final Path EXPORT_DIR = GAME_DIR.resolve(".dark-matter/class");
@@ -78,7 +76,7 @@ public class InstrumentationInternals {
                     byte[] clsFile = writer.toByteArray();
                     if (export) {
                         try {
-                            Path path = EXPORT_DIR.resolve(className.replace(".", "/") + ".class");
+                            Path path = EXPORT_DIR.resolve(className.replace('.', '/') + ".class");
                             Files.createDirectories(path.getParent());
                             Files.write(path, clsFile);
                         } catch (IOException e) {
@@ -164,10 +162,10 @@ public class InstrumentationInternals {
         try {
             ap = ClassLoader.getSystemClassLoader().loadClass(AgentProvider.class.getName());
         } catch (Throwable t) {
-            try (var is = AgentProvider.class.getClassLoader().getResourceAsStream(AgentProvider.class.getName().replace(".", "/") + ".class")) {
-                ap = UnsafeUtils.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), MakeSure.notNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
-            } catch (Throwable ignored) {
-                throw new RuntimeException("Failed to define " + AgentProvider.class.getName());
+            try (var is = AgentProvider.class.getClassLoader().getResourceAsStream(AgentProvider.class.getName().replace('.', '/') + ".class")) {
+                ap = UnsafeUtils.defineClass(ClassLoader.getSystemClassLoader(), AgentProvider.class.getName(), Objects.requireNonNull(is).readAllBytes(), AgentProvider.class.getProtectionDomain());
+            } catch (Throwable t1) {
+                throw new RuntimeException("Failed to define " + AgentProvider.class.getName(), t1);
             }
         }
 

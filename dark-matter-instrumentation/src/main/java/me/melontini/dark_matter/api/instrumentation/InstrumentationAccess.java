@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.instrumentation;
 
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.impl.instrumentation.InstrumentationInternals;
 import org.objectweb.asm.tree.ClassNode;
 
@@ -8,11 +9,8 @@ import java.lang.instrument.Instrumentation;
 import java.security.ProtectionDomain;
 import java.util.*;
 
+@UtilityClass
 public class InstrumentationAccess {
-
-    private InstrumentationAccess() {
-        throw new UnsupportedOperationException();
-    }
 
     public static void retransform(AsmTransformer transformer, String... cls) throws TransformationException {
         InstrumentationInternals.retransform(transformer, false, cls);

@@ -59,9 +59,9 @@ public class ConstructDummyPlugin implements IPluginPlugin {
                 for (int i = 0; i < args.length; i++) {
                     ia.load(i + 1, args[i]);
                 }
-                ia.invokespecial(targetClass.superName.replace(".", "/"), mappedName, mappedDesc, false);
+                ia.invokespecial(targetClass.superName.replace('.', '/'), mappedName, mappedDesc, false);
                 ia.areturn(mappedDescType.getReturnType());
-                ia.visitLocalVariable("this", "L" + targetClass.name + ";", null, new Label(), new Label(), 0);
+                ia.visitLocalVariable("this", 'L' + targetClass.name + ';', null, new Label(), new Label(), 0);
                 ia.visitMaxs(args.length + 1, args.length + 1);
             });
             DarkMatterLog.debug("Successfully created and added a dummy method {}.{}{}", targetClass.name, mappedName, mappedDesc);

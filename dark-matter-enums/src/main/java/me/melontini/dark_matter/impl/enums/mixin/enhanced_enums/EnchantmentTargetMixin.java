@@ -39,11 +39,9 @@ public class EnchantmentTargetMixin implements ExtendableEnum<Parameters.Enchant
         if (dark_matter$predicate != null) cir.setReturnValue(dark_matter$predicate.test(par1));
     }
 
-    @Unique
-    private Predicate<Item> dark_matter$predicate;
+    @Unique private Predicate<Item> dark_matter$predicate;
 
-    @Unique
-    @Publicize
+    @Unique @Publicize
     private static EnchantmentTarget dark_matter$extendEnum(String internalName, Predicate<Item> predicate) {
         for (EnchantmentTarget target : field_9077) {
             if (target.name().equalsIgnoreCase(internalName)) return target;
