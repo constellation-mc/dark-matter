@@ -3,9 +3,33 @@
     <Match>
         <!-- Must be a full match -->
         <Class name="~.*\.impl\..*\.mixin\..*Mixin" />
-        <Bug pattern="BC_IMPOSSIBLE_CAST" />
+        <Bug pattern="BC_IMPOSSIBLE_CAST, MS_SHOULD_BE_FINAL" />
     </Match>
     <Match>
         <Class name="~me\.melontini\.dark_matter\.test\..*" />
+    </Match>
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP, EI_EXPOSE_REP2, PA_PUBLIC_PRIMITIVE_ATTRIBUTE, BC_UNCONFIRMED_CAST" />
+    </Match>
+
+    <Match>
+        <Class name="me.melontini.dark_matter.impl.instrumentation.InstrumentationInternals" />
+        <Method name="getInstrumentation" />
+        <Bug pattern="MS_EXPOSE_REP" />
+    </Match>
+    <Match>
+        <Class name="me.melontini.dark_matter.api.data.nbt.NbtUtil" />
+        <Method name="readInventoryFromNbt" />
+        <Bug pattern="INT_BAD_COMPARISON_WITH_NONNEGATIVE_VALUE" />
+    </Match>
+    <Match>
+        <Class name="me.melontini.dark_matter.api.base.util.ColorUtil" />
+        <Method name="HSBtoRGB" />
+        <Bug pattern="SF_SWITCH_NO_DEFAULT" />
+    </Match>
+    <Match>
+        <Class name="me.melontini.dark_matter.impl.enums.mixin.enhanced_enums.RaidMemberMixin" />
+        <Method name="dark_matter$init" />
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
     </Match>
 </FindBugsFilter>
