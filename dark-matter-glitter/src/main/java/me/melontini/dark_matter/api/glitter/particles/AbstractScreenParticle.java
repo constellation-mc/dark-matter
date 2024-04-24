@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.api.glitter.particles;
 
-import lombok.Getter;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -13,10 +12,9 @@ import org.jetbrains.annotations.ApiStatus;
 public abstract class AbstractScreenParticle implements Drawable {
     public double x, y, velX, velY;
     public double prevX, prevY;
-    protected int age = 0, deathAge = 200;
+    public int age = 0, deathAge = 200;
     protected MinecraftClient client;
-    @Getter
-    protected boolean removed = false;
+    public boolean removed = false;
     protected Screen screen;
 
     public AbstractScreenParticle(double x, double y, double velX, double velY) {
