@@ -98,7 +98,7 @@ public class ScreenParticleInternals {
 
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
             particle.tickInternal();
-            if (particle.removed) SCREEN_PARTICLES_REMOVAL.add(particle);
+            if (particle.isRemoved()) SCREEN_PARTICLES_REMOVAL.add(particle);
         }
 
         SCREEN_PARTICLES.removeIf(SCREEN_PARTICLES_REMOVAL::contains);

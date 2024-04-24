@@ -82,7 +82,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
         builder.entries((displayContext, operatorEnabled) -> {});
         builder.icon(() -> ItemGroupBuilderImpl.this.icon.get());
 
-        builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> Text.translatable("itemGroup." + this.identifier.toString().replace(":", "."))));
+        builder.displayName(Objects.requireNonNullElseGet(this.displayName, () -> Text.translatable("itemGroup." + this.identifier.toString().replace(':', '.'))));
         if (this.texture != null) builder.texture(this.texture);
         builder.entries((displayContext, entries1) -> this.entries.collect(new DarkMatterEntriesImpl(entries1)));
 

@@ -25,10 +25,10 @@ public final class Crashlytics {
      * Optional keys that may be attached to a crash report.
      */
     public static class Keys {
-        public static Context.Key<CrashReport> CRASH_REPORT = Context.key("crash_report");
-        public static Context.Key<String> LATEST_LOG = Context.key("latest_log");
-        public static Context.Key<IMixinInfo> MIXIN_INFO = Context.key("mixin_info");
-        public static Context.Key<String> MIXIN_STAGE = Context.key("mixin_stage");
+        public static final Context.Key<CrashReport> CRASH_REPORT = Context.key("crash_report");
+        public static final Context.Key<String> LATEST_LOG = Context.key("latest_log");
+        public static final Context.Key<IMixinInfo> MIXIN_INFO = Context.key("mixin_info");
+        public static final Context.Key<String> MIXIN_STAGE = Context.key("mixin_stage");
     }
 
     @FunctionalInterface

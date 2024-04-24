@@ -21,7 +21,7 @@ public class ReflectionInternals {
 
     public static @Nullable <T> Constructor<T> findConstructor(@NotNull Class<T> clazz, Class<?>... classes) {
         Constructor<T>[] ctxs = (Constructor<T>[]) clazz.getDeclaredConstructors();
-        if (clazz.getDeclaredConstructors().length == 1) {
+        if (ctxs.length == 1) {
             return checkCtx(ctxs[0], classes) ? ctxs[0] : null;
         } else {
             try {

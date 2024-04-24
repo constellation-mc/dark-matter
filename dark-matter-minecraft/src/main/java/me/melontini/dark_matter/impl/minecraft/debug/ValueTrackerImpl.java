@@ -109,7 +109,7 @@ public class ValueTrackerImpl {
         return VIEW;
     }
 
-    public static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
+    private static final List<String> DARK_MATTER$VALUES_TO_RENDER = new ArrayList<>();
 
     public static void tick() {
         DARK_MATTER$VALUES_TO_RENDER.clear();

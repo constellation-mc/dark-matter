@@ -5,6 +5,7 @@ import me.melontini.dark_matter.api.mixin.VirtualMixins;
 import org.spongepowered.asm.mixin.Mixins;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 
 public class VirtualMixinsTest {
 
@@ -26,7 +27,7 @@ public class VirtualMixinsTest {
             }""";
 
     public static void onPreLaunch() {
-        VirtualMixins.addMixins(acceptor -> acceptor.add(CONFIG, new ByteArrayInputStream(CONTENTS.getBytes())));
+        VirtualMixins.addMixins(acceptor -> acceptor.add(CONFIG, new ByteArrayInputStream(CONTENTS.getBytes(StandardCharsets.UTF_8))));
     }
 
     public static void onInitialize() {
