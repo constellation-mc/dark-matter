@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.item_group;
 
+import lombok.NonNull;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.impl.item_group.ItemGroupBuilderImpl;
 import net.minecraft.item.ItemConvertible;
@@ -15,8 +16,8 @@ import java.util.function.Supplier;
 
 public interface ItemGroupBuilder {
 
-    static ItemGroupBuilder create(Identifier id) {
-        return new ItemGroupBuilderImpl(id);
+    static ItemGroupBuilder create(@NonNull Identifier identifier) {
+        return new ItemGroupBuilderImpl(identifier);
     }
 
     default ItemGroupBuilder icon(ItemStack itemStack) {
