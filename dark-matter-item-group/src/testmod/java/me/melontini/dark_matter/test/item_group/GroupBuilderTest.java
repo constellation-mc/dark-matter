@@ -7,6 +7,8 @@ import net.minecraft.item.ItemGroup;
 import net.minecraft.item.Items;
 import net.minecraft.util.Identifier;
 
+import java.util.Objects;
+
 public class GroupBuilderTest implements ModInitializer {
 
     public static ItemGroup group;
@@ -17,9 +19,9 @@ public class GroupBuilderTest implements ModInitializer {
                 .entries(entries -> entries.add(Items.GLOW_ITEM_FRAME))
                 .icon(Items.BLUE_ORCHID).build();
 
-        MakeSure.notNull(group);
+        Objects.requireNonNull(group);
         MakeSure.isTrue(!group.isSpecial());
         MakeSure.isTrue(group.getIcon().getItem() == Items.BLUE_ORCHID);
-        MakeSure.notNull(group.getDisplayName());
+        Objects.requireNonNull(group.getDisplayName());
     }
 }

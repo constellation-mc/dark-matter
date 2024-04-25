@@ -3,6 +3,7 @@ package me.melontini.dark_matter.impl.minecraft.client.util;
 import com.google.common.base.Suppliers;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
+import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -28,13 +29,10 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 @Environment(EnvType.CLIENT)
+@UtilityClass
 public class DrawInternals {
 
     public static final Supplier<FakeScreen> FAKE_SCREEN = Suppliers.memoize(FakeScreen::new);
-
-    private DrawInternals() {
-        throw new UnsupportedOperationException();
-    }
 
     public static FakeScreen getFakeScreen() {
         return FAKE_SCREEN.get();

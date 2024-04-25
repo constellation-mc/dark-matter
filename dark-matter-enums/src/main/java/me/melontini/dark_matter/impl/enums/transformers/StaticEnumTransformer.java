@@ -34,7 +34,7 @@ public class StaticEnumTransformer implements IAsmTransformer {
 
         int mod = Modifier.PRIVATE | Modifier.STATIC | Opcodes.ACC_SYNTHETIC;
         String desc = "[L" + targetClass.name + ";";
-        FieldNode values = targetClass.fields.stream().filter(field -> desc.equals(field.desc) && (field.access & mod) == mod).findFirst().orElse(null);
+        FieldNode values = targetClass.fields.stream().filter(field -> (field.access & mod) == mod && desc.equals(field.desc)).findFirst().orElse(null);
         if (values == null) return;
         values.access = values.access & ~Opcodes.ACC_FINAL;
 

@@ -33,9 +33,8 @@ public class RegistryInternals {
     public static <T extends BlockEntity> @Nullable BlockEntityType<T> getBlockEntityFromBlock(@Nullable Block block) {
         if (block == null) return null;
 
-        if (BLOCK_ENTITY_LOOKUP.containsKey(block)) {
-            return cast(BLOCK_ENTITY_LOOKUP.get(block));
-        }
+        var r = BLOCK_ENTITY_LOOKUP.get(block);
+        if (r != null) return cast(r);
 
         Registries.BLOCK_ENTITY_TYPE.forEach(beType -> {
             for (Block block1 : beType.blocks) {

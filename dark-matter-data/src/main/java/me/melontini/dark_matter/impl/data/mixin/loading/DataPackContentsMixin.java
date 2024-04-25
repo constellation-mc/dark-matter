@@ -33,10 +33,8 @@ abstract class DataPackContentsMixin implements DataPackContentsAccessor {
 
     @Shadow public abstract List<ResourceReloader> getContents();
 
-    @Unique
-    private Map<Identifier, IdentifiableResourceReloadListener> reloadersMap;
-    @Unique
-    private List<IdentifiableResourceReloadListener> reloaders;
+    @Unique private Map<Identifier, IdentifiableResourceReloadListener> reloadersMap;
+    @Unique private List<IdentifiableResourceReloadListener> reloaders;
 
     @Inject(at = @At("TAIL"), method = "<init>")
     private void dark_matter$addReloaders(DynamicRegistryManager.Immutable dynamicRegistryManager, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, int functionPermissionLevel, CallbackInfo ci) {

@@ -9,8 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 @Mixin(ItemGroup.class)
 public class ItemGroupMixin implements ItemGroupExtensions {
 
-    @Unique
-    public ItemGroupAnimaton dark_matter$animation;
+    @Unique private ItemGroupAnimaton dark_matter$animation;
 
     @Override
     public ItemGroup dm$setIconAnimation(ItemGroupAnimaton animation) {

@@ -47,7 +47,7 @@ public class MapperInternals {
         for (Type argumentType : descriptor.getArgumentTypes()) {
             mappedDesc.append(mapDescriptor(argumentType.getDescriptor()));
         }
-        mappedDesc.append(")");
+        mappedDesc.append(')');
         mappedDesc.append(mapDescriptor(descriptor.getReturnType().getDescriptor()));
         return mappedDesc.toString();
     }
@@ -57,20 +57,20 @@ public class MapperInternals {
         for (Type argumentType : descriptor.getArgumentTypes()) {
             mappedDesc.append(unmapDescriptor(argumentType.getDescriptor()));
         }
-        mappedDesc.append(")");
+        mappedDesc.append(')');
         mappedDesc.append(unmapDescriptor(descriptor.getReturnType().getDescriptor()));
         return mappedDesc.toString();
     }
 
     public static String mapDescriptor(@NonNull String arg) {
-        if (arg.startsWith("L")) arg = "L" + RESOLVER.mapClassName("intermediary", arg.substring(1, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
-        if (arg.startsWith("[")) arg = "[L" + RESOLVER.mapClassName("intermediary", arg.substring(2, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
+        if (arg.startsWith("L")) arg = "L" + RESOLVER.mapClassName("intermediary", arg.substring(1, arg.length() - 1).replace('/', '.')).replace('.', '/') + ';';
+        if (arg.startsWith("[")) arg = "[L" + RESOLVER.mapClassName("intermediary", arg.substring(2, arg.length() - 1).replace('/', '.')).replace('.', '/') + ';';
         return arg;
     }
 
     public static String unmapDescriptor(@NonNull String arg) {
-        if (arg.startsWith("L")) arg = "L" + RESOLVER.unmapClassName("intermediary", arg.substring(1, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
-        if (arg.startsWith("[")) arg = "[L" + RESOLVER.unmapClassName("intermediary", arg.substring(2, arg.length() - 1).replace("/", ".")).replace(".", "/") + ";";
+        if (arg.startsWith("L")) arg = "L" + RESOLVER.unmapClassName("intermediary", arg.substring(1, arg.length() - 1).replace('/', '.')).replace('.', '/') + ';';
+        if (arg.startsWith("[")) arg = "[L" + RESOLVER.unmapClassName("intermediary", arg.substring(2, arg.length() - 1).replace('/', '.')).replace('.', '/') + ';';
         return arg;
     }
 }

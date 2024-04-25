@@ -18,8 +18,14 @@ import java.util.function.Supplier;
 public final class MakeSure {
 
     @Contract(value = "null -> fail; !null -> param1", pure = true)
-    public static <T> @NotNull T notNull(@Nullable T thing) {
+    public static <T> @NotNull T notNull(T thing) {
         if (thing == null) throw new NullPointerException();
+        return thing;
+    }
+
+    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
+    public static <T> @NotNull T notNull(T thing, String msg) {
+        if (thing == null) throw new NullPointerException(msg);
         return thing;
     }
 
@@ -33,12 +39,6 @@ public final class MakeSure {
         T ret = thing == null ? supplier.get() : thing;
         if (ret == null) throw new NullPointerException(msg);
         return ret;
-    }
-
-    @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
-    public static <T> @NotNull T notNull(@Nullable T thing, String msg) {
-        if (thing == null) throw new NullPointerException(msg);
-        return thing;
     }
 
     @Contract(value = "null -> fail", pure = true)

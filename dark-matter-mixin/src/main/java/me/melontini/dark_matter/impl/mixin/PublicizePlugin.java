@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 
 public class PublicizePlugin implements IPluginPlugin {
 
-    private static final String PUBLICIZE_DESC = "L" + Publicize.class.getName().replace(".", "/") + ";";
+    private static final String PUBLICIZE_DESC = 'L' + Publicize.class.getName().replace('.', '/') + ';';
 
     @Override
     public void afterApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {

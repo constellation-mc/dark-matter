@@ -59,4 +59,5 @@ public abstract class AbstractScreenParticle implements Drawable {
         this.removed = checkRemoval();
         if (screen != null && client.currentScreen != screen) removed = true;
     }
+
 }

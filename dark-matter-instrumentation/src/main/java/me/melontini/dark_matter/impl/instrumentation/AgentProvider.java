@@ -1,11 +1,11 @@
 package me.melontini.dark_matter.impl.instrumentation;
 
-import me.melontini.dark_matter.api.base.util.MakeSure;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.instrument.Instrumentation;
+import java.util.Objects;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarOutputStream;
@@ -26,7 +26,7 @@ public final class AgentProvider {
     static File createJarFile() throws IOException {
         String cls = AgentProvider.class.getName().replace('.', '/') + ".class";
         try (var is = AgentProvider.class.getResourceAsStream('/' + cls)) {
-            MakeSure.notNull(is, "Cannot locate class file for Byte Buddy installer");
+            Objects.requireNonNull(is, "Cannot locate class file for Byte Buddy installer");
 
             File jar = File.createTempFile("dark_matter_agent", ".jar");
             jar.deleteOnExit();
