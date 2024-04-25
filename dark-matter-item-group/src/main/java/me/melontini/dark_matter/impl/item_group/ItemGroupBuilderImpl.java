@@ -1,7 +1,6 @@
 package me.melontini.dark_matter.impl.item_group;
 
 import lombok.NonNull;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.item_group.DarkMatterEntries;
 import me.melontini.dark_matter.api.item_group.ItemGroupBuilder;
@@ -27,7 +26,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     private BooleanSupplier register = Utilities.getTruth();
     private Text displayName;
 
-    public ItemGroupBuilderImpl(@NonNull Identifier identifier) {
+    public ItemGroupBuilderImpl(Identifier identifier) {
         if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", identifier);
         this.identifier = identifier;
     }
@@ -39,8 +38,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     }
 
     @Override
-    public ItemGroupBuilder texture(String texture) {
-        MakeSure.notEmpty(texture, "couldn't build: " + identifier);
+    public ItemGroupBuilder texture(@NonNull String texture) {
         this.texture = texture;
         return this;
     }
