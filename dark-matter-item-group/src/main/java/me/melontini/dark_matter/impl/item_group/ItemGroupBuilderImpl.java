@@ -28,6 +28,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     private Text displayName;
 
     public ItemGroupBuilderImpl(@NonNull Identifier identifier) {
+        if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", identifier);
         this.identifier = identifier;
     }
 
@@ -71,7 +72,6 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     @Override
     public ItemGroup build() {
         if (!this.register.getAsBoolean()) return null;
-        if (!FabricLoader.getInstance().isModLoaded("fabric-item-group-api-v1")) DarkMatterLog.warn("Building {} ItemGroup without Fabric Item Groups", identifier);
 
         ItemGroup.Builder builder = new ItemGroup.Builder(null, -1);
         builder.entries((displayContext, operatorEnabled) -> {});
