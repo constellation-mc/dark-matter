@@ -4,10 +4,10 @@ plugins {
     id 'java-library'
     id 'fabric-loom' version "${loom_version}" apply false
     id 'maven-publish'
-    id 'io.freefair.lombok' version '8.3' apply false
+    id 'io.freefair.lombok' version '8.6' apply false
 }
 
-def targetJavaVersion = 17
+def targetJavaVersion = 21
 def local = !System.getenv().containsKey("GITHUB_RUN_NUMBER");
 
 allprojects {
@@ -120,7 +120,7 @@ allprojects {
         modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
-        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.4-build.5") {
+        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.5-build.7") {
             exclude(group: "net.fabricmc", module: "fabric-loader")
         }
 

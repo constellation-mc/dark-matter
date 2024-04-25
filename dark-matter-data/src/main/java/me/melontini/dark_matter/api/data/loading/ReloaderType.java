@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.Accessors;
 import net.fabricmc.fabric.api.resource.ResourceReloadListenerKeys;
-import net.minecraft.loot.LootManager;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.registry.tag.TagManagerLoader;
 import net.minecraft.resource.ResourceReloader;
@@ -24,7 +23,6 @@ public final class ReloaderType<T extends ResourceReloader> {
     public static final ReloaderType<RecipeManager> RECIPES = create(ResourceReloadListenerKeys.RECIPES);
     public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS = create(ResourceReloadListenerKeys.ADVANCEMENTS);
     public static final ReloaderType<FunctionLoader> FUNCTIONS = create(ResourceReloadListenerKeys.FUNCTIONS);
-    public static final ReloaderType<LootManager> LOOT_TABLES = create(ResourceReloadListenerKeys.LOOT_TABLES);
 
     private final Identifier identifier;
 

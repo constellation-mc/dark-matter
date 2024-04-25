@@ -6,6 +6,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.MathHelper;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
@@ -14,8 +15,8 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class NbtUtil {
 
-    public static @NotNull NbtCompound writeInventoryToNbt(NbtCompound nbt, @NotNull Inventory inventory) {
-        return writeInventoryToNbt("Items", nbt, inventory);
+    public static @NotNull NbtCompound writeInventoryToNbt(NbtCompound nbt, @NotNull Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+        return writeInventoryToNbt("Items", nbt, inventory, lookup);
     }
 
     /**
@@ -25,21 +26,21 @@ public class NbtUtil {
      * @param inventory the inventory to write to the NbtCompound
      * @return the NbtCompound with the inventory data written to it
      */
-    public static @NotNull NbtCompound writeInventoryToNbt(String key, NbtCompound nbt, @NotNull Inventory inventory) {
+    public static @NotNull NbtCompound writeInventoryToNbt(String key, NbtCompound nbt, @NotNull Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
         nbt = (nbt == null) ? new NbtCompound() : nbt;
         NbtList nbtList = new NbtList();
         for (int i = 0; i < inventory.size(); ++i) {
             ItemStack itemStack = inventory.getStack(i);
             if (!itemStack.isEmpty()) {
-                nbtList.add(itemStack.writeNbt(NbtBuilder.create().putByte("Slot", (byte) i).build()));
+                nbtList.add(itemStack.encode(lookup, NbtBuilder.create().putByte("Slot", (byte) i).build()));
             }
         }
         nbt.put(key, nbtList);
         return nbt;
     }
 
-    public static void readInventoryFromNbt(NbtCompound nbt, Inventory inventory) {
-        readInventoryFromNbt("Items", nbt, inventory);
+    public static void readInventoryFromNbt(NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+        readInventoryFromNbt("Items", nbt, inventory, lookup);
     }
 
     /**
@@ -48,7 +49,7 @@ public class NbtUtil {
      * @param nbt       the NbtCompound to read the inventory from
      * @param inventory the inventory to read the data into
      */
-    public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory) {
+    public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
         if (nbt == null) return;
         if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) return;
 
@@ -58,7 +59,7 @@ public class NbtUtil {
             int j = nbtCompound.getByte("Slot") & 255;
             //noinspection ConstantConditions
             if (j >= 0 && j < inventory.size()) {
-                inventory.setStack(j, ItemStack.fromNbt(nbtCompound));
+                inventory.setStack(j, ItemStack.fromNbt(lookup, nbtCompound).orElseThrow());
             }
         }
     }

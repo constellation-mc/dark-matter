@@ -19,6 +19,7 @@ import net.minecraft.particle.ParticleEffect;
 import net.minecraft.util.crash.CrashException;
 import net.minecraft.util.crash.CrashReport;
 import net.minecraft.util.crash.CrashReportSection;
+import org.joml.Matrix4fStack;
 
 /**
  * Render vanilla particle types on screen!
@@ -70,13 +71,13 @@ public class VanillaParticle extends AbstractScreenParticle {
         RenderSystem.enableDepthTest();
 
         matrices.push();
-        MatrixStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.push();
+        Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
+        matrixStack.pushMatrix();
         matrixStack.translate(0, 0, 500);
         matrixStack.scale(24, 24, 1);
         matrixStack.translate(0, client.getWindow().getScaledHeight() / 24f, 0);
         matrixStack.scale(1, -1, 1);
-        matrixStack.multiplyPositionMatrix(matrices.peek().getPositionMatrix());
+        matrixStack.mul(matrices.peek().getPositionMatrix());
         RenderSystem.applyModelViewMatrix();
 
         Mirage.getAlwaysBrightLTM().enable();
@@ -100,7 +101,7 @@ public class VanillaParticle extends AbstractScreenParticle {
         particle.getType().draw(tessellator);
 
         Mirage.getAlwaysBrightLTM().disable();
-        matrixStack.pop();
+        matrixStack.popMatrix();
         RenderSystem.applyModelViewMatrix();
         matrices.pop();
 

@@ -11,10 +11,12 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientConnectionState;
 import net.minecraft.client.network.ClientDynamicRegistryType;
 import net.minecraft.client.network.ClientPlayNetworkHandler;
+import net.minecraft.client.session.telemetry.WorldSession;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
+import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
@@ -23,6 +25,7 @@ import net.minecraft.world.dimension.DimensionTypes;
 import net.minecraft.world.gen.WorldPresets;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -42,7 +45,7 @@ public class FakeWorld {
             var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
 
             ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), new ClientConnection(NetworkSide.CLIENTBOUND), new ClientConnectionState(
-                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null, immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null));
+                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), new WorldSession((eventType, propertyAdder) -> {}, false, null, null), immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null, Collections.emptyMap(), null, false));
 
             return new ClientWorld(networkHandler,
                     new ClientWorld.Properties(Difficulty.EASY, false, false),
@@ -77,7 +80,7 @@ public class FakeWorld {
         for (RegistryKey<? extends Registry<?>> key : keys) {
             SimpleRegistry<Object> registry = new SimpleRegistry<>(Utilities.cast(key), Lifecycle.stable());
 
-            pain.getOptionalWrapper(key).ifPresent(impl -> impl.streamEntries().forEach(ref -> registry.add(ref.registryKey(), ref.value(), Lifecycle.stable())));
+            pain.getOptionalWrapper(key).ifPresent(impl -> impl.streamEntries().forEach(ref -> registry.add(ref.registryKey(), ref.value(), RegistryEntryInfo.DEFAULT)));
 
             registry.freeze();
             regs.add(registry);

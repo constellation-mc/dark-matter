@@ -6,7 +6,6 @@
   "plugin": "me.melontini.dark_matter.impl.enums.DarkMatterEnumsPlugin",
   "mixins": [
     "compat.UnsafeExtensibleEnumMixin",
-    "enhanced_enums.EnchantmentTargetMixin",
     "enhanced_enums.RaidMemberMixin",
     "enhanced_enums.auto.StaticEnums"
   ],

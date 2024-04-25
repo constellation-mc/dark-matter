@@ -6,11 +6,8 @@ import me.melontini.dark_matter.api.enums.Parameters;
 import me.melontini.dark_matter.api.enums.interfaces.ExtendableEnum;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.block.Blocks;
-import net.minecraft.enchantment.EnchantmentTarget;
 import net.minecraft.entity.vehicle.AbstractMinecartEntity;
 import net.minecraft.entity.vehicle.BoatEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.Items;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 
@@ -20,13 +17,9 @@ public class ExtendableEnumTest implements ModInitializer {
         AbstractMinecartEntity.Type category = ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME");
         MakeSure.notNull(category);
 
-        Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", () -> Formatting.BOLD);
+        Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", new Parameters.Rarity(4, "testingly_rare", Formatting.BOLD));
         MakeSure.notNull(rarity);
-        MakeSure.isTrue(rarity.formatting == Formatting.BOLD);
-
-        EnchantmentTarget target = ExtendableEnum.extend(EnchantmentTarget.class, "COOL_TARGET", () -> Item::isFood);
-        MakeSure.notNull(target);
-        MakeSure.isTrue(target.isAcceptableItem(Items.COOKED_CHICKEN));
+        MakeSure.isTrue(rarity.getFormatting() == Formatting.BOLD);
 
         BoatEntity.Type boatType = ExtendableEnum.extend(BoatEntity.Type.class, "REAL_WOOD", new Parameters.BoatEntityType(Blocks.AMETHYST_BLOCK, "amethyst"));
         MakeSure.notNull(boatType);

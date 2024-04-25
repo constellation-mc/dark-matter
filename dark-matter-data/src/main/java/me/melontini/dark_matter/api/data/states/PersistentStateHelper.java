@@ -2,6 +2,7 @@ package me.melontini.dark_matter.api.data.states;
 
 import lombok.experimental.UtilityClass;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.ApiStatus;
@@ -17,14 +18,14 @@ import java.util.function.Supplier;
 @ApiStatus.Experimental
 public final class PersistentStateHelper {
 
-    public static <T extends PersistentState> T getOrCreate(@NotNull ServerWorld world, Function<NbtCompound, T> readFunction, Supplier<T> supplier, String id) {
+    public static <T extends PersistentState> T getOrCreate(@NotNull ServerWorld world, BiFunction<NbtCompound, RegistryWrapper.WrapperLookup, T> readFunction, Supplier<T> supplier, String id) {
         return world.getPersistentStateManager().getOrCreate(new PersistentState.Type<>(supplier, readFunction, null), id);
     }
 
     public static <T extends PersistentState & DeserializableState> T getOrCreate(ServerWorld world, Supplier<T> supplier, String id) {
-        return getOrCreate(world, nbt -> {
+        return getOrCreate(world, (nbt, lookup) -> {
             T state = supplier.get();
-            state.readNbt(nbt);
+            state.readNbt(nbt, lookup);
             return state;
         }, supplier, id);
     }

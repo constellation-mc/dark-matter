@@ -4,7 +4,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonPrimitive;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
@@ -66,15 +65,11 @@ public class ExtraCodecsUnitTest {
     }
 
     private static <T> T parse(Codec<T> codec, JsonElement element) {
-        return codec.parse(JsonOps.INSTANCE, element).getOrThrow(false, string -> {
-            throw new JsonParseException(string);
-        });
+        return codec.parse(JsonOps.INSTANCE, element).getOrThrow();
     }
 
     private static <T> JsonElement encode(Codec<T> codec, T object) {
-        return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow(false, string -> {
-            throw new JsonParseException(string);
-        });
+        return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow();
     }
 
     public enum TestEnum {

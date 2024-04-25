@@ -3,7 +3,6 @@ package me.melontini.dark_matter.api.data.codecs;
 import com.google.common.collect.Maps;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
@@ -45,9 +44,7 @@ public abstract class JsonCodecDataLoader<T> extends JsonDataLoader implements I
 
     @Override
     protected void apply(Map<Identifier, JsonElement> prepared, ResourceManager manager, Profiler profiler) {
-        this.apply(Maps.transformValues(prepared, input -> this.codec.parse(JsonOps.INSTANCE, input).getOrThrow(false, string -> {
-            throw new JsonParseException(string);
-        })), manager);
+        this.apply(Maps.transformValues(prepared, input -> this.codec.parse(JsonOps.INSTANCE, input).getOrThrow()), manager);
     }
 
     protected abstract void apply(Map<Identifier, T> parsed, ResourceManager manager);

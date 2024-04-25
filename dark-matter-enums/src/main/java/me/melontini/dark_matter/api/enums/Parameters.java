@@ -6,11 +6,9 @@ import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.raid.RaiderEntity;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 @UtilityClass
@@ -25,18 +23,6 @@ public class Parameters {
         }
     }
 
-    public interface EnchantmentTarget extends Base {
-        static EnchantmentTarget of(Predicate<Item> predicate) {
-            return () -> predicate;
-        }
-
-        Predicate<Item> predicate();
-        @Override
-        default Object[] get() {
-            return new Object[] { predicate() };
-        }
-    }
-
     public record RaidMember(EntityType<? extends RaiderEntity> type, int[] countInWave) implements Base {
         @Override
         public Object[] get() {
@@ -44,15 +30,10 @@ public class Parameters {
         }
     }
 
-    public interface Rarity extends Base {
-        static Rarity of(net.minecraft.util.Formatting formatting) {
-            return () -> formatting;
-        }
-
-        net.minecraft.util.Formatting formatting();
+    public record Rarity(int index, String name, net.minecraft.util.Formatting formatting) implements Base {
         @Override
-        default Object[] get() {
-            return new Object[] { formatting() };
+        public Object[] get() {
+            return new Object[] { index(), name(), formatting() };
         }
     }
 
