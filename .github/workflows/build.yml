@@ -73,7 +73,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: 17
-          cache: gradle
       - name: make gradle wrapper executable
         run: chmod +x ./gradlew
       - name: run testmod
