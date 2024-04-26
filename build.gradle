@@ -8,6 +8,7 @@ plugins {
     id 'io.freefair.lombok' version '8.6' apply false
     id 'com.github.spotbugs-base' version '6.0.12'
     id 'com.diffplug.spotless' version '6.25.0' apply false
+    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
 }
 
 def targetJavaVersion = 21
@@ -270,15 +271,34 @@ remapJar {
     }
 }
 
-tasks.register('printVersionName') {
-    doLast {
-        println "${project.mod_version} (${project.minecraft_version})"
-    }
-}
+import me.modmuss50.mpp.ReleaseType
 
-tasks.register('printVersion') {
-    doLast {
-        println version
+publishMods {
+    file = remapJar.archiveFile
+    additionalFiles.from(remapSourcesJar.archiveFile)
+
+    changelog = "https://github.com/constellation-mc/dark-matter/blob/${{ providers.environmentVariable("GITHUB_SHA").getOrElse("1.20-fabric") }}/CHANGELOG.md"
+    type = ReleaseType.valueOf(providers.environmentVariable("VERSION_TYPE").getOrElse("BETA"))
+    modLoaders.add("fabric")
+
+    displayName = "${project.mod_version} (${project.minecraft_version})"
+
+    curseforge {
+        projectId = "839908"
+        accessToken = providers.environmentVariable("CURSEFORGE_TOKEN")
+        minecraftVersions.add("${project.minecraft_version}")
     }
+    modrinth {
+        projectId = "qcz8IJ9L"
+        accessToken = providers.environmentVariable("MODRINTH_TOKEN")
+        minecraftVersions.add("${project.minecraft_version}")
+    }
+    github {
+        repository = "constellation-mc/dark-matter"
+        accessToken = providers.environmentVariable("GITHUB_TOKEN")
+        commitish = providers.environmentVariable("GITHUB_SHA").getOrElse("${project.minecraft_version}")
+    }
+
+    dryRun = local
 }
 
