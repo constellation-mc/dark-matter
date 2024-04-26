@@ -7,6 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 
@@ -18,43 +19,31 @@ import java.util.function.Supplier;
 public final class MakeSure {
 
     @Contract(value = "null -> fail; !null -> param1", pure = true)
-    public static <T> @NotNull T notNull(T thing) {
-        if (thing == null) throw new NullPointerException();
-        return thing;
+    public static <T> @NotNull T notNull(@Nullable T thing) {
+        return Objects.requireNonNull(thing);
     }
 
     @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
-    public static <T> @NotNull T notNull(T thing, String msg) {
-        if (thing == null) throw new NullPointerException(msg);
-        return thing;
+    public static <T> @NotNull T notNull(@Nullable T thing, String msg) {
+        return Objects.requireNonNull(thing);
     }
 
     public static <T> @NotNull T notNull(@Nullable T thing, Supplier<T> supplier) {
-        T ret = thing == null ? supplier.get() : thing;
-        if (ret == null) throw new NullPointerException();
-        return ret;
+        return Objects.requireNonNullElseGet(thing, supplier);
     }
 
     public static <T> @NotNull T notNull(@Nullable T thing, Supplier<T> supplier, String msg) {
-        T ret = thing == null ? supplier.get() : thing;
-        if (ret == null) throw new NullPointerException(msg);
-        return ret;
+        return Objects.isNull(thing) ? Objects.requireNonNull(supplier.get(), msg) : thing;
     }
 
     @Contract(value = "null -> fail", pure = true)
     public static void notNulls(@Nullable Object... things) {
-        if (things == null) throw new NullPointerException();
-        for (Object thing : things) {
-            if (thing == null) throw new NullPointerException();
-        }
+        for (Object thing : Objects.requireNonNull(things)) Objects.requireNonNull(thing);
     }
 
     @Contract(value = "_, null -> fail", pure = true)
     public static void notNulls(String msg, @Nullable Object... things) {
-        if (things == null) throw new NullPointerException(msg);
-        for (Object thing : things) {
-            if (thing == null) throw new NullPointerException(msg);
-        }
+        for (Object thing : Objects.requireNonNull(things)) Objects.requireNonNull(thing, msg);
     }
 
     @Contract(value = "false -> fail", pure = true)
