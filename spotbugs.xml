@@ -32,4 +32,9 @@
         <Method name="dark_matter$init" />
         <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
     </Match>
+    <Match>
+        <Class name="me.melontini.dark_matter.api.base.util.MakeSure" />
+        <Method name="notNull" />
+        <Bug pattern="NP_PARAMETER_MUST_BE_NONNULL_BUT_MARKED_AS_NULLABLE" />
+    </Match>
 </FindBugsFilter>
