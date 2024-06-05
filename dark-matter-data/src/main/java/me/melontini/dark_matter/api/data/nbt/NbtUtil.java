@@ -50,7 +50,7 @@ public class NbtUtil {
      */
     public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory) {
         if (nbt == null) return;
-        if (!nbt.contains(key, NbtElement.COMPOUND_TYPE)) return;
+        if (!nbt.contains(key)) return;
 
         NbtList nbtList = nbt.getList(key, NbtElement.COMPOUND_TYPE);
         for (int i = 0; i < nbtList.size(); ++i) {
