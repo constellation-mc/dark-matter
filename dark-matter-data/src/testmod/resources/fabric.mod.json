@@ -7,6 +7,9 @@
   "entrypoints": {
     "main": [
       "me.melontini.dark_matter.test.data.codecs.ExtraCodecsTest"
+    ],
+    "fabric-gametest": [
+      "me.melontini.dark_matter.test.data.nbt.NbtUtilTest"
     ]
   }
 }
