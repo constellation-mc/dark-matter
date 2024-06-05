@@ -20,19 +20,19 @@ public class NbtUtilTest {
     public void testWriteInvToNbt(TestContext context) {
         var inv = new SimpleInventory(Items.ALLIUM.getDefaultStack());
         NbtCompound nbt = new NbtCompound();
-        NbtUtil.writeInventoryToNbt(nbt, inv);
+        NbtUtil.writeInventoryToNbt(nbt, inv, context.getWorld().getRegistryManager());
         System.out.println(nbt);
 
-        MakeSure.isTrue(Objects.equals(nbt.toString(), "{Items:[{Count:1b,Slot:0b,id:\"minecraft:allium\"}]}"));
+        MakeSure.isTrue(Objects.equals(nbt.toString(), "{Items:[{Slot:0b,count:1,id:\"minecraft:allium\"}]}"));
         context.complete();
     }
 
     @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE)
     public void testReadInvFromNbt(TestContext context) throws CommandSyntaxException {
         var inv = new SimpleInventory(1);
-        NbtCompound nbt = StringNbtReader.parse("{Items:[{Count:1b,Slot:0b,id:\"minecraft:allium\"}]}");
-        NbtUtil.readInventoryFromNbt(nbt, inv);
-        System.out.println(inv.toNbtList());
+        NbtCompound nbt = StringNbtReader.parse("{Items:[{Slot:0b,count:1,id:\"minecraft:allium\"}]}");
+        NbtUtil.readInventoryFromNbt(nbt, inv, context.getWorld().getRegistryManager());
+        System.out.println(inv.toNbtList(context.getWorld().getRegistryManager()));
 
         MakeSure.isTrue(ItemStack.areEqual(inv.getStack(0), Items.ALLIUM.getDefaultStack()));
         context.complete();
