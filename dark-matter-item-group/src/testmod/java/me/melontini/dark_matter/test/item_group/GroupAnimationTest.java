@@ -5,7 +5,7 @@ import me.melontini.dark_matter.api.minecraft.client.util.DrawUtil;
 import me.melontini.handytests.client.ClientTestContext;
 import me.melontini.handytests.client.ClientTestEntrypoint;
 import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.impl.client.itemgroup.CreativeGuiExtensions;
+import net.fabricmc.fabric.api.client.itemgroup.v1.FabricCreativeInventoryScreen;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.screen.ingame.CreativeInventoryScreen;
 import net.minecraft.client.render.model.BakedModel;
@@ -36,7 +36,7 @@ public class GroupAnimationTest implements ClientModInitializer, ClientTestEntry
         context.setScreen(client -> new CreativeInventoryScreen(client.player, client.world.getEnabledFeatures(), false));
         context.waitForWorldTicks(10);
         context.executeForScreen(CreativeInventoryScreen.class, (client, screen) -> {
-            ((CreativeGuiExtensions)screen).fabric_nextPage();
+            ((FabricCreativeInventoryScreen) screen).switchToNextPage();
             return null;
         });
         context.takeScreenshot("item-group-animation");

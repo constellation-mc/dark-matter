@@ -9,10 +9,7 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.*;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.ParticleEffect;
@@ -81,24 +78,27 @@ public class VanillaParticle extends AbstractScreenParticle {
         RenderSystem.applyModelViewMatrix();
 
         Mirage.getAlwaysBrightLTM().enable();
-        Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
 
         RenderSystem.setShader(GameRenderer::getParticleProgram);
         RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        particle.getType().begin(bufferBuilder, client.getTextureManager());
+        BufferBuilder bufferBuilder = particle.getType().begin(Tessellator.getInstance(), client.getTextureManager());
 
-        try {
-            particle.buildGeometry(bufferBuilder, CAMERA, client.getTickDelta());
-        } catch (Throwable var17) {
-            CrashReport crashReport = CrashReport.create(var17, "[Dark Matter Glitter] Rendering Particle On Screen");
-            CrashReportSection crashReportSection = crashReport.addElement("Particle being rendered on screen");
-            crashReportSection.add("Particle", particle::toString);
-            crashReportSection.add("Particle Type", particle.getType()::toString);
-            throw new CrashException(crashReport);
+        if (bufferBuilder != null) {
+            try {
+                particle.buildGeometry(bufferBuilder, CAMERA, delta);
+            } catch (Throwable var17) {
+                CrashReport crashReport = CrashReport.create(var17, "[Dark Matter Glitter] Rendering Particle On Screen");
+                CrashReportSection crashReportSection = crashReport.addElement("Particle being rendered on screen");
+                crashReportSection.add("Particle", particle::toString);
+                crashReportSection.add("Particle Type", particle.getType()::toString);
+                throw new CrashException(crashReport);
+            }
+
+            BuiltBuffer builtBuffer = bufferBuilder.endNullable();
+            if (builtBuffer != null) {
+                BufferRenderer.drawWithGlobalProgram(builtBuffer);
+            }
         }
-
-        particle.getType().draw(tessellator);
 
         Mirage.getAlwaysBrightLTM().disable();
         matrixStack.popMatrix();

@@ -87,7 +87,7 @@ public class ScreenParticleInternals {
         int i = (int) (client.mouse.getX() * (double) client.getWindow().getScaledWidth() / (double) client.getWindow().getWidth());
         int j = (int) (client.mouse.getY() * (double) client.getWindow().getScaledHeight() / (double) client.getWindow().getHeight());
         for (AbstractScreenParticle particle : SCREEN_PARTICLES) {
-            particle.renderInternal(context, i, j, client.getTickDelta());
+            particle.renderInternal(context, i, j, client.getRenderTickCounter().getTickDelta(false));
         }
     }
 

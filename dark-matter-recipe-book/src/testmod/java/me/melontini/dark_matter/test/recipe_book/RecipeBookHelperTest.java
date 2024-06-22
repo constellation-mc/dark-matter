@@ -14,21 +14,21 @@ public class RecipeBookHelperTest implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        RecipeBookCategory category = RecipeBookHelper.createCategory(new Identifier("dark-matter", "test_category"));
+        RecipeBookCategory category = RecipeBookHelper.createCategory(Identifier.of("dark-matter", "test_category"));
         Objects.requireNonNull(category);
 
-        RecipeBookGroup search = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_search_group"), Items.COMPASS.getDefaultStack());
+        RecipeBookGroup search = RecipeBookHelper.createGroup(Identifier.of("dark-matter", "test_search_group"), Items.COMPASS.getDefaultStack());
         Objects.requireNonNull(search);
         MakeSure.isTrue(search.getIcons().size() == 1);
 
         try {
-            RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_group"));
+            RecipeBookGroup group = RecipeBookHelper.createGroup(Identifier.of("dark-matter", "test_group"));
             throw new IllegalStateException();
         } catch (IllegalArgumentException e) {
 
         }
 
-        RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_group"), Items.ACACIA_DOOR.getDefaultStack());
+        RecipeBookGroup group = RecipeBookHelper.createGroup(Identifier.of("dark-matter", "test_group"), Items.ACACIA_DOOR.getDefaultStack());
         Objects.requireNonNull(group);
 
         RecipeBookHelper.registerAndAddToSearch(category, search, group);

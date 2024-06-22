@@ -12,7 +12,7 @@ import net.minecraft.util.Identifier;
 
 public class RecipeBookPageButton extends ButtonWidget {
 
-    private static final Identifier TEXTURE = new Identifier("dark-matter-recipe-book", "textures/gui/recipe_book_buttons.png");
+    private static final Identifier TEXTURE = Identifier.of("dark-matter-recipe-book", "textures/gui/recipe_book_buttons.png");
 
     private final boolean next;
     private final RecipeBookWidget widget;

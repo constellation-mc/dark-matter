@@ -21,7 +21,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
 
     private final Identifier identifier;
     private Supplier<ItemStack> icon = () -> ItemStack.EMPTY;
-    private String texture;
+    private Identifier texture;
     private DarkMatterEntries.Collector entries;
     private BooleanSupplier register = Utilities.getTruth();
     private Text displayName;
@@ -38,7 +38,7 @@ public class ItemGroupBuilderImpl implements ItemGroupBuilder {
     }
 
     @Override
-    public ItemGroupBuilder texture(@NonNull String texture) {
+    public ItemGroupBuilder texture(@NonNull Identifier texture) {
         this.texture = texture;
         return this;
     }

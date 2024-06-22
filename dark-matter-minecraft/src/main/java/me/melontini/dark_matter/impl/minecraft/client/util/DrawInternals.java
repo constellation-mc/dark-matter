@@ -13,7 +13,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
-import net.minecraft.client.item.TooltipData;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
@@ -92,20 +92,19 @@ public class DrawInternals {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         fillGradient(matrices.peek().getPositionMatrix(), bufferBuilder, startX, startY, endX, endY, z, colorStart, colorEnd);
-        tessellator.draw();
+        BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
         RenderSystem.disableBlend();
     }
 
     public static void fillGradient(Matrix4f matrix, BufferBuilder builder, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
         float f = ColorUtil.getAlphaF(colorStart), g = ColorUtil.getRedF(colorStart), h = ColorUtil.getGreenF(colorStart), i = ColorUtil.getBlueF(colorStart);
         float j = ColorUtil.getAlphaF(colorEnd), k = ColorUtil.getRedF(colorEnd), l = ColorUtil.getGreenF(colorEnd), m = ColorUtil.getBlueF(colorEnd);
-        builder.vertex(matrix, endX, startY, z).color(g, h, i, f).next();
-        builder.vertex(matrix, startX, startY, z).color(g, h, i, f).next();
-        builder.vertex(matrix, startX, endY, z).color(k, l, m, j).next();
-        builder.vertex(matrix, endX, endY, z).color(k, l, m, j).next();
+        builder.vertex(matrix, endX, startY, z).color(g, h, i, f);
+        builder.vertex(matrix, startX, startY, z).color(g, h, i, f);
+        builder.vertex(matrix, startX, endY, z).color(k, l, m, j);
+        builder.vertex(matrix, endX, endY, z).color(k, l, m, j);
     }
 
     public static void fillGradientHorizontal(MatrixStack matrices, float startX, float startY, float endX, float endY, int colorStart, int colorEnd, float z) {
@@ -113,20 +112,19 @@ public class DrawInternals {
         RenderSystem.defaultBlendFunc();
         RenderSystem.setShader(GameRenderer::getPositionColorProgram);
         Tessellator tessellator = Tessellator.getInstance();
-        BufferBuilder bufferBuilder = tessellator.getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         fillGradientHorizontal(matrices.peek().getPositionMatrix(), bufferBuilder, startX, startY, endX, endY, z, colorStart, colorEnd);
-        tessellator.draw();
+        tessellator.clear();
         RenderSystem.disableBlend();
     }
 
     public static void fillGradientHorizontal(Matrix4f matrix, BufferBuilder builder, float startX, float startY, float endX, float endY, float z, int colorStart, int colorEnd) {
         float f = ColorUtil.getAlphaF(colorStart), g = ColorUtil.getRedF(colorStart), h = ColorUtil.getGreenF(colorStart), i = ColorUtil.getBlueF(colorStart);
         float j = ColorUtil.getAlphaF(colorEnd), k = ColorUtil.getRedF(colorEnd), l = ColorUtil.getGreenF(colorEnd), m = ColorUtil.getBlueF(colorEnd);
-        builder.vertex(matrix, endX, startY, z).color(k, l, m, j).next();
-        builder.vertex(matrix, startX, startY, z).color(g, h, i, f).next();
-        builder.vertex(matrix, startX, endY, z).color(g, h, i, f).next();
-        builder.vertex(matrix, endX, endY, z).color(k, l, m, j).next();
+        builder.vertex(matrix, endX, startY, z).color(k, l, m, j);
+        builder.vertex(matrix, startX, startY, z).color(g, h, i, f);
+        builder.vertex(matrix, startX, endY, z).color(g, h, i, f);
+        builder.vertex(matrix, endX, endY, z).color(k, l, m, j);
     }
 
     public static void drawTexture(MatrixStack matrices, float x, float y, float z, float u, float v, float width, float height) {
@@ -151,12 +149,11 @@ public class DrawInternals {
 
     public static void drawTexturedQuad(Matrix4f matrix, float x0, float x1, float y0, float y1, float z, float u0, float u1, float v0, float v1) {
         RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-        BufferBuilder bufferBuilder = Tessellator.getInstance().getBuffer();
-        bufferBuilder.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        bufferBuilder.vertex(matrix, x0, y1, z).texture(u0, v1).next();
-        bufferBuilder.vertex(matrix, x1, y1, z).texture(u1, v1).next();
-        bufferBuilder.vertex(matrix, x1, y0, z).texture(u1, v0).next();
-        bufferBuilder.vertex(matrix, x0, y0, z).texture(u0, v0).next();
+        BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+        bufferBuilder.vertex(matrix, x0, y1, z).texture(u0, v1);
+        bufferBuilder.vertex(matrix, x1, y1, z).texture(u1, v1);
+        bufferBuilder.vertex(matrix, x1, y0, z).texture(u1, v0);
+        bufferBuilder.vertex(matrix, x0, y0, z).texture(u0, v0);
         BufferRenderer.drawWithGlobalProgram(bufferBuilder.end());
     }
 

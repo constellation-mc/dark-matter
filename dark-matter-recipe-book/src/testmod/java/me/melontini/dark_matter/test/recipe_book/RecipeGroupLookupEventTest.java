@@ -18,10 +18,10 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientT
 
     @Override
     public void onInitializeClient() {
-        RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
+        RecipeBookGroup group = RecipeBookHelper.createGroup(Identifier.of("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
         RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, 1, group);
 
-        RecipeBookGroup group1 = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
+        RecipeBookGroup group1 = RecipeBookHelper.createGroup(Identifier.of("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
         RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, group);
 
         RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
@@ -34,7 +34,7 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientT
 
     @Override
     public void onClientTest(ClientTestContext context) {
-        RecipeBookGroup group = EnumUtils.getEnumConstant(new Identifier("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
+        RecipeBookGroup group = EnumUtils.getEnumConstant(Identifier.of("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
 
         MakeSure.isTrue(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group));
 

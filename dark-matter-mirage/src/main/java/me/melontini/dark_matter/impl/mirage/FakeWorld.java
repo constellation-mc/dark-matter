@@ -19,6 +19,7 @@ import net.minecraft.network.NetworkSide;
 import net.minecraft.registry.*;
 import net.minecraft.registry.entry.RegistryEntryInfo;
 import net.minecraft.resource.featuretoggle.FeatureFlags;
+import net.minecraft.server.ServerLinks;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptionsRegistryHolder;
@@ -46,7 +47,8 @@ public class FakeWorld {
             var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
 
             ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(), new ClientConnection(NetworkSide.CLIENTBOUND), new ClientConnectionState(
-                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), new WorldSession((eventType, propertyAdder) -> {}, false, null, null), immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null, Collections.emptyMap(), null, false));
+                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), new WorldSession((eventType, propertyAdder) -> {}, false, null, null), immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null, Collections.emptyMap(), null, false,
+                    Collections.emptyMap(), ServerLinks.EMPTY));
 
             return new ClientWorld(networkHandler,
                     new ClientWorld.Properties(Difficulty.EASY, false, false),

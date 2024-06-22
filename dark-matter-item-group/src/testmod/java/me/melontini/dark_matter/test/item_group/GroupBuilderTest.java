@@ -15,7 +15,7 @@ public class GroupBuilderTest implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        group = ItemGroupBuilder.create(new Identifier("dark-matter", "test_group"))
+        group = ItemGroupBuilder.create(Identifier.of("dark-matter", "test_group"))
                 .entries(entries -> entries.add(Items.GLOW_ITEM_FRAME))
                 .icon(Items.BLUE_ORCHID).build();
 
