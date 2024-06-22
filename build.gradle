@@ -133,7 +133,7 @@ allprojects {
         modApi("net.fabricmc:fabric-loader:${project.loader_version}")
 
         testmodImplementation sourceSets.main.output
-        testmodRemapImplementation("me.melontini:handy-tests:0.1.0-1.20.4-build.5") {
+        testmodRemapImplementation("me.melontini:handy-tests:0.2.0-1.20.4-build.12") {
             exclude(group: "net.fabricmc", module: "fabric-loader")
         }
 
@@ -245,6 +245,10 @@ loom {
 
         autotest {
             inherit(testmodClient)
+            properties([
+                    "mixin.debug.export": "true",
+                    "handy-tests.auto-test": "true"
+            ])
         }
     }
 }
