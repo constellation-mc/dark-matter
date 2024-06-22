@@ -38,10 +38,10 @@ public class ExtraCodecsUnitTest {
     @Test
     public void testMapLookupCodec() {
         BiMap<Identifier, Integer> map = ImmutableBiMap.<Identifier, Integer>builder()
-                .put(new Identifier("dark_matter", "one"), 1)
-                .put(new Identifier("dark_matter", "two"), 2)
-                .put(new Identifier("dark_matter", "three"), 3)
-                .put(new Identifier("dark_matter", "four"), 4)
+                .put(Identifier.of("dark_matter", "one"), 1)
+                .put(Identifier.of("dark_matter", "two"), 2)
+                .put(Identifier.of("dark_matter", "three"), 3)
+                .put(Identifier.of("dark_matter", "four"), 4)
                 .build();
         Codec<Integer> codec = ExtraCodecs.mapLookup(Identifier.CODEC, map);
 
