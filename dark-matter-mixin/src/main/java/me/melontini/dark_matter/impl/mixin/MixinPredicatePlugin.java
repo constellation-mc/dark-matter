@@ -1,22 +1,28 @@
 package me.melontini.dark_matter.impl.mixin;
 
+import me.melontini.dark_matter.api.base.reflect.Reflect;
+import me.melontini.dark_matter.api.base.util.Exceptions;
 import me.melontini.dark_matter.api.mixin.AsmUtil;
 import me.melontini.dark_matter.api.mixin.IPluginPlugin;
 import me.melontini.dark_matter.api.mixin.annotations.MixinPredicate;
+import me.melontini.dark_matter.api.mixin.annotations.MixinPredicate.IMixinPredicate;
 import me.melontini.dark_matter.api.mixin.annotations.Mod;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.metadata.version.VersionPredicate;
 import org.jetbrains.annotations.NotNull;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.util.Annotations;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Function;
 
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
@@ -32,7 +38,7 @@ public class MixinPredicatePlugin implements IPluginPlugin {
         Map<String, Object> values = AsmUtil.mapAnnotationNode(node);
         if (values.isEmpty()) return true;
 
-        return checkMods(values);
+        return checkMods(values) && checkPredicates(values, targetClassName, mixinClassName, mixinNode);
     }
 
     @Override
@@ -42,7 +48,23 @@ public class MixinPredicatePlugin implements IPluginPlugin {
         }
     }
 
-    private static boolean checkMods(@NotNull Map<String, Object> values) {
+    private boolean checkPredicates(@NotNull Map<String, Object> values, String targetClassName, String mixinClassName, ClassNode mixinNode) {
+        List<Type> types = cast(values.getOrDefault("predicates", Collections.emptyList()));
+        if (types.isEmpty()) return true;
+
+        Function<Type, Class<?>> mapper = Exceptions.function((type) -> Class.forName(type.getClassName()));
+        Function<Class<?>, IMixinPredicate> ctx = Exceptions.function((aClass -> (IMixinPredicate) Reflect.setAccessible(aClass.getDeclaredConstructor()).newInstance()));
+        for (Type type : types) {
+            Class<?> cls = mapper.apply(type);
+            if (!IMixinPredicate.class.isAssignableFrom(cls)) continue;
+
+            IMixinPredicate predicate = ctx.apply(cls);
+            if (!predicate.shouldApplyMixin(targetClassName, mixinClassName, mixinNode)) return false;
+        }
+        return true;
+    }
+
+    private boolean checkMods(@NotNull Map<String, Object> values) {
         List<Map<String, Object>> array = cast(values.getOrDefault("mods", AsmUtil.emptyAnnotationList()));
         if (array.isEmpty()) return true;
 
