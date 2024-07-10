@@ -47,15 +47,27 @@ public class Support {
         FabricLoader.getInstance().getObjectShare().put(id, o);
     }
 
-    public <T> void whenAvailable(String id, Class<T> type /*generics moment*/, BiConsumer<String, T> consumer) {
-        FabricLoader.getInstance().getObjectShare().whenAvailable(id, (s, o) -> {
-            if (type.isInstance(o)) consumer.accept(s, type.cast(o));
-        });
+    public <T> void whenAvailable(String id, BiConsumer<String, T> consumer) {
+        FabricLoader.getInstance().getObjectShare().whenAvailable(id, (s, o) -> consumer.accept(s, (T) o));
     }
 
+    public <T> void whenAvailable(EnvType envType, String id, BiConsumer<String, T> consumer) {
+        if (environment() == envType) FabricLoader.getInstance().getObjectShare().whenAvailable(id, (s, o) -> consumer.accept(s, (T) o));
+    }
+
+    /**
+     * @deprecated Use {@link Support#whenAvailable(String, BiConsumer)} with {@code <>} syntax.
+     */
+    @Deprecated
+    public <T> void whenAvailable(String id, Class<T> type, BiConsumer<String, T> consumer) {
+        whenAvailable(id, consumer);
+    }
+
+    /**
+     * @deprecated Use {@link Support#whenAvailable(EnvType, String, BiConsumer)} with {@code <>} syntax.
+     */
+    @Deprecated
     public <T> void whenAvailable(EnvType envType, String id, Class<T> type, BiConsumer<String, T> consumer) {
-        if (environment() == envType) FabricLoader.getInstance().getObjectShare().whenAvailable(id, (s, o) -> {
-            if (type.isInstance(o)) consumer.accept(s, type.cast(o));
-        });
+        whenAvailable(envType, id, consumer);
     }
 }
