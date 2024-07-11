@@ -1,7 +1,10 @@
 package me.melontini.dark_matter.api.mixin;
 
 import lombok.Getter;
-import me.melontini.dark_matter.impl.mixin.*;
+import me.melontini.dark_matter.impl.mixin.AsmTransformerPlugin;
+import me.melontini.dark_matter.impl.mixin.ConstructDummyPlugin;
+import me.melontini.dark_matter.impl.mixin.MixinPredicatePlugin;
+import me.melontini.dark_matter.impl.mixin.PublicizePlugin;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.MappingResolver;
@@ -16,7 +19,6 @@ import org.spongepowered.asm.service.MixinService;
 
 import java.util.*;
 
-@ApiStatus.Experimental
 public class ExtendablePlugin implements IMixinConfigPlugin {
 
     private final Set<IPluginPlugin> plugins;
