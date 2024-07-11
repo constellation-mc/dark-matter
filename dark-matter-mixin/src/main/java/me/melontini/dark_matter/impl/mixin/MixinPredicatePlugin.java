@@ -1,7 +1,7 @@
 package me.melontini.dark_matter.impl.mixin;
 
+import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
-import me.melontini.dark_matter.api.base.util.Exceptions;
 import me.melontini.dark_matter.api.mixin.AsmUtil;
 import me.melontini.dark_matter.api.mixin.IPluginPlugin;
 import me.melontini.dark_matter.api.mixin.annotations.MixinPredicate;
@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Function;
 
 import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
@@ -48,17 +47,16 @@ public class MixinPredicatePlugin implements IPluginPlugin {
         }
     }
 
+    @SneakyThrows
     private boolean checkPredicates(@NotNull Map<String, Object> values, String targetClassName, String mixinClassName, ClassNode mixinNode) {
         List<Type> types = cast(values.getOrDefault("predicates", Collections.emptyList()));
         if (types.isEmpty()) return true;
 
-        Function<Type, Class<?>> mapper = Exceptions.function((type) -> Class.forName(type.getClassName()));
-        Function<Class<?>, IMixinPredicate> ctx = Exceptions.function((aClass -> (IMixinPredicate) Reflect.setAccessible(aClass.getDeclaredConstructor()).newInstance()));
         for (Type type : types) {
-            Class<?> cls = mapper.apply(type);
+            Class<?> cls = Class.forName(type.getClassName());
             if (!IMixinPredicate.class.isAssignableFrom(cls)) continue;
 
-            IMixinPredicate predicate = ctx.apply(cls);
+            IMixinPredicate predicate = (IMixinPredicate) Reflect.setAccessible(cls.getDeclaredConstructor()).newInstance();
             if (!predicate.shouldApplyMixin(targetClassName, mixinClassName, mixinNode)) return false;
         }
         return true;
