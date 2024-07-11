@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.item_group.mixin.animated_groups;
 
+import com.llamalad7.mixinextras.sugar.Local;
 import me.melontini.dark_matter.impl.item_group.ItemGroupExtensions;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
@@ -11,7 +12,6 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-import org.spongepowered.asm.mixin.injection.callback.LocalCapture;
 
 @Mixin(CreativeInventoryScreen.class)
 public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> {
@@ -20,8 +20,8 @@ public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScre
         super(screenHandler, playerInventory, text);
     }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BEFORE), locals = LocalCapture.CAPTURE_FAILSOFT, method = "renderTabIcon", cancellable = true)
-    private void dark_matter$drawGroupIcon(DrawContext context, ItemGroup group, CallbackInfo ci, boolean bl, boolean bl2, int i, int j, int k, int l, int m) {
+    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BEFORE), method = "renderTabIcon", cancellable = true)
+    private void dark_matter$drawGroupIcon(DrawContext context, ItemGroup group, CallbackInfo ci, @Local(index = 3) boolean bl, @Local(index = 4) boolean bl2, @Local(index = 8) int l, @Local(index = 9) int m) {
         if (((ItemGroupExtensions)group).dm$getIconAnimation() != null) {
             ((ItemGroupExtensions)group).dm$getIconAnimation().animateIcon(group, context, l, m, bl, bl2);
             ci.cancel();
