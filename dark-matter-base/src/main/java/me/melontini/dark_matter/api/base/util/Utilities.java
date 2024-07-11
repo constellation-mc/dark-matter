@@ -68,6 +68,14 @@ public final class Utilities {
         return STACK_WALKER.walk(s -> s.skip(depth).findFirst().map(StackWalker.StackFrame::getDeclaringClass));
     }
 
+    public static StackWalker.StackFrame getCallerFrame() {
+        return getCallerFrame(3).orElseThrow();
+    }
+
+    public static Optional<StackWalker.StackFrame> getCallerFrame(int depth) {
+        return STACK_WALKER.walk(s -> s.skip(depth).findFirst());
+    }
+
     public static <T> T makeLambda(MethodHandles.Lookup lookup, Class<T> type, MethodHandle handle) {
         return makeLambda(lookup, type, "invoke", handle);
     }

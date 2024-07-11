@@ -2,14 +2,11 @@
 
 The invisible force that holds galaxies together.
 
-[![](https://img.shields.io/modrinth/dt/qcz8IJ9L?label=modrinth)](https://modrinth.com/mod/dark-matter)
-[![CurseForge](https://cf.way2muchnoise.eu/title/839908.svg)](https://www.curseforge.com/minecraft/mc-mods/dark-matter)
-[![](https://jitpack.io/v/me.melontini/dark-matter.svg)](https://jitpack.io/#me.melontini/dark-matter)
-![GitHub](https://img.shields.io/github/license/melontini/dark-matter)
+[![Available on Modrinth](https://raw.githubusercontent.com/melontini/mini-badges/main/minecraft/modrinth.svg)](https://modrinth.com/mod/dark-matter)
+[![Available on CurseForge](https://raw.githubusercontent.com/melontini/mini-badges/main/minecraft/curseforge.svg)](https://www.curseforge.com/minecraft/mc-mods/dark-matter)
+![License MIT](https://raw.githubusercontent.com/melontini/mini-badges/main/licenses/MIT.svg)
 
-See [the wiki](https://github.com/melontini/dark-matter/wiki) for a detailed explanation of each module.
-
-You can find all the tags and modules here: https://jitpack.io/#me.melontini/dark-matter
+A small collection of random might-be-useful utils and patches. Such as enum extension, content builders, unsafe hacks, recipe book utils, screen particles, Instrumentation access, and more!
 
 ### Credits
 
