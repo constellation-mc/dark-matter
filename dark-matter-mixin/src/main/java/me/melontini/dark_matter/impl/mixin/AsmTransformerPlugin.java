@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.mixin;
 
+import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.tuple.Tuple;
 import me.melontini.dark_matter.api.mixin.AsmUtil;
@@ -14,13 +15,13 @@ import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.util.Annotations;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class AsmTransformerPlugin implements IPluginPlugin {
 
     private final Map<Tuple<String, String>, Set<IAsmTransformer>> transformers = Collections.synchronizedMap(new HashMap<>());
 
+    @SneakyThrows
     @Override
     public void beforeApply(String targetClassName, ClassNode targetClass, String mixinClassName, IMixinInfo mixinInfo) {
         ClassNode mixinNode = mixinInfo.getClassNode(ClassReader.SKIP_DEBUG | ClassReader.SKIP_FRAMES | ClassReader.SKIP_CODE);
@@ -32,19 +33,12 @@ public class AsmTransformerPlugin implements IPluginPlugin {
         if (types == null) return;
 
         for (Type type : types) {
-            try {
-                Class<?> cls = Class.forName(type.getClassName());
-                if (IAsmTransformer.class.isAssignableFrom(cls)) {
-                    Set<IAsmTransformer> transformers = this.transformers.computeIfAbsent(Tuple.of(mixinInfo.getClassName(), targetClassName), k -> new LinkedHashSet<>());
-                    transformers.add((IAsmTransformer) Reflect.setAccessible(cls.getDeclaredConstructor()).newInstance());
-                    DarkMatterLog.debug("Added transformer {} to mixin {}", type.getClassName(), mixinInfo.getClassName());
-                } else throw new IllegalStateException("javac failed me. %s is not a transformer!".formatted(type.getClassName()));
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Specified transformer class not found! " + type.getClassName(), e);
-            } catch (InvocationTargetException | InstantiationException | IllegalAccessException |
-                     NoSuchMethodException e) {
-                throw new RuntimeException("Failed to construct transformer class! " + type.getClassName(), e);
-            }
+            Class<?> cls = Class.forName(type.getClassName());
+            if (!IAsmTransformer.class.isAssignableFrom(cls)) continue;
+
+            Set<IAsmTransformer> transformers = this.transformers.computeIfAbsent(Tuple.of(mixinInfo.getClassName(), targetClassName), k -> new LinkedHashSet<>());
+            transformers.add((IAsmTransformer) Reflect.setAccessible(cls.getDeclaredConstructor()).newInstance());
+            DarkMatterLog.debug("Added transformer {} to mixin {}", type.getClassName(), mixinInfo.getClassName());
         }
 
         Set<IAsmTransformer> transformers = this.transformers.get(Tuple.of(mixinInfo.getClassName(), targetClassName));
