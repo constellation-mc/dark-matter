@@ -12,6 +12,7 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
  * <p>
  * The Fabric API is side-agnostic, so you have to rely on static hooks. It also lacks a way to retrieve {@link DynamicRegistryManager}.
  * </p>
+ * FAPI version 0.100.7+1.21 introduces a new reloader API which has {@link DynamicRegistryManager} context.
  */
 public interface ServerReloadersEvent {
 
