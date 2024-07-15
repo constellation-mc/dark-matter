@@ -10,8 +10,10 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
-public record ContextImpl(DynamicRegistryManager.Immutable registryManager, FeatureSet enabledFeatures,
-                          Consumer<IdentifiableResourceReloadListener> registrar, Function<ReloaderType<?>, ResourceReloader> provider) implements ServerReloadersEvent.Context {
+public record ContextImpl(DynamicRegistryManager.Immutable registryManager,
+                          FeatureSet enabledFeatures,
+                          Consumer<IdentifiableResourceReloadListener> registrar,
+                          Function<ReloaderType<?>, ResourceReloader> provider) implements ServerReloadersEvent.Context {
 
     public void register(IdentifiableResourceReloadListener listener) {
         registrar().accept(listener);

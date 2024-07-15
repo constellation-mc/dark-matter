@@ -6,7 +6,8 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "me.melontini.dark_matter.test.data.codecs.ExtraCodecsTest"
+      "me.melontini.dark_matter.test.data.codecs.ExtraCodecsTest",
+      "me.melontini.dark_matter.test.data.loading.ServerReloadersEventTest"
     ],
     "fabric-gametest": [
       "me.melontini.dark_matter.test.data.nbt.NbtUtilTest"
