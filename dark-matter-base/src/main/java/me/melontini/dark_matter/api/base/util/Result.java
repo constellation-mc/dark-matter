@@ -48,7 +48,7 @@ public abstract sealed class Result<V, E> permits Result.Err, Result.Ok {
 
     @Value @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(callSuper = false)
-    private static class Ok<V, E> extends Result<V, E> {
+    static class Ok<V, E> extends Result<V, E> {
         public static Ok<?, ?> EMPTY = new Ok<>(null);
 
         V value;
@@ -99,7 +99,7 @@ public abstract sealed class Result<V, E> permits Result.Err, Result.Ok {
 
     @Value @AllArgsConstructor(access = AccessLevel.PRIVATE)
     @EqualsAndHashCode(callSuper = false)
-    private static class Err<V, E> extends Result<V, E> {
+    static class Err<V, E> extends Result<V, E> {
         E error;
 
         @Override
