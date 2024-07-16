@@ -1,9 +1,6 @@
 package me.melontini.dark_matter.api.base.util.functions;
 
-import java.util.HashMap;
-import java.util.IdentityHashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -52,12 +49,12 @@ public class Memoize {
      * Unlike previous functions, this one will evict unused entries when capacity is too high.
      */
     public static <T, R> Function<T, R> lruFunction(Function<T, R> delegate, int capacity) {
-        return cachedFunction(new LinkedHashMap<>(Math.min(16, capacity), 0.75f, true) {
+        return cachedFunction(Collections.synchronizedMap(new LinkedHashMap<>(capacity + 1, 0.75f, true) {
             @Override
             protected boolean removeEldestEntry(Map.Entry<T, R> eldest) {
                 return size() > capacity;
             }
-        }, delegate);
+        }), delegate);
     }
 
     public static <T, R> Function<T, R> cachedFunction(Map<T, R> cache, Function<T, R> delegate) {
