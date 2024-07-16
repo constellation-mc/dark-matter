@@ -7,7 +7,8 @@ import me.melontini.dark_matter.api.data.loading.ReloaderType;
 import me.melontini.dark_matter.impl.data.loading.InternalContentsAccessor;
 import me.melontini.dark_matter.impl.data.loading.InternalContext;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.CombinedDynamicRegistries;
+import net.minecraft.registry.ServerDynamicRegistryType;
 import net.minecraft.resource.ResourceManager;
 import net.minecraft.resource.ResourceReload;
 import net.minecraft.resource.ResourceReloader;
@@ -53,13 +54,13 @@ abstract class DataPackContentsMixin implements InternalContentsAccessor {
         }
     }
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/SimpleResourceReload;start(Lnet/minecraft/resource/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/resource/ResourceReload;"), method = "reload")
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/SimpleResourceReload;start(Lnet/minecraft/resource/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/resource/ResourceReload;"), method = "method_58296")
     private static ResourceReload setContext(ResourceManager manager, List<ResourceReloader> reloaders, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, boolean profiled, Operation<ResourceReload> original,
                                              @Local DataPackContents contents,
-                                             @Local(argsOnly = true) DynamicRegistryManager.Immutable registryManager,
+                                             @Local(argsOnly = true) CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries,
                                              @Local(argsOnly = true) FeatureSet featureSet) {
         try {
-            InternalContext.LOCAL.set(new InternalContext(registryManager, featureSet, contents));
+            InternalContext.LOCAL.set(new InternalContext(dynamicRegistries.getCombinedRegistryManager(), featureSet, contents));
             return original.call(manager, reloaders, prepareExecutor, applyExecutor, initialStage, profiled);
         } finally {
             InternalContext.LOCAL.remove();
