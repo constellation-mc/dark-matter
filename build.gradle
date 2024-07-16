@@ -3,12 +3,12 @@ import net.fabricmc.loom.api.RemapConfigurationSettings
 
 plugins {
     id 'java-library'
-    id 'fabric-loom' version "${loom_version}" apply false
+    alias libs.plugins.fabric.loom
     id 'maven-publish'
-    id 'io.freefair.lombok' version '8.6' apply false
-    id 'com.github.spotbugs-base' version '6.0.12'
-    id 'com.diffplug.spotless' version '6.25.0' apply false
-    id "me.modmuss50.mod-publish-plugin" version "0.5.1"
+    alias libs.plugins.lombok
+    alias libs.plugins.spotbugs.base
+    alias libs.plugins.spotless
+    alias libs.plugins.modmuss50.publish
 }
 
 def targetJavaVersion = 21
@@ -89,7 +89,7 @@ allprojects {
     processResources {
         var input = [
                 "version"          : project.version,
-                "loader_version"   : project.loader_version,
+                "loader_version"   : libs.fabric.loader.get().version,
                 "minecraft_version": project.minecraft_version
         ]
         inputs.properties input
@@ -130,14 +130,14 @@ allprojects {
     dependencies {
         minecraft("com.mojang:minecraft:${project.minecraft_version}")
         mappings("net.fabricmc:yarn:${project.yarn_mappings}:v2")
-        modApi("net.fabricmc:fabric-loader:${project.loader_version}")
+        modImplementation libs.fabric.loader
 
         testmodImplementation sourceSets.main.output
-        testmodRemapImplementation("me.melontini:handy-tests:0.2.0-1.21-build.14") {
+        testmodRemapImplementation(libs.handy.tests) {
             exclude(group: "net.fabricmc", module: "fabric-loader")
         }
 
-        testImplementation "net.fabricmc:fabric-loader-junit:${project.loader_version}"
+        testImplementation "net.fabricmc:fabric-loader-junit:${libs.fabric.loader.get().version}"
         testImplementation sourceSets.testmod.output
     }
 
@@ -179,13 +179,13 @@ subprojects {
 
 static def fabric(Project project, List<String> modules) {
     for (final def module in modules) {
-        project.dependencies.modApi(project.fabricApi.module(module, project.fabric_api_version))
+        project.dependencies.modApi(project.fabricApi.module(module, project.libs.fabric.api.get().version))
     }
 }
 
 static def fabricTest(Project project, List<String> modules) {
     for (final def module in modules) {
-        project.dependencies.testmodRemapImplementation(project.fabricApi.module(module, project.fabric_api_version))
+        project.dependencies.testmodRemapImplementation(project.fabricApi.module(module, project.libs.fabric.api.get().version))
     }
 }
 

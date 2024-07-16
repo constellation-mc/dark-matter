@@ -1,60 +1,69 @@
 package me.melontini.dark_matter.impl.data.mixin.loading;
 
-import com.google.common.collect.ImmutableList;
-import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Streams;
-import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-import me.melontini.dark_matter.api.data.loading.DataPackContentsAccessor;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import me.melontini.dark_matter.api.data.loading.ReloaderType;
-import me.melontini.dark_matter.api.data.loading.ServerReloadersEvent;
-import me.melontini.dark_matter.impl.data.loading.ContextImpl;
+import me.melontini.dark_matter.impl.data.loading.InternalContentsAccessor;
+import me.melontini.dark_matter.impl.data.loading.InternalContext;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
-import net.minecraft.registry.DynamicRegistryManager;
+import net.minecraft.registry.CombinedDynamicRegistries;
+import net.minecraft.registry.ServerDynamicRegistryType;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceReload;
 import net.minecraft.resource.ResourceReloader;
 import net.minecraft.resource.featuretoggle.FeatureSet;
 import net.minecraft.server.DataPackContents;
-import net.minecraft.server.command.CommandManager;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.function.Function;
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(value = DataPackContents.class, priority = 1100)
-abstract class DataPackContentsMixin implements DataPackContentsAccessor {
+abstract class DataPackContentsMixin implements InternalContentsAccessor {
 
-    @Shadow public abstract List<ResourceReloader> getContents();
-
-    @Unique private Map<Identifier, IdentifiableResourceReloadListener> reloadersMap;
-    @Unique private List<IdentifiableResourceReloadListener> reloaders;
-
-    @Inject(at = @At("TAIL"), method = "<init>")
-    private void dark_matter$addReloaders(DynamicRegistryManager.Immutable dynamicRegistryManager, FeatureSet enabledFeatures, CommandManager.RegistrationEnvironment environment, int functionPermissionLevel, CallbackInfo ci) {
-        List<IdentifiableResourceReloadListener> list = new ArrayList<>();
-        ServerReloadersEvent.EVENT.invoker().onServerReloaders(new ContextImpl(dynamicRegistryManager, enabledFeatures, list::add, this::dm$getReloader));
-        this.reloaders = ImmutableList.copyOf(list);
-
-        var cls = IdentifiableResourceReloadListener.class;
-        this.reloadersMap = getContents().stream().filter(cls::isInstance).map(cls::cast)
-                .collect(ImmutableMap.toImmutableMap(IdentifiableResourceReloadListener::getFabricId, Function.identity()));
-    }
+    @Unique private final Map<Identifier, IdentifiableResourceReloadListener> reloadersByIdentifier = new HashMap<>();
+    @Unique private final IdentityHashMap<ReloaderType<?>, IdentifiableResourceReloadListener> reloadersByType = new IdentityHashMap<>();
 
     @Override
     public <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type) {
-        return (T) Objects.requireNonNull(this.reloadersMap.get(type.identifier()), () -> "Missing reloader %s".formatted(type.identifier()));
+        var reloader = this.reloadersByType.get(type);
+        if (reloader == null) {
+            synchronized (this.reloadersByIdentifier) {
+                reloader = this.reloadersByIdentifier.get(type.identifier());
+                if (reloader == null)
+                    throw new NoSuchElementException("Missing reloader %s".formatted(type.identifier()));
+                this.reloadersByType.put(type, reloader);
+            }
+        }
+        return (T) reloader;
     }
 
-    @ModifyReturnValue(at = @At("RETURN"), method = "getContents")
-    private List<ResourceReloader> dark_matter$injectContents(List<ResourceReloader> original) {
-        if (this.reloaders.isEmpty()) return original;
-        return Streams.concat(original.stream(), this.reloaders.stream()).distinct().toList();
+    @Override
+    public void dark_matter$setReloaders(List<IdentifiableResourceReloadListener> reloaders) {
+        this.reloadersByIdentifier.clear();
+        this.reloadersByType.clear();
+
+        for (IdentifiableResourceReloadListener reloader : reloaders) {
+            this.reloadersByIdentifier.put(reloader.getFabricId(), reloader);
+        }
+    }
+
+    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/resource/SimpleResourceReload;start(Lnet/minecraft/resource/ResourceManager;Ljava/util/List;Ljava/util/concurrent/Executor;Ljava/util/concurrent/Executor;Ljava/util/concurrent/CompletableFuture;Z)Lnet/minecraft/resource/ResourceReload;"), method = "method_58296")
+    private static ResourceReload setContext(ResourceManager manager, List<ResourceReloader> reloaders, Executor prepareExecutor, Executor applyExecutor, CompletableFuture<Unit> initialStage, boolean profiled, Operation<ResourceReload> original,
+                                             @Local DataPackContents contents,
+                                             @Local(argsOnly = true) CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries,
+                                             @Local(argsOnly = true) FeatureSet featureSet) {
+        try {
+            InternalContext.LOCAL.set(new InternalContext(dynamicRegistries.getCombinedRegistryManager(), featureSet, contents));
+            return original.call(manager, reloaders, prepareExecutor, applyExecutor, initialStage, profiled);
+        } finally {
+            InternalContext.LOCAL.remove();
+        }
     }
 }

@@ -6,6 +6,7 @@
   "mixins": [
     "loading.DataPackContentsMixin",
     "loading.MinecraftServerMixin",
+    "loading.ResourceManagerHelperImplMixin",
     "states.PersistentStateManagerMixin"
   ],
   "client": [

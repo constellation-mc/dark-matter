@@ -29,6 +29,11 @@ public interface ServerReloadersEvent {
         FeatureSet enabledFeatures();
 
         void register(IdentifiableResourceReloadListener reloadListener);
+
+        /**
+         * Returns a reloader by type. <br/>
+         * Due to a design oversight, calling this method during the event will crash the game. Using it during {@code prepare} and {@code apply} is fine.
+         */
         <T extends ResourceReloader> T reloader(ReloaderType<T> type);
     }
 }
