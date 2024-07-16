@@ -8,13 +8,31 @@ import me.melontini.dark_matter.api.base.util.functions.ThrowingRunnable;
 import me.melontini.dark_matter.api.base.util.functions.ThrowingSupplier;
 import org.jetbrains.annotations.ApiStatus;
 
+import java.io.UncheckedIOException;
+import java.lang.reflect.InvocationTargetException;
+import java.util.IdentityHashMap;
+import java.util.Map;
 import java.util.concurrent.CompletionException;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 @UtilityClass
 public class Exceptions {
+
+    private static final IdentityHashMap<Class<?>, Function<Throwable, Throwable>> UNWRAPPERS = new IdentityHashMap<>();
+
+    static {
+        registerUnwrapper(CompletionException.class, Throwable::getCause);
+        registerUnwrapper(UncheckedIOException.class, Throwable::getCause);
+        registerUnwrapper(ExecutionException.class, Throwable::getCause);
+        registerUnwrapper(InvocationTargetException.class, Throwable::getCause);
+    }
+
+    public static <E extends Throwable> void registerUnwrapper(Class<E> type, Function<E, Throwable> unwrapper) {
+        UNWRAPPERS.put(type, (Function<Throwable, Throwable>) unwrapper);
+    }
 
     @SneakyThrows
     public static <E extends Throwable> void run(ThrowingRunnable<E> runnable) {
@@ -89,6 +107,16 @@ public class Exceptions {
         } catch (Throwable e) {
             return Result.error(e);
         }
+    }
+
+    public static Throwable unwrap(Throwable throwable) {
+        for (Map.Entry<Class<?>, Function<Throwable, Throwable>> entry : UNWRAPPERS.entrySet()) {
+            if (!entry.getKey().isInstance(throwable)) continue;
+
+            var unwrapped = entry.getValue().apply(throwable);
+            if (unwrapped != null) return unwrap(unwrapped);
+        }
+        return throwable;
     }
 
     public static RuntimeException wrap(Throwable t) {

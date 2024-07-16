@@ -18,13 +18,11 @@ public final class Utilities {
     private static final StackWalker STACK_WALKER = StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
     public static <T> T pickAtRandom(@NotNull T[] list) {
-        MakeSure.notEmpty(list);
-        return list[MathUtil.threadRandom().nextInt(list.length)];
+        return list[MathUtil.threadRandom().nextInt(MakeSure.notEmpty(list).length)];
     }
 
     public static <T> T pickAtRandom(@NotNull List<T> list) {
-        MakeSure.notEmpty(list);
-        return list.get(MathUtil.threadRandom().nextInt(list.size()));
+        return list.get(MathUtil.threadRandom().nextInt(MakeSure.notEmpty(list).size()));
     }
 
     public static BooleanSupplier getTruth() {
