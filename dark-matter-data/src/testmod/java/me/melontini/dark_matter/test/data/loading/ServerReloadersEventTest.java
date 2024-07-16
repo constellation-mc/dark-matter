@@ -11,7 +11,7 @@ import net.minecraft.util.Identifier;
 
 public class ServerReloadersEventTest implements ModInitializer {
 
-    public static final ReloaderType<TestReloader> TYPE = ReloaderType.create(new Identifier("dark-matter-data", "test-reloader"));
+    public static final ReloaderType<TestReloader> TYPE = ReloaderType.create(Identifier.of("dark-matter-data", "test-reloader"));
 
     @Override
     public void onInitialize() {
@@ -34,7 +34,7 @@ public class ServerReloadersEventTest implements ModInitializer {
         @Override
         public void reload(ResourceManager manager) {
             DarkMatterLog.info("Hi!!!!");
-            DarkMatterLog.info(context.registryManager().get(RegistryKeys.DIMENSION_TYPE).get(new Identifier("overworld")));
+            DarkMatterLog.info(context.registryManager().get(RegistryKeys.DIMENSION_TYPE).get(Identifier.of("overworld")));
             DarkMatterLog.info(context.reloader(TYPE).getFabricId());
         }
     }

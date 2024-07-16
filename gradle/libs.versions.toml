@@ -1,7 +1,7 @@
 [libraries]
 fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version = "0.16.0" }
-fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version = "0.97.6+1.20.5" }
-handy-tests = { group = "me.melontini", name = "handy-tests", version = "0.2.0-1.20.5-build.13" }
+fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version = "0.100.7+1.21" }
+handy-tests = { group = "me.melontini", name = "handy-tests", version = "0.2.0-1.21-build.14" }
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version = "1.7.2" }
