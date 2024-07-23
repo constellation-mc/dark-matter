@@ -36,6 +36,7 @@ public class RecipeBookHelperTest implements ClientModInitializer {
     Assertions.assertThat(group).isNotNull();
 
     RecipeBookHelper.registerAndAddToSearch(category, search, group);
-    Assertions.assertThat(search).matches(RecipeBookHelper::isSearchGroup);
+    Assertions.assertThat(search)
+        .matches(RecipeBookHelper::isSearchGroup, "search is a search group");
   }
 }

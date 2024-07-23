@@ -19,13 +19,18 @@ public class ExtendablePluginTest extends ExtendablePlugin {
   @Override
   protected void onPluginLoad(String mixinPackage) {
     Assertions.assertThat(Version.parse("1.3.5"))
-        .matches(version -> versionMatches(version, asPredicate(">=1.3.5")));
+        .matches(
+            version -> versionMatches(version, asPredicate(">=1.3.5")), "1.3.5 matches >=1.3.5");
     Assertions.assertThat(Version.parse("1.3.5"))
-        .matches(version -> !versionMatches(version, asPredicate(">1.3.5")));
+        .matches(
+            version -> !versionMatches(version, asPredicate(">1.3.5")),
+            "1.3.5 does not match >1.3.5");
 
     Assertions.assertThat(getModVersion("dark-matter-base"))
         .isPresent()
         .get()
-        .matches(version -> versionMatches(version, asPredicate(">1.0.0")));
+        .matches(
+            version -> versionMatches(version, asPredicate(">1.0.0")),
+            "dark-matter-base version (>4.0.0) matches >1.0.0");
   }
 }

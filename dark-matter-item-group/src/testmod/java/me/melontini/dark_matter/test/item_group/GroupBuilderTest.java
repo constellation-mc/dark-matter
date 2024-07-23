@@ -20,8 +20,9 @@ public class GroupBuilderTest implements ModInitializer {
 
     Assertions.assertThat(group)
         .isNotNull()
-        .matches(group -> !group.isSpecial())
-        .matches(group -> group.getIcon().getItem() == Items.BLUE_ORCHID)
+        .matches(group -> !group.isSpecial(), "group is special")
+        .matches(
+            group -> group.getIcon().getItem() == Items.BLUE_ORCHID, "icon is of 'blue_orchid'")
         .extracting(ItemGroup::getDisplayName)
         .isNotNull();
   }

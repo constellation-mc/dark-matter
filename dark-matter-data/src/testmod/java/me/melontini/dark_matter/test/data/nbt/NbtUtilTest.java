@@ -32,7 +32,9 @@ public class NbtUtilTest {
     NbtUtil.readInventoryFromNbt(nbt, inv);
 
     Assertions.assertThat(inv.getStack(0))
-        .matches(stack -> ItemStack.areEqual(stack, Items.ALLIUM.getDefaultStack()));
+        .matches(
+            stack -> ItemStack.areEqual(stack, Items.ALLIUM.getDefaultStack()),
+            "stack matches default allium");
     context.complete();
   }
 }
