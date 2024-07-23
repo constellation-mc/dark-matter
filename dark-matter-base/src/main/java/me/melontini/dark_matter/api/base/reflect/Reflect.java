@@ -59,7 +59,7 @@ public class Reflect {
         return ReflectionInternals.setAccessible(member, true);
     }
 
-    public static <T extends AccessibleObject> T setAccessible(T member, boolean set) {
-        return ReflectionInternals.setAccessible(member, set);
+    public static <T extends AccessibleObject> T setAccessible(T member, boolean flag) {
+        return ReflectionInternals.setAccessible(member, flag);
     }
 }

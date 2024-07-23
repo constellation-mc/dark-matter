@@ -22,9 +22,7 @@ allprojects {
     constellationRepo(project, "handy-tests")
 
     repositories {
-        maven {
-            url 'https://jitpack.io'
-        }
+        mavenCentral()
     }
 
     apply plugin: 'java-library'
@@ -136,9 +134,17 @@ allprojects {
         testmodRemapImplementation(libs.handy.tests) {
             exclude(group: "net.fabricmc", module: "fabric-loader")
         }
+        testmodImplementation libs.assertj.core
 
-        testImplementation "net.fabricmc:fabric-loader-junit:${libs.fabric.loader.get().version}"
+        testImplementation("net.fabricmc:fabric-loader-junit:${libs.fabric.loader.get().version}") {
+            exclude(group: "org.junit")
+            exclude(group: "org.junit.jupiter")
+        }
+        testImplementation platform(libs.junit.bom)
+        testImplementation libs.junit.jupiter
         testImplementation sourceSets.testmod.output
+        testImplementation libs.assertj.core
+        testImplementation libs.mockito.core
     }
 
     test {

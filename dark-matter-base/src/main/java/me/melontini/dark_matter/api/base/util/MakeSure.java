@@ -25,7 +25,7 @@ public final class MakeSure {
 
     @Contract(value = "null, _ -> fail; !null, _ -> param1", pure = true)
     public static <T> @NotNull T notNull(@Nullable T thing, String msg) {
-        return Objects.requireNonNull(thing);
+        return Objects.requireNonNull(thing, msg);
     }
 
     public static <T> @NotNull T notNull(@Nullable T thing, Supplier<T> supplier) {
@@ -37,7 +37,7 @@ public final class MakeSure {
     }
 
     @Contract(value = "null -> fail", pure = true)
-    public static void notNulls(@Nullable Object... things) {
+    public static void notNulls(@Nullable Object @Nullable... things) {
         for (Object thing : Objects.requireNonNull(things)) Objects.requireNonNull(thing);
     }
 
@@ -56,24 +56,26 @@ public final class MakeSure {
         if (!bool) throw new IllegalArgumentException(msg);
     }
 
+    @Contract("_, null -> fail")
     public static <T> T isTrue(T obj, Predicate<T> predicate) {
         if (predicate == null || !predicate.test(obj)) throw new IllegalArgumentException();
         return obj;
     }
 
+    @Contract("_, null, _ -> fail")
     public static <T> T isTrue(T obj, Predicate<T> predicate, String msg) {
         if (predicate == null || !predicate.test(obj)) throw new IllegalArgumentException(msg);
         return obj;
     }
 
     @Contract(value = "null -> fail", pure = true)
-    public static <T> T @NotNull [] notEmpty(@Nullable T[] array) {
+    public static <T> T @NotNull [] notEmpty(T @Nullable [] array) {
         if (array == null || array.length == 0) throw new IllegalArgumentException();
         return array;
     }
 
     @Contract(value = "null, _ -> fail", pure = true)
-    public static <T> T @NotNull [] notEmpty(@Nullable T[] array, String msg) {
+    public static <T> T @NotNull [] notEmpty(T @Nullable [] array, String msg) {
         if (array == null || array.length == 0) throw new IllegalArgumentException(msg);
         return array;
     }

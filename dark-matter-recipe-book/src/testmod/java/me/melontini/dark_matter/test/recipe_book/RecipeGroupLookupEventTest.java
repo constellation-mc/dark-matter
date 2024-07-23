@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.test.recipe_book;
 
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.EnumUtils;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import me.melontini.dark_matter.api.recipe_book.events.RecipeGroupLookupEvent;
@@ -13,6 +12,7 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.registry.tag.ItemTags;
 import net.minecraft.util.Identifier;
+import org.assertj.core.api.Assertions;
 
 public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientTestEntrypoint {
 
@@ -36,7 +36,8 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientT
     public void onClientTest(ClientTestContext context) {
         RecipeBookGroup group = EnumUtils.getEnumConstant(new Identifier("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
 
-        MakeSure.isTrue(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group));
+        Assertions.assertThat(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group))
+                        .isTrue();
 
         context.submitAndWait(client -> client.player.getRecipeBook()
                 .getResultsForGroup(group)
