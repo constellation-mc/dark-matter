@@ -13,14 +13,18 @@ public class ExceptionsTest {
   @Test
   void supplyAsResultTest() {
     Assertions.assertThat(Exceptions.supplyAsResult(() -> "No Issues!"))
-        .matches(result -> result.value().isPresent() && result.error().isEmpty())
+        .matches(
+            result -> result.value().isPresent() && result.error().isEmpty(),
+            "value present, error empty")
         .extracting(result -> result.value().orElseThrow())
         .isEqualTo("No Issues!");
 
     Assertions.assertThat(Exceptions.supplyAsResult(() -> {
           throw new Exception("Test exception!");
         }))
-        .matches(result -> result.value().isEmpty() && result.error().isPresent())
+        .matches(
+            result -> result.value().isEmpty() && result.error().isPresent(),
+            "error present, value empty")
         .extracting(
             r -> r.error().orElseThrow(), Assertions.as(InstanceOfAssertFactories.THROWABLE))
         .isOfAnyClassIn(Exception.class)
