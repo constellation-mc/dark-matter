@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.impl.mixin;
 
+import java.util.*;
 import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.util.tuple.Tuple;
@@ -14,8 +15,6 @@ import org.objectweb.asm.tree.AnnotationNode;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 import org.spongepowered.asm.util.Annotations;
-
-import java.util.*;
 
 public class AsmTransformerPlugin implements IPluginPlugin {
 

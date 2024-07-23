@@ -1,12 +1,11 @@
 package me.melontini.dark_matter.impl.mixin;
 
+import static me.melontini.dark_matter.api.base.util.Utilities.cast;
+
+import java.util.*;
 import lombok.experimental.UtilityClass;
 import org.objectweb.asm.Type;
 import org.objectweb.asm.tree.AnnotationNode;
-
-import java.util.*;
-
-import static me.melontini.dark_matter.api.base.util.Utilities.cast;
 
 @UtilityClass
 public class AsmImpl {
