@@ -12,8 +12,12 @@ import org.spongepowered.asm.mixin.injection.ModifyConstant;
 @Mixin(targets = "fuzs/extensibleenums/core/UnsafeExtensibleEnum")
 @MixinPredicate(mods = @Mod(value = "extensibleenums", version = "<=7.0.0"))
 public class UnsafeExtensibleEnumMixin {
-    @ModifyConstant(method = "addToEnumValues", constant = @Constant(intValue = 4122), remap = false, require = 0)
-    private static int dark_matter$skipFinalCheck(int value) {
-        return 4106;
-    }
+  @ModifyConstant(
+      method = "addToEnumValues",
+      constant = @Constant(intValue = 4122),
+      remap = false,
+      require = 0)
+  private static int dark_matter$skipFinalCheck(int value) {
+    return 4106;
+  }
 }

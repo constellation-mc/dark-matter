@@ -7,9 +7,9 @@ import org.spongepowered.asm.mixin.MixinEnvironment;
 
 public class DarkMatterBaseGameTest {
 
-    @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE)
-    public void mixinAudit(TestContext context) {
-        MixinEnvironment.getCurrentEnvironment().audit();
-        context.complete();
-    }
+  @GameTest(templateName = FabricGameTest.EMPTY_STRUCTURE)
+  public void mixinAudit(TestContext context) {
+    MixinEnvironment.getCurrentEnvironment().audit();
+    context.complete();
+  }
 }

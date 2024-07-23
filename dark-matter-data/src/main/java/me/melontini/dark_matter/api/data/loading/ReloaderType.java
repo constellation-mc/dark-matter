@@ -20,16 +20,21 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(fluent = true)
 public final class ReloaderType<T extends ResourceReloader> {
 
-    public static final ReloaderType<TagManagerLoader> TAGS = create(ResourceReloadListenerKeys.TAGS);
-    public static final ReloaderType<RecipeManager> RECIPES = create(ResourceReloadListenerKeys.RECIPES);
-    public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS = create(ResourceReloadListenerKeys.ADVANCEMENTS);
-    public static final ReloaderType<FunctionLoader> FUNCTIONS = create(ResourceReloadListenerKeys.FUNCTIONS);
-    public static final ReloaderType<LootManager> LOOT_TABLES = create(ResourceReloadListenerKeys.LOOT_TABLES);
+  public static final ReloaderType<TagManagerLoader> TAGS = create(ResourceReloadListenerKeys.TAGS);
+  public static final ReloaderType<RecipeManager> RECIPES =
+      create(ResourceReloadListenerKeys.RECIPES);
+  public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS =
+      create(ResourceReloadListenerKeys.ADVANCEMENTS);
+  public static final ReloaderType<FunctionLoader> FUNCTIONS =
+      create(ResourceReloadListenerKeys.FUNCTIONS);
+  public static final ReloaderType<LootManager> LOOT_TABLES =
+      create(ResourceReloadListenerKeys.LOOT_TABLES);
 
-    private final Identifier identifier;
+  private final Identifier identifier;
 
-    @Contract("_ -> new")
-    public static <T extends ResourceReloader> @NotNull ReloaderType<T> create(Identifier identifier) {
-        return new ReloaderType<>(identifier);
-    }
+  @Contract("_ -> new")
+  public static <T extends ResourceReloader> @NotNull ReloaderType<T> create(
+      Identifier identifier) {
+    return new ReloaderType<>(identifier);
+  }
 }

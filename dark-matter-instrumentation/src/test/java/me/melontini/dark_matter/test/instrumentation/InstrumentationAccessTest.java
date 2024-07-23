@@ -11,32 +11,34 @@ import org.objectweb.asm.tree.MethodNode;
 
 public class InstrumentationAccessTest {
 
-    @Test
-    @SneakyThrows
-    public void testInstrumentation() {
-        Assertions.assertEquals(TestClass.get(), 4);
+  @Test
+  @SneakyThrows
+  public void testInstrumentation() {
+    Assertions.assertEquals(TestClass.get(), 4);
 
-        InstrumentationAccess.getOrEmpty().orElseThrow();
-        InstrumentationAccess.retransform(node -> {
-            for (MethodNode method : node.methods) {
-                if ("get".equals(method.name)) {
-                    for (AbstractInsnNode instruction : method.instructions) {
-                        if (instruction.getOpcode() == Opcodes.ICONST_4) {
-                            method.instructions.set(instruction, new InsnNode(Opcodes.ICONST_1));
-                            return node;
-                        }
-                    }
+    InstrumentationAccess.getOrEmpty().orElseThrow();
+    InstrumentationAccess.retransform(
+        node -> {
+          for (MethodNode method : node.methods) {
+            if ("get".equals(method.name)) {
+              for (AbstractInsnNode instruction : method.instructions) {
+                if (instruction.getOpcode() == Opcodes.ICONST_4) {
+                  method.instructions.set(instruction, new InsnNode(Opcodes.ICONST_1));
+                  return node;
                 }
+              }
             }
-            throw new IllegalStateException();
-        }, TestClass.class);
+          }
+          throw new IllegalStateException();
+        },
+        TestClass.class);
 
-        Assertions.assertEquals(TestClass.get(), 1);
-    }
+    Assertions.assertEquals(TestClass.get(), 1);
+  }
 
-    public static class TestClass {
-        public static int get() {
-            return 4;
-        }
+  public static class TestClass {
+    public static int get() {
+      return 4;
     }
+  }
 }

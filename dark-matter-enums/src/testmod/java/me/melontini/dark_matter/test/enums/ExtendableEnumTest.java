@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.test.enums;
 
+import java.util.Objects;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
 import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.enums.Parameters;
@@ -14,26 +15,32 @@ import net.minecraft.item.Items;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Rarity;
 
-import java.util.Objects;
-
 public class ExtendableEnumTest implements ModInitializer {
-    @Override
-    public void onInitialize() {
-        AbstractMinecartEntity.Type category = ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME");
-        Objects.requireNonNull(category);
+  @Override
+  public void onInitialize() {
+    AbstractMinecartEntity.Type category =
+        ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME");
+    Objects.requireNonNull(category);
 
-        Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", () -> Formatting.BOLD);
-        Objects.requireNonNull(rarity);
-        MakeSure.isTrue(rarity.formatting == Formatting.BOLD);
+    Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", () -> Formatting.BOLD);
+    Objects.requireNonNull(rarity);
+    MakeSure.isTrue(rarity.formatting == Formatting.BOLD);
 
-        EnchantmentTarget target = ExtendableEnum.extend(EnchantmentTarget.class, "COOL_TARGET", () -> Item::isFood);
-        Objects.requireNonNull(target);
-        MakeSure.isTrue(target.isAcceptableItem(Items.COOKED_CHICKEN));
+    EnchantmentTarget target =
+        ExtendableEnum.extend(EnchantmentTarget.class, "COOL_TARGET", () -> Item::isFood);
+    Objects.requireNonNull(target);
+    MakeSure.isTrue(target.isAcceptableItem(Items.COOKED_CHICKEN));
 
-        BoatEntity.Type boatType = ExtendableEnum.extend(BoatEntity.Type.class, "REAL_WOOD", new Parameters.BoatEntityType(Blocks.AMETHYST_BLOCK, "amethyst"));
-        Objects.requireNonNull(boatType);
+    BoatEntity.Type boatType = ExtendableEnum.extend(
+        BoatEntity.Type.class,
+        "REAL_WOOD",
+        new Parameters.BoatEntityType(Blocks.AMETHYST_BLOCK, "amethyst"));
+    Objects.requireNonNull(boatType);
 
-        Formatting formatting = ExtendableEnum.extend(Formatting.class, "IDK", new Parameters.Formatting("IDK", 'p', 16, ColorUtil.toColor(193, 0, 184)));
-        Objects.requireNonNull(formatting);
-    }
+    Formatting formatting = ExtendableEnum.extend(
+        Formatting.class,
+        "IDK",
+        new Parameters.Formatting("IDK", 'p', 16, ColorUtil.toColor(193, 0, 184)));
+    Objects.requireNonNull(formatting);
+  }
 }

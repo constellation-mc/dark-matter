@@ -10,23 +10,23 @@ import org.jetbrains.annotations.NotNull;
 @SuppressWarnings("unused")
 public class TextUtil {
 
-    @Contract(value = "_ -> new", pure = true)
-    public static @NotNull MutableText translatable(String key) {
-        return Text.translatable(key);
-    }
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull MutableText translatable(String key) {
+    return Text.translatable(key);
+  }
 
-    @Contract(value = "_, _ -> new", pure = true)
-    public static @NotNull MutableText translatable(String key, Object... args) {
-        return Text.translatable(key, args);
-    }
+  @Contract(value = "_, _ -> new", pure = true)
+  public static @NotNull MutableText translatable(String key, Object... args) {
+    return Text.translatable(key, args);
+  }
 
-    @Contract(value = "_ -> new", pure = true)
-    public static @NotNull MutableText literal(String text) {
-        return Text.literal(text);
-    }
+  @Contract(value = "_ -> new", pure = true)
+  public static @NotNull MutableText literal(String text) {
+    return Text.literal(text);
+  }
 
-    @Contract(value = " -> new", pure = true)
-    public static @NotNull MutableText empty() {
-        return Text.empty();
-    }
+  @Contract(value = " -> new", pure = true)
+  public static @NotNull MutableText empty() {
+    return Text.empty();
+  }
 }

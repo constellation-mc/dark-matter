@@ -10,11 +10,12 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(MinecraftServer.class)
 abstract class MinecraftServerMixin implements DataPackContentsAccessor {
 
-    @Shadow
-    private MinecraftServer.ResourceManagerHolder resourceManagerHolder;
+  @Shadow
+  private MinecraftServer.ResourceManagerHolder resourceManagerHolder;
 
-    @Override
-    public <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type) {
-        return ((DataPackContentsAccessor)resourceManagerHolder.dataPackContents()).dm$getReloader(type);
-    }
+  @Override
+  public <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type) {
+    return ((DataPackContentsAccessor) resourceManagerHolder.dataPackContents())
+        .dm$getReloader(type);
+  }
 }

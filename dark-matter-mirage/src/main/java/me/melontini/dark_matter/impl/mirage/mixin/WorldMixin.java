@@ -12,11 +12,18 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(World.class)
 public class WorldMixin {
 
-    @WrapOperation(at = @At(value = "NEW", target = "(Lnet/minecraft/registry/DynamicRegistryManager;)Lnet/minecraft/entity/damage/DamageSources;"), method = "<init>")
-    private DamageSources dark_matter$ignoreDamageSources(DynamicRegistryManager registryManager, Operation<DamageSources> original) {
-        if (FakeWorld.LOADING.get()) {
-            return null;
-        }
-        return original.call(registryManager);
+  @WrapOperation(
+      at =
+          @At(
+              value = "NEW",
+              target =
+                  "(Lnet/minecraft/registry/DynamicRegistryManager;)Lnet/minecraft/entity/damage/DamageSources;"),
+      method = "<init>")
+  private DamageSources dark_matter$ignoreDamageSources(
+      DynamicRegistryManager registryManager, Operation<DamageSources> original) {
+    if (FakeWorld.LOADING.get()) {
+      return null;
     }
+    return original.call(registryManager);
+  }
 }

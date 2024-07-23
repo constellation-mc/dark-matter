@@ -1,5 +1,7 @@
 package me.melontini.dark_matter.api.enums;
 
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,87 +12,90 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
-
 @UtilityClass
 public class Parameters {
 
-    public static final Empty EMPTY = new Empty();
+  public static final Empty EMPTY = new Empty();
 
-    public record Empty() implements Base {
-        @Override
-        public Object[] get() {
-            return new Object[0];
-        }
+  public record Empty() implements Base {
+    @Override
+    public Object[] get() {
+      return new Object[0];
+    }
+  }
+
+  public interface EnchantmentTarget extends Base {
+    static EnchantmentTarget of(Predicate<Item> predicate) {
+      return () -> predicate;
     }
 
-    public interface EnchantmentTarget extends Base {
-        static EnchantmentTarget of(Predicate<Item> predicate) {
-            return () -> predicate;
-        }
+    Predicate<Item> predicate();
 
-        Predicate<Item> predicate();
-        @Override
-        default Object[] get() {
-            return new Object[] { predicate() };
-        }
+    @Override
+    default Object[] get() {
+      return new Object[] {predicate()};
+    }
+  }
+
+  public record RaidMember(EntityType<? extends RaiderEntity> type, int[] countInWave)
+      implements Base {
+    @Override
+    public Object[] get() {
+      return new Object[] {type(), countInWave()};
+    }
+  }
+
+  public interface Rarity extends Base {
+    static Rarity of(net.minecraft.util.Formatting formatting) {
+      return () -> formatting;
     }
 
-    public record RaidMember(EntityType<? extends RaiderEntity> type, int[] countInWave) implements Base {
-        @Override
-        public Object[] get() {
-            return new Object[] { type(), countInWave() };
-        }
+    net.minecraft.util.Formatting formatting();
+
+    @Override
+    default Object[] get() {
+      return new Object[] {formatting()};
+    }
+  }
+
+  public record BoatEntityType(Block baseBlock, String name) implements Base {
+    @Override
+    public Object[] get() {
+      return new Object[] {baseBlock(), name()};
+    }
+  }
+
+  @Environment(EnvType.CLIENT)
+  public interface RecipeBookGroup extends Base {
+    static RecipeBookGroup of(ItemStack... stacks) {
+      return () -> stacks;
     }
 
-    public interface Rarity extends Base {
-        static Rarity of(net.minecraft.util.Formatting formatting) {
-            return () -> formatting;
-        }
+    ItemStack[] entries();
 
-        net.minecraft.util.Formatting formatting();
-        @Override
-        default Object[] get() {
-            return new Object[] { formatting() };
-        }
+    @Override
+    default Object[] get() {
+      return new Object[] {entries()};
+    }
+  }
+
+  public record Formatting(
+      String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue)
+      implements Base {
+
+    public Formatting(String name, char code, int colorIndex, @Nullable Integer colorValue) {
+      this(name, code, false, colorIndex, colorValue);
     }
 
-    public record BoatEntityType(Block baseBlock, String name) implements Base {
-        @Override
-        public Object[] get() {
-            return new Object[]{ baseBlock(), name() };
-        }
+    public Formatting(String name, char code, boolean modifier) {
+      this(name, code, modifier, -1, null);
     }
 
-    @Environment(EnvType.CLIENT)
-    public interface RecipeBookGroup extends Base {
-        static RecipeBookGroup of(ItemStack... stacks) {
-            return () -> stacks;
-        }
-
-        ItemStack[] entries();
-        @Override
-        default Object[] get() {
-            return new Object[] { entries() };
-        }
+    @Override
+    public Object[] get() {
+      return new Object[] {name(), code(), modifier(), colorIndex(), colorValue()};
     }
+  }
 
-    public record Formatting(String name, char code, boolean modifier, int colorIndex, @Nullable Integer colorValue) implements Base {
-
-        public Formatting(String name, char code, int colorIndex, @Nullable Integer colorValue) {
-            this(name, code, false, colorIndex, colorValue);
-        }
-
-        public Formatting(String name, char code, boolean modifier) {
-            this(name, code, modifier, -1, null);
-        }
-
-        @Override
-        public Object[] get() {
-            return new Object[] { name(), code(), modifier(), colorIndex(), colorValue() };
-        }
-    }
-
-    private interface Base extends Supplier<Object[]> { }
+  private interface Base extends Supplier<Object[]> {}
 }

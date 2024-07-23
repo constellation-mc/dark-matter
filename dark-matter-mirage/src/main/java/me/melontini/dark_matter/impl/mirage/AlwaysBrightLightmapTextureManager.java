@@ -5,14 +5,15 @@ import net.minecraft.client.render.LightmapTextureManager;
 
 public final class AlwaysBrightLightmapTextureManager extends LightmapTextureManager {
 
-    public static final AlwaysBrightLightmapTextureManager INSTANCE = new AlwaysBrightLightmapTextureManager();
+  public static final AlwaysBrightLightmapTextureManager INSTANCE =
+      new AlwaysBrightLightmapTextureManager();
 
-    private AlwaysBrightLightmapTextureManager() {
-        super(MinecraftClient.getInstance().gameRenderer, MinecraftClient.getInstance());
-    }
+  private AlwaysBrightLightmapTextureManager() {
+    super(MinecraftClient.getInstance().gameRenderer, MinecraftClient.getInstance());
+  }
 
-    @Override
-    public void update(float delta) {
-        //no updates for you
-    }
+  @Override
+  public void update(float delta) {
+    // no updates for you
+  }
 }

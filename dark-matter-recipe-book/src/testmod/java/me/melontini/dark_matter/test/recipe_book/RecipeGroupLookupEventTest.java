@@ -16,33 +16,44 @@ import org.assertj.core.api.Assertions;
 
 public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientTestEntrypoint {
 
-    @Override
-    public void onInitializeClient() {
-        RecipeBookGroup group = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
-        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, 1, group);
+  @Override
+  public void onInitializeClient() {
+    RecipeBookGroup group = RecipeBookHelper.createGroup(
+        new Identifier("dark-matter", "test_event_group"), Items.CHICKEN.getDefaultStack());
+    RecipeBookHelper.registerAndAddToSearch(
+        RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, 1, group);
 
-        RecipeBookGroup group1 = RecipeBookHelper.createGroup(new Identifier("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
-        RecipeBookHelper.registerAndAddToSearch(RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, group);
+    RecipeBookGroup group1 = RecipeBookHelper.createGroup(
+        new Identifier("dark-matter", "test_event_group_2"), Items.CACTUS.getDefaultStack());
+    RecipeBookHelper.registerAndAddToSearch(
+        RecipeBookCategory.CRAFTING, RecipeBookGroup.CRAFTING_SEARCH, group);
 
-        RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
-            var o = recipe.getOutput(registryManager);
-            if (o.isIn(ItemTags.PLANKS)) return group;
-            if (o.isIn(ItemTags.LOGS)) return group1;
-            return null;
-        });
-    }
+    RecipeGroupLookupEvent.forType(RecipeType.CRAFTING).register((id, recipe, registryManager) -> {
+      var o = recipe.getOutput(registryManager);
+      if (o.isIn(ItemTags.PLANKS)) return group;
+      if (o.isIn(ItemTags.LOGS)) return group1;
+      return null;
+    });
+  }
 
-    @Override
-    public void onClientTest(ClientTestContext context) {
-        RecipeBookGroup group = EnumUtils.getEnumConstant(new Identifier("dark-matter", "test_event_group").toString().replace('/', '_').replace(':', '_'), RecipeBookGroup.class);
+  @Override
+  public void onClientTest(ClientTestContext context) {
+    RecipeBookGroup group = EnumUtils.getEnumConstant(
+        new Identifier("dark-matter", "test_event_group")
+            .toString()
+            .replace('/', '_')
+            .replace(':', '_'),
+        RecipeBookGroup.class);
 
-        Assertions.assertThat(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group))
-                        .isTrue();
+    Assertions.assertThat(RecipeBookGroup.getGroups(RecipeBookCategory.CRAFTING).contains(group))
+        .isTrue();
 
-        context.submitAndWait(client -> client.player.getRecipeBook()
-                .getResultsForGroup(group)
-                .stream().filter(rrc -> rrc.getAllRecipes().stream()
-                        .anyMatch(recipe -> recipe.getOutput(client.world.getRegistryManager())
-                                .isIn(ItemTags.PLANKS)))).findFirst().orElseThrow();
-    }
+    context
+        .submitAndWait(client -> client.player.getRecipeBook().getResultsForGroup(group).stream()
+            .filter(rrc -> rrc.getAllRecipes().stream()
+                .anyMatch(recipe ->
+                    recipe.getOutput(client.world.getRegistryManager()).isIn(ItemTags.PLANKS))))
+        .findFirst()
+        .orElseThrow();
+  }
 }

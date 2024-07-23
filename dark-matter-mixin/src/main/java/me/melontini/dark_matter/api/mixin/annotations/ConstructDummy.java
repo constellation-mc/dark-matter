@@ -1,12 +1,11 @@
 package me.melontini.dark_matter.api.mixin.annotations;
 
-import org.jetbrains.annotations.ApiStatus;
-import org.objectweb.asm.Opcodes;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import org.jetbrains.annotations.ApiStatus;
+import org.objectweb.asm.Opcodes;
 
 /**
  * Have you ever wanted to inject some code into a block, only to find out that neither the block nor its superclasses override the method?
@@ -24,20 +23,20 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 public @interface ConstructDummy {
 
-    /**
-     * Only used to remap the method name.
-     */
-    String owner();
+  /**
+   * Only used to remap the method name.
+   */
+  String owner();
 
-    String name();
+  String name();
 
-    String desc();
+  String desc();
 
-    int access() default Opcodes.ACC_PUBLIC;
+  int access() default Opcodes.ACC_PUBLIC;
 
-    @ApiStatus.NonExtendable
-    String mixin() default "";
-    @ApiStatus.NonExtendable
-    int priority() default 0;
+  @ApiStatus.NonExtendable
+  String mixin() default "";
 
+  @ApiStatus.NonExtendable
+  int priority() default 0;
 }

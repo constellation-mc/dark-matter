@@ -5,11 +5,12 @@ import net.fabricmc.fabric.api.event.EventFactory;
 
 public interface AfterFirstReload {
 
-    Event<AfterFirstReload> EVENT = EventFactory.createArrayBacked(AfterFirstReload.class, afterFirstReload -> () -> {
+  Event<AfterFirstReload> EVENT =
+      EventFactory.createArrayBacked(AfterFirstReload.class, afterFirstReload -> () -> {
         for (AfterFirstReload resourceReload : afterFirstReload) {
-            resourceReload.afterFirstReload();
+          resourceReload.afterFirstReload();
         }
-    });
+      });
 
-    void afterFirstReload();
+  void afterFirstReload();
 }

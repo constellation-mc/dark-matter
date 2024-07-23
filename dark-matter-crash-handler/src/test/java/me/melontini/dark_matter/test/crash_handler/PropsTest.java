@@ -6,11 +6,10 @@ import org.junit.jupiter.api.Test;
 
 public class PropsTest {
 
-    @Test
-    public void testPropsEnum() {
-        for (Props prop : Props.values()) {
-            Assertions.assertThat(prop.get())
-                    .isNotNull().isNotBlank();
-        }
+  @Test
+  public void testPropsEnum() {
+    for (Props prop : Props.values()) {
+      Assertions.assertThat(prop.get()).isNotNull().isNotBlank();
     }
+  }
 }
