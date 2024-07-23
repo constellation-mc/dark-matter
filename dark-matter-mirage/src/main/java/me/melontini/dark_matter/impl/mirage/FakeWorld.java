@@ -39,12 +39,24 @@ public class FakeWorld {
       LOADING.set(true);
       var regs = FakeWorld.getRegistries();
 
-      var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries().with(ClientDynamicRegistryType.REMOTE, new DynamicRegistryManager.ImmutableImpl(SerializableRegistries.streamDynamicEntries(regs)).toImmutable());
+      var immutable = ClientDynamicRegistryType.createCombinedDynamicRegistries()
+          .with(
+              ClientDynamicRegistryType.REMOTE,
+              new DynamicRegistryManager.ImmutableImpl(
+                      SerializableRegistries.streamDynamicEntries(regs))
+                  .toImmutable());
 
-            ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(MinecraftClient.getInstance(),
+      ClientPlayNetworkHandler networkHandler = new ClientPlayNetworkHandler(
+          MinecraftClient.getInstance(),
           new ClientConnection(NetworkSide.CLIENTBOUND),
           new ClientConnectionState(
-                    new GameProfile(UUID.randomUUID(), "fake_profile_ratio"), null, immutable.getCombinedRegistryManager(), FeatureFlags.FEATURE_MANAGER.getFeatureSet(), null, null, null));
+              new GameProfile(UUID.randomUUID(), "fake_profile_ratio"),
+              null,
+              immutable.getCombinedRegistryManager(),
+              FeatureFlags.FEATURE_MANAGER.getFeatureSet(),
+              null,
+              null,
+              null));
 
       return new ClientWorld(
           networkHandler,

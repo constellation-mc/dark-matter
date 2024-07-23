@@ -12,9 +12,21 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(PersistentStateManager.class)
 public class PersistentStateManagerMixin {
 
-    @WrapOperation(at = @At(value = "INVOKE", target = "Lnet/minecraft/datafixer/DataFixTypes;update(Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/nbt/NbtCompound;II)Lnet/minecraft/nbt/NbtCompound;"), method = "readNbt")
-    private NbtCompound dark_matter$skipFixing(DataFixTypes instance, DataFixer dataFixer, NbtCompound nbt, int oldVersion, int newVersion, Operation<NbtCompound> original) {
-        if (instance == null) return nbt;
-        return original.call(instance, dataFixer, nbt, oldVersion, newVersion);
-    }
+  @WrapOperation(
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/datafixer/DataFixTypes;update(Lcom/mojang/datafixers/DataFixer;Lnet/minecraft/nbt/NbtCompound;II)Lnet/minecraft/nbt/NbtCompound;"),
+      method = "readNbt")
+  private NbtCompound dark_matter$skipFixing(
+      DataFixTypes instance,
+      DataFixer dataFixer,
+      NbtCompound nbt,
+      int oldVersion,
+      int newVersion,
+      Operation<NbtCompound> original) {
+    if (instance == null) return nbt;
+    return original.call(instance, dataFixer, nbt, oldVersion, newVersion);
+  }
 }

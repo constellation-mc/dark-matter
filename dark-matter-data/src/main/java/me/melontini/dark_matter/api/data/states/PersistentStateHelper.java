@@ -21,7 +21,9 @@ public final class PersistentStateHelper {
       Function<NbtCompound, T> readFunction,
       Supplier<T> supplier,
       String id) {
-    return world.getPersistentStateManager().getOrCreate(new PersistentState.Type<>(supplier, readFunction, null), id);
+    return world
+        .getPersistentStateManager()
+        .getOrCreate(new PersistentState.Type<>(supplier, readFunction, null), id);
   }
 
   public static <T extends PersistentState & DeserializableState> T getOrCreate(

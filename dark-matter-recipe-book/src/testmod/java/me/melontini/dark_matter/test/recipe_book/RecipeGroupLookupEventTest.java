@@ -50,9 +50,10 @@ public class RecipeGroupLookupEventTest implements ClientModInitializer, ClientT
 
     context
         .submitAndWait(client -> client.player.getRecipeBook().getResultsForGroup(group).stream()
-            .filter(rrc -> rrc.getAllRecipes().stream()
-                .anyMatch(recipe ->
-                    recipe.value().getResult(client.world.getRegistryManager()).isIn(ItemTags.PLANKS))))
+            .filter(rrc -> rrc.getAllRecipes().stream().anyMatch(recipe -> recipe
+                .value()
+                .getResult(client.world.getRegistryManager())
+                .isIn(ItemTags.PLANKS))))
         .findFirst()
         .orElseThrow();
   }

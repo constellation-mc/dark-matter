@@ -101,14 +101,16 @@ public class ExtraCodecs {
             .orElseGet(() -> DataResult.error(() -> "Unknown type: %s".formatted(eventType))));
   }
 
-    @ApiStatus.Experimental
-    public static <T extends Enum<T>> Codec<T> enumCodec(Class<T> cls) {
-        return Codec.STRING.comapFlatMap(string -> {
-            try {
-                return DataResult.success(Enum.valueOf(cls, string.toUpperCase(Locale.ROOT)));
-            } catch (IllegalArgumentException e) {
-                return DataResult.error(() -> "No such enum constant %s!".formatted(string));
-            }
-        }, t -> t.name().toLowerCase(Locale.ROOT));
-    }
+  @ApiStatus.Experimental
+  public static <T extends Enum<T>> Codec<T> enumCodec(Class<T> cls) {
+    return Codec.STRING.comapFlatMap(
+        string -> {
+          try {
+            return DataResult.success(Enum.valueOf(cls, string.toUpperCase(Locale.ROOT)));
+          } catch (IllegalArgumentException e) {
+            return DataResult.error(() -> "No such enum constant %s!".formatted(string));
+          }
+        },
+        t -> t.name().toLowerCase(Locale.ROOT));
+  }
 }

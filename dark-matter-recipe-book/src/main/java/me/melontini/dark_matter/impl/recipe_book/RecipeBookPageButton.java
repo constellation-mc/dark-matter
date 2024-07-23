@@ -46,7 +46,12 @@ public class RecipeBookPageButton extends ButtonWidget {
 
       RenderSystem.enableDepthTest();
       context.drawTexture(
-          TEXTURE, this.getX(), this.getY(), 0, u + (next ? 14 : 0), v,
+          TEXTURE,
+          this.getX(),
+          this.getY(),
+          0,
+          u + (next ? 14 : 0),
+          v,
           this.width,
           this.height,
           256,
