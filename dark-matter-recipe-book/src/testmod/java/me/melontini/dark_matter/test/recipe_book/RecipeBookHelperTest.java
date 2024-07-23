@@ -1,6 +1,5 @@
 package me.melontini.dark_matter.test.recipe_book;
 
-import java.util.Objects;
 import me.melontini.dark_matter.api.recipe_book.RecipeBookHelper;
 import net.fabricmc.api.ClientModInitializer;
 import net.minecraft.client.recipebook.RecipeBookGroup;
@@ -8,7 +7,6 @@ import net.minecraft.item.Items;
 import net.minecraft.recipe.book.RecipeBookCategory;
 import net.minecraft.util.Identifier;
 import org.assertj.core.api.Assertions;
-import org.assertj.core.api.Condition;
 import org.assertj.core.api.InstanceOfAssertFactories;
 
 public class RecipeBookHelperTest implements ClientModInitializer {
@@ -35,10 +33,9 @@ public class RecipeBookHelperTest implements ClientModInitializer {
 
     RecipeBookGroup group = RecipeBookHelper.createGroup(
         new Identifier("dark-matter", "test_group"), Items.ACACIA_DOOR.getDefaultStack());
-    Objects.requireNonNull(group);
+    Assertions.assertThat(group).isNotNull();
 
     RecipeBookHelper.registerAndAddToSearch(category, search, group);
-    Assertions.assertThat(search)
-        .is(new Condition<>(RecipeBookHelper::isSearchGroup, "search group"));
+    Assertions.assertThat(search).matches(RecipeBookHelper::isSearchGroup);
   }
 }

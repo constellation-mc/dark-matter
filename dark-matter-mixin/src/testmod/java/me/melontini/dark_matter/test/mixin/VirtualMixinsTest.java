@@ -2,8 +2,8 @@ package me.melontini.dark_matter.test.mixin;
 
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.mixin.VirtualMixins;
+import org.assertj.core.api.Assertions;
 import org.spongepowered.asm.mixin.Mixins;
 
 public class VirtualMixinsTest {
@@ -32,11 +32,7 @@ public class VirtualMixinsTest {
   }
 
   public static void onInitialize() {
-    MakeSure.isTrue(
-        Mixins.getConfigs().stream()
-            .filter(config -> CONFIG.equals(config.getName()))
-            .findFirst()
-            .isEmpty(),
-        "Unvisited mixin config!");
+    Assertions.assertThat(Mixins.getConfigs().stream())
+        .noneMatch(config -> CONFIG.equals(config.getName()));
   }
 }

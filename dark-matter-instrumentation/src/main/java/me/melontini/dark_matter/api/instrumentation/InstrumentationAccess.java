@@ -51,7 +51,7 @@ public class InstrumentationAccess {
     getOrEmpty()
         .ifPresent(instrumentation -> instrumentation.redefineModule(
             module,
-            new HashSet<>(List.of(extraReads)),
+            Set.of(extraReads),
             Collections.emptyMap(),
             Collections.emptyMap(),
             Collections.emptySet(),
@@ -98,7 +98,7 @@ public class InstrumentationAccess {
             Collections.emptySet(),
             Collections.emptyMap(),
             Collections.emptyMap(),
-            new HashSet<>(List.of(uses)),
+            Set.of(uses),
             Collections.emptyMap()));
   }
 

@@ -2,7 +2,7 @@ package me.melontini.dark_matter.test.instrumentation;
 
 import lombok.SneakyThrows;
 import me.melontini.dark_matter.api.instrumentation.InstrumentationAccess;
-import org.junit.jupiter.api.Assertions;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
@@ -14,9 +14,9 @@ public class InstrumentationAccessTest {
   @Test
   @SneakyThrows
   public void testInstrumentation() {
-    Assertions.assertEquals(TestClass.get(), 4);
+    Assertions.assertThat(TestClass.get()).isEqualTo(4);
+    Assertions.assertThat(InstrumentationAccess.get()).isNotNull();
 
-    InstrumentationAccess.getOrEmpty().orElseThrow();
     InstrumentationAccess.retransform(
         node -> {
           for (MethodNode method : node.methods) {
@@ -33,7 +33,7 @@ public class InstrumentationAccessTest {
         },
         TestClass.class);
 
-    Assertions.assertEquals(TestClass.get(), 1);
+    Assertions.assertThat(TestClass.get()).isEqualTo(1);
   }
 
   public static class TestClass {

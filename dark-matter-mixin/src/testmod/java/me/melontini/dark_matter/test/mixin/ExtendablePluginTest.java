@@ -2,10 +2,10 @@ package me.melontini.dark_matter.test.mixin;
 
 import java.util.Set;
 import lombok.SneakyThrows;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.mixin.ExtendablePlugin;
 import me.melontini.dark_matter.api.mixin.IPluginPlugin;
 import net.fabricmc.loader.api.Version;
+import org.assertj.core.api.Assertions;
 
 public class ExtendablePluginTest extends ExtendablePlugin {
 
@@ -18,10 +18,14 @@ public class ExtendablePluginTest extends ExtendablePlugin {
   @SneakyThrows
   @Override
   protected void onPluginLoad(String mixinPackage) {
-    MakeSure.isTrue(versionMatches(Version.parse("1.3.5"), asPredicate(">=1.3.5")));
-    MakeSure.isTrue(!versionMatches(Version.parse("1.3.5"), asPredicate(">1.3.5")));
+    Assertions.assertThat(Version.parse("1.3.5"))
+        .matches(version -> versionMatches(version, asPredicate(">=1.3.5")));
+    Assertions.assertThat(Version.parse("1.3.5"))
+        .matches(version -> !versionMatches(version, asPredicate(">1.3.5")));
 
-    MakeSure.isTrue(
-        versionMatches(getModVersion("dark-matter-base").orElseThrow(), asPredicate(">1.0.0")));
+    Assertions.assertThat(getModVersion("dark-matter-base"))
+        .isPresent()
+        .get()
+        .matches(version -> versionMatches(version, asPredicate(">1.0.0")));
   }
 }

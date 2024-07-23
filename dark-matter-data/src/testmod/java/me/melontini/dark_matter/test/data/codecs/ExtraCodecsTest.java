@@ -4,8 +4,6 @@ import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import java.lang.reflect.Type;
-import java.util.Objects;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.data.codecs.ExtraCodecs;
 import net.fabricmc.api.ModInitializer;
 import net.minecraft.loot.LootGsons;
@@ -13,6 +11,8 @@ import net.minecraft.loot.condition.LootCondition;
 import net.minecraft.loot.condition.RandomChanceLootCondition;
 import net.minecraft.registry.Registries;
 import net.minecraft.util.JsonSerializableType;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.InstanceOfAssertFactories;
 
 public class ExtraCodecsTest implements ModInitializer {
   @Override
@@ -34,10 +34,12 @@ public class ExtraCodecsTest implements ModInitializer {
                         "chance": 0.5
                       }""");
     LootCondition condition = parse(codec, element);
-    MakeSure.isTrue(condition instanceof RandomChanceLootCondition);
-
-    JsonElement encode = encode(codec, condition);
-    MakeSure.isTrue(Objects.equals(element, encode));
+    Assertions.assertThat(parse(codec, element))
+        .isNotNull()
+        .isInstanceOf(RandomChanceLootCondition.class)
+        .asInstanceOf(InstanceOfAssertFactories.type(LootCondition.class))
+        .extracting(lc -> encode(codec, condition))
+        .isEqualTo(element);
   }
 
   private static <T> T parse(Codec<T> codec, JsonElement element) {
