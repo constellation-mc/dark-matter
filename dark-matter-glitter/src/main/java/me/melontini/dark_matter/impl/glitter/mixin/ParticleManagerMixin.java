@@ -10,10 +10,16 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(ParticleManager.class)
 public class ParticleManagerMixin {
 
-    @ModifyExpressionValue(at = @At(value = "FIELD", target = "Lnet/minecraft/client/particle/ParticleManager;world:Lnet/minecraft/client/world/ClientWorld;"), method = "createParticle")
-    private ClientWorld dark_matter$modifyWorld(ClientWorld value) {
-        var w = VanillaParticle.WORLD.get();
-        if (w != null) return w;
-        return value;
-    }
+  @ModifyExpressionValue(
+      at =
+          @At(
+              value = "FIELD",
+              target =
+                  "Lnet/minecraft/client/particle/ParticleManager;world:Lnet/minecraft/client/world/ClientWorld;"),
+      method = "createParticle")
+  private ClientWorld dark_matter$modifyWorld(ClientWorld value) {
+    var w = VanillaParticle.WORLD.get();
+    if (w != null) return w;
+    return value;
+  }
 }

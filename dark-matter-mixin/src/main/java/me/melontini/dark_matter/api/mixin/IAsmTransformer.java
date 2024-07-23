@@ -5,11 +5,7 @@ import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
 
 public interface IAsmTransformer {
 
-    default void beforeApply(ClassNode targetClass, IMixinInfo mixinInfo) {
+  default void beforeApply(ClassNode targetClass, IMixinInfo mixinInfo) {}
 
-    }
-
-    default void afterApply(ClassNode targetClass, IMixinInfo mixinInfo) {
-
-    }
+  default void afterApply(ClassNode targetClass, IMixinInfo mixinInfo) {}
 }

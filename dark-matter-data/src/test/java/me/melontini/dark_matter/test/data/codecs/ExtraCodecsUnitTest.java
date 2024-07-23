@@ -2,82 +2,94 @@ package me.melontini.dark_matter.test.data.codecs;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.ImmutableBiMap;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
 import me.melontini.dark_matter.api.base.util.ColorUtil;
-import me.melontini.dark_matter.api.base.util.MakeSure;
 import me.melontini.dark_matter.api.data.codecs.ExtraCodecs;
 import net.minecraft.util.Identifier;
+import org.assertj.core.api.Assertions;
+import org.assertj.core.api.InstanceOfAssertFactories;
 import org.junit.jupiter.api.Test;
-
-import java.util.Objects;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class ExtraCodecsUnitTest {
 
-    @Test
-    public void testColorCodec() {
-        JsonArray color = new JsonArray();
-        color.add(23);
-        color.add(45);
-        color.add(0);
+  @ValueSource(
+      strings = {
+        "[1, 34, 5]",
+        "[67, 98, 10]",
+        "[255, 255, 255]",
+        "[0, 0, 0]",
+      })
+  @ParameterizedTest
+  public void testColorCodecArrays(String value) {
+    JsonArray array = JsonParser.parseString(value).getAsJsonArray();
+    int intended = ColorUtil.toColor(
+        array.get(0).getAsInt(), array.get(1).getAsInt(), array.get(2).getAsInt());
 
-        int colorResult = parse(ExtraCodecs.COLOR, color);
-        MakeSure.isTrue(colorResult == ColorUtil.toColor(23, 45, 0));
+    int color = parse(ExtraCodecs.COLOR, array);
+    Assertions.assertThat(color).isEqualTo(intended);
 
-        JsonPrimitive value = new JsonPrimitive(345);
-        colorResult = parse(ExtraCodecs.COLOR, value);
-        MakeSure.isTrue(colorResult == 345);
+    Assertions.assertThat(encode(ExtraCodecs.COLOR, color)).isEqualTo(new JsonPrimitive(intended));
+  }
 
-        JsonElement encode = encode(ExtraCodecs.COLOR, ColorUtil.toColor(23, 45, 0));
-        MakeSure.isTrue(Objects.equals(new JsonPrimitive(ColorUtil.toColor(23, 45, 0)), encode));
-    }
+  @ValueSource(
+      strings = {
+        "[1, 34, -5]",
+        "[45678, 98, 10]",
+        "[255, 255, 256]",
+        "[0, -1, 0]",
+      })
+  @ParameterizedTest
+  public void testColorCodecArraysInvalid(String value) {
+    JsonArray array = JsonParser.parseString(value).getAsJsonArray();
+    Assertions.assertThatThrownBy(() -> parse(ExtraCodecs.COLOR, array));
+  }
 
-    @Test
-    public void testMapLookupCodec() {
-        BiMap<Identifier, Integer> map = ImmutableBiMap.<Identifier, Integer>builder()
-                .put(new Identifier("dark_matter", "one"), 1)
-                .put(new Identifier("dark_matter", "two"), 2)
-                .put(new Identifier("dark_matter", "three"), 3)
-                .put(new Identifier("dark_matter", "four"), 4)
-                .build();
-        Codec<Integer> codec = ExtraCodecs.mapLookup(Identifier.CODEC, map);
+  @Test
+  public void testMapLookupCodec() {
+    BiMap<Identifier, Integer> map = ImmutableBiMap.<Identifier, Integer>builder()
+        .put(new Identifier("dark_matter", "one"), 1)
+        .put(new Identifier("dark_matter", "two"), 2)
+        .put(new Identifier("dark_matter", "three"), 3)
+        .put(new Identifier("dark_matter", "four"), 4)
+        .build();
+    Codec<Integer> codec = ExtraCodecs.mapLookup(Identifier.CODEC, map);
 
-        JsonPrimitive identifier = new JsonPrimitive("dark_matter:two");
-        int integer = parse(codec, identifier);
-        MakeSure.isTrue(integer == 2);
+    Assertions.assertThat(parse(codec, new JsonPrimitive("dark_matter:two"))).isEqualTo(2);
 
-        JsonElement encode = encode(codec, 3);
-        MakeSure.isTrue(Objects.equals(encode.getAsString(), "dark_matter:three"));
-    }
+    Assertions.assertThat(encode(codec, 3))
+        .extracting(JsonElement::getAsString, Assertions.as(InstanceOfAssertFactories.STRING))
+        .isEqualTo("dark_matter:three");
+  }
 
-    @Test
-    public void testEnumCodec() {
-        Codec<TestEnum> codec = ExtraCodecs.enumCodec(TestEnum.class);
-        JsonPrimitive constant = new JsonPrimitive("first");
-        TestEnum testEnum = parse(codec, constant);
-        MakeSure.isTrue(testEnum == TestEnum.FIRST);
+  @Test
+  public void testEnumCodec() {
+    Codec<TestEnum> codec = ExtraCodecs.enumCodec(TestEnum.class);
+    Assertions.assertThat(parse(codec, new JsonPrimitive("first"))).isEqualTo(TestEnum.FIRST);
 
-        JsonElement encode = encode(codec, TestEnum.SECOND);
-        MakeSure.isTrue(Objects.equals(encode.getAsString(), "second"));
-    }
+    Assertions.assertThat(encode(codec, TestEnum.SECOND))
+        .extracting(JsonElement::getAsString, Assertions.as(InstanceOfAssertFactories.STRING))
+        .isEqualTo("second");
+  }
 
-    private static <T> T parse(Codec<T> codec, JsonElement element) {
-        return codec.parse(JsonOps.INSTANCE, element).getOrThrow(false, string -> {
-            throw new JsonParseException(string);
-        });
-    }
+  private static <T> T parse(Codec<T> codec, JsonElement element) {
+    return codec.parse(JsonOps.INSTANCE, element).getOrThrow(false, string -> {
+      throw new JsonParseException(string);
+    });
+  }
 
-    private static <T> JsonElement encode(Codec<T> codec, T object) {
-        return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow(false, string -> {
-            throw new JsonParseException(string);
-        });
-    }
+  private static <T> JsonElement encode(Codec<T> codec, T object) {
+    return codec.encodeStart(JsonOps.INSTANCE, object).getOrThrow(false, string -> {
+      throw new JsonParseException(string);
+    });
+  }
 
-    public enum TestEnum {
-        FIRST, SECOND, SIXTEENTH
-    }
+  public enum TestEnum {
+    FIRST,
+    SECOND,
+    SIXTEENTH
+  }
 }

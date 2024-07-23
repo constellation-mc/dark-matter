@@ -10,13 +10,18 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(MinecraftClient.class)
 public class MinecraftClientTickMixin {
 
-    @Inject(at = @At("TAIL"), method = "tick")
-    private void dark_matter$tickValueTrack(CallbackInfo ci) {
-        ValueTrackerImpl.tick();
-    }
+  @Inject(at = @At("TAIL"), method = "tick")
+  private void dark_matter$tickValueTrack(CallbackInfo ci) {
+    ValueTrackerImpl.tick();
+  }
 
-    @Inject(method = "startIntegratedServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/world/LevelLoadingScreen;tick()V"))
-    private void dark_matter$tickValueTrackIntegratedServer(CallbackInfo ci) {
-        ValueTrackerImpl.tick();
-    }
+  @Inject(
+      method = "startIntegratedServer",
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/client/gui/screen/world/LevelLoadingScreen;tick()V"))
+  private void dark_matter$tickValueTrackIntegratedServer(CallbackInfo ci) {
+    ValueTrackerImpl.tick();
+  }
 }

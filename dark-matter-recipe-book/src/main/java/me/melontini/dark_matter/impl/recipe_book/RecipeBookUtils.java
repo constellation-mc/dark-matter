@@ -10,12 +10,14 @@ import net.minecraft.recipe.book.RecipeBookOptions;
 @UtilityClass
 public class RecipeBookUtils {
 
-    public static RecipeBookCategory createCategory(String internalName) {
-        MakeSure.notEmpty(internalName, "Tried to create a RecipeBookCategory with an empty string.");
+  public static RecipeBookCategory createCategory(String internalName) {
+    MakeSure.notEmpty(internalName, "Tried to create a RecipeBookCategory with an empty string.");
 
-        RecipeBookCategory category = ExtendableEnum.extend(RecipeBookCategory.class, internalName);
+    RecipeBookCategory category = ExtendableEnum.extend(RecipeBookCategory.class, internalName);
 
-        RecipeBookOptions.CATEGORY_OPTION_NAMES.putIfAbsent(category, new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
-        return category;
-    }
+    RecipeBookOptions.CATEGORY_OPTION_NAMES.putIfAbsent(
+        category,
+        new Pair<>("is" + internalName + "GuiOpen", "is" + internalName + "FilteringCraftable"));
+    return category;
+  }
 }

@@ -1,5 +1,8 @@
 package me.melontini.dark_matter.api.mixin;
 
+import java.io.InputStream;
+import java.lang.reflect.Proxy;
+import java.util.function.Consumer;
 import lombok.NonNull;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericField;
 import me.melontini.dark_matter.api.base.reflect.wrappers.GenericMethod;
@@ -9,10 +12,6 @@ import org.spongepowered.asm.mixin.FabricUtil;
 import org.spongepowered.asm.mixin.Mixins;
 import org.spongepowered.asm.service.IMixinService;
 import org.spongepowered.asm.service.MixinService;
-
-import java.io.InputStream;
-import java.lang.reflect.Proxy;
-import java.util.function.Consumer;
 
 /**
  * Allows adding new "virtual" mixin configs. This temporarily replaces the mixin service and injects the configs using a ThreadLocal. This <b>MUST</b> be run at preLaunch, while no classes are transformed!
@@ -29,54 +28,64 @@ import java.util.function.Consumer;
 @ApiStatus.Experimental
 public class VirtualMixins {
 
-    private static final ThreadLocal<Tuple<String, InputStream>> CONFIG = ThreadLocal.withInitial(() -> null);
+  private static final ThreadLocal<Tuple<String, InputStream>> CONFIG =
+      ThreadLocal.withInitial(() -> null);
 
-    private static final GenericMethod<?, MixinService> GET_INSTANCE = GenericMethod.of(MixinService.class, "getInstance");
-    private static final GenericField<MixinService, IMixinService> SERVICE = GenericField.of(MixinService.class, "service");
+  private static final GenericMethod<?, MixinService> GET_INSTANCE =
+      GenericMethod.of(MixinService.class, "getInstance");
+  private static final GenericField<MixinService, IMixinService> SERVICE =
+      GenericField.of(MixinService.class, "service");
 
-    public static void addMixins(Consumer<Acceptor> consumer) {
-        IMixinService service = MixinService.getService();
-        injectService(service);
-        consumer.accept(VirtualMixins::add);
-        dejectService(service);
-    }
+  public static void addMixins(Consumer<Acceptor> consumer) {
+    IMixinService service = MixinService.getService();
+    injectService(service);
+    consumer.accept(VirtualMixins::add);
+    dejectService(service);
+  }
 
-    private static void add(@NonNull String configName, @NonNull InputStream stream) {
-        Mixins.getConfigs().stream().filter(config -> config.getName().equals(configName)).findFirst().ifPresent(config -> {
-            throw new IllegalStateException("Config name %s is already in use by %s!".formatted(config.getName(), FabricUtil.getModId(config.getConfig())));
+  private static void add(@NonNull String configName, @NonNull InputStream stream) {
+    Mixins.getConfigs().stream()
+        .filter(config -> config.getName().equals(configName))
+        .findFirst()
+        .ifPresent(config -> {
+          throw new IllegalStateException("Config name %s is already in use by %s!"
+              .formatted(config.getName(), FabricUtil.getModId(config.getConfig())));
         });
 
-        try {
-            CONFIG.set(Tuple.of(configName, stream));
-            Mixins.addConfiguration(configName);
-        } finally {
-            CONFIG.remove();
-        }
+    try {
+      CONFIG.set(Tuple.of(configName, stream));
+      Mixins.addConfiguration(configName);
+    } finally {
+      CONFIG.remove();
     }
+  }
 
-    private static void injectService(IMixinService currentService) {
-        IMixinService service = (IMixinService) Proxy.newProxyInstance(VirtualMixins.class.getClassLoader(), new Class[]{IMixinService.class}, (proxy, method, args) -> {
-            if (method.getName().equals("getResourceAsStream")) {
-                if (args[0] instanceof String s) {
-                    var tuple = CONFIG.get();
-                    if (tuple != null && tuple.left().equals(s)) {
-                        return tuple.right();
-                    }
-                }
+  private static void injectService(IMixinService currentService) {
+    IMixinService service = (IMixinService) Proxy.newProxyInstance(
+        VirtualMixins.class.getClassLoader(),
+        new Class[] {IMixinService.class},
+        (proxy, method, args) -> {
+          if (method.getName().equals("getResourceAsStream")) {
+            if (args[0] instanceof String s) {
+              var tuple = CONFIG.get();
+              if (tuple != null && tuple.left().equals(s)) {
+                return tuple.right();
+              }
             }
+          }
 
-            return method.invoke(currentService, args);
+          return method.invoke(currentService, args);
         });
-        MixinService serviceProxy = GET_INSTANCE.accessible(true).invoke(null);
-        SERVICE.accessible(true).set(serviceProxy, service);
-    }
+    MixinService serviceProxy = GET_INSTANCE.accessible(true).invoke(null);
+    SERVICE.accessible(true).set(serviceProxy, service);
+  }
 
-    private static void dejectService(IMixinService realService) {
-        MixinService serviceProxy = GET_INSTANCE.accessible(true).invoke(null);
-        SERVICE.accessible(true).set(serviceProxy, realService);
-    }
+  private static void dejectService(IMixinService realService) {
+    MixinService serviceProxy = GET_INSTANCE.accessible(true).invoke(null);
+    SERVICE.accessible(true).set(serviceProxy, realService);
+  }
 
-    public interface Acceptor {
-        void add(String configName, InputStream stream);
-    }
+  public interface Acceptor {
+    void add(String configName, InputStream stream);
+  }
 }
