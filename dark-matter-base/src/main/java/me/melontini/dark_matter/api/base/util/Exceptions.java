@@ -91,44 +91,72 @@ public class Exceptions {
   }
 
   @ApiStatus.Experimental
-  public static Result<Void, Throwable> runAsResult(ThrowingRunnable<Throwable> runnable) {
+  public static <E extends Throwable> Result<Void, E> runAsResult(
+      Class<E> type, ThrowingRunnable<? super E> runnable) {
     try {
       runnable.run();
       return Result.empty();
     } catch (Throwable e) {
-      return Result.error(e);
+      if (type.isInstance(e)) return Result.error(type.cast(e));
+      return throwNow(e);
     }
+  }
+
+  @ApiStatus.Experimental
+  public static <T, E extends Throwable> Result<T, E> supplyAsResult(
+      Class<E> type, ThrowingSupplier<? extends T, ? extends E> supplier) {
+    try {
+      return Result.ok(supplier.get());
+    } catch (Throwable e) {
+      if (type.isInstance(e)) return Result.error(type.cast(e));
+      return throwNow(e);
+    }
+  }
+
+  @ApiStatus.Experimental
+  public static <T, E extends Throwable> Result<T, E> consumeAsResult(
+      Class<E> type, T obj, ThrowingConsumer<? super T, ? extends E> consumer) {
+    try {
+      consumer.accept(obj);
+      return Result.ok(obj);
+    } catch (Throwable e) {
+      if (type.isInstance(e)) return Result.error(type.cast(e));
+      return throwNow(e);
+    }
+  }
+
+  @ApiStatus.Experimental
+  public static <T, R, E extends Throwable> Result<R, E> processAsResult(
+      Class<E> type, T obj, ThrowingFunction<? super T, ? extends R, ? extends E> function) {
+    try {
+      return Result.ok(function.apply(obj));
+    } catch (Throwable e) {
+      if (type.isInstance(e)) return Result.error(type.cast(e));
+      return throwNow(e);
+    }
+  }
+
+  @ApiStatus.Experimental
+  public static Result<Void, Throwable> runAsResult(ThrowingRunnable<Throwable> runnable) {
+    return runAsResult(Throwable.class, runnable);
   }
 
   @ApiStatus.Experimental
   public static <T> Result<T, Throwable> supplyAsResult(
       ThrowingSupplier<? extends T, Throwable> supplier) {
-    try {
-      return Result.ok(supplier.get());
-    } catch (Throwable e) {
-      return Result.error(e);
-    }
+    return supplyAsResult(Throwable.class, supplier);
   }
 
   @ApiStatus.Experimental
   public static <T> Result<T, Throwable> consumeAsResult(
       T obj, ThrowingConsumer<? super T, Throwable> consumer) {
-    try {
-      consumer.accept(obj);
-      return Result.ok(obj);
-    } catch (Throwable e) {
-      return Result.error(e);
-    }
+    return consumeAsResult(Throwable.class, obj, consumer);
   }
 
   @ApiStatus.Experimental
   public static <T, R> Result<R, Throwable> processAsResult(
       T obj, ThrowingFunction<? super T, ? extends R, Throwable> function) {
-    try {
-      return Result.ok(function.apply(obj));
-    } catch (Throwable e) {
-      return Result.error(e);
-    }
+    return processAsResult(Throwable.class, obj, function);
   }
 
   /**
