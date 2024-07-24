@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public interface Context {
 
@@ -18,7 +20,8 @@ public interface Context {
             () -> new IllegalStateException("Missing required context '%s'!".formatted(key)));
   }
 
-  static <T> Key<T> key(String id) {
+  @Contract("_ -> new")
+  static <T> @NotNull Key<T> key(String id) {
     return new Key<>(id);
   }
 
@@ -28,7 +31,8 @@ public interface Context {
     return Empty.INSTANCE;
   }
 
-  static Context of(Map<Key<?>, Object> map) {
+  @Contract(value = "_ -> new", pure = true)
+  static @NotNull Context of(Map<Key<?>, Object> map) {
     return new Context() {
       private final Map<Key<?>, Object> ctx = Collections.unmodifiableMap(map);
 
@@ -49,7 +53,8 @@ public interface Context {
     };
   }
 
-  static Builder builder() {
+  @Contract(" -> new")
+  static @NotNull Builder builder() {
     return new Builder();
   }
 
