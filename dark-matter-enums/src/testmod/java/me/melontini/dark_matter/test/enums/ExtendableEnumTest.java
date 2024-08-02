@@ -18,7 +18,10 @@ public class ExtendableEnumTest implements ModInitializer {
         ExtendableEnum.extend(AbstractMinecartEntity.Type.class, "INT_NAME");
     Assertions.assertThat(category).isNotNull();
 
-    Rarity rarity = ExtendableEnum.extend(Rarity.class, "TESTINGLY_RARE", new Parameters.Rarity(4, "testingly_rare", Formatting.BOLD));
+    Rarity rarity = ExtendableEnum.extend(
+        Rarity.class,
+        "TESTINGLY_RARE",
+        new Parameters.Rarity(4, "testingly_rare", Formatting.BOLD));
     Assertions.assertThat(rarity)
         .isNotNull()
         .matches(rarity1 -> rarity1.getFormatting() == Formatting.BOLD, "formatting is `BOLD`");

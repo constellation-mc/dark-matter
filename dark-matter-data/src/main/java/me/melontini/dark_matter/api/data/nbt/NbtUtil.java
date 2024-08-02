@@ -28,21 +28,25 @@ public class NbtUtil {
    * @return the NbtCompound with the inventory data written to it
    */
   public static @NotNull NbtCompound writeInventoryToNbt(
-      String key, NbtCompound nbt, @NotNull Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+      String key,
+      NbtCompound nbt,
+      @NotNull Inventory inventory,
+      RegistryWrapper.WrapperLookup lookup) {
     nbt = (nbt == null) ? new NbtCompound() : nbt;
     NbtList nbtList = new NbtList();
     for (int i = 0; i < inventory.size(); ++i) {
       ItemStack itemStack = inventory.getStack(i);
       if (!itemStack.isEmpty()) {
-        nbtList.add(
-            itemStack.encode(lookup, NbtBuilder.create().putByte("Slot", (byte) i).build()));
+        nbtList.add(itemStack.encode(
+            lookup, NbtBuilder.create().putByte("Slot", (byte) i).build()));
       }
     }
     nbt.put(key, nbtList);
     return nbt;
   }
 
-  public static void readInventoryFromNbt(NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+  public static void readInventoryFromNbt(
+      NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
     readInventoryFromNbt("Items", nbt, inventory, lookup);
   }
 
@@ -52,7 +56,8 @@ public class NbtUtil {
    * @param nbt       the NbtCompound to read the inventory from
    * @param inventory the inventory to read the data into
    */
-  public static void readInventoryFromNbt(String key, NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
+  public static void readInventoryFromNbt(
+      String key, NbtCompound nbt, Inventory inventory, RegistryWrapper.WrapperLookup lookup) {
     if (nbt == null) return;
     if (!nbt.contains(key)) return;
 

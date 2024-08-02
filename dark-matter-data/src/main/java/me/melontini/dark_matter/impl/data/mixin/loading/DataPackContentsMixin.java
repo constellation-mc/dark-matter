@@ -3,9 +3,6 @@ package me.melontini.dark_matter.impl.data.mixin.loading;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
-import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executor;
 import me.melontini.dark_matter.api.data.loading.ReloaderType;
 import me.melontini.dark_matter.impl.data.loading.InternalContentsAccessor;
 import me.melontini.dark_matter.impl.data.loading.InternalContext;
@@ -22,6 +19,10 @@ import net.minecraft.util.Unit;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Mixin(value = DataPackContents.class, priority = 1100)
 abstract class DataPackContentsMixin implements InternalContentsAccessor {
@@ -72,10 +73,12 @@ abstract class DataPackContentsMixin implements InternalContentsAccessor {
       boolean profiled,
       Operation<ResourceReload> original,
       @Local DataPackContents contents,
-      @Local(argsOnly = true) CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries,
+      @Local(argsOnly = true)
+          CombinedDynamicRegistries<ServerDynamicRegistryType> dynamicRegistries,
       @Local(argsOnly = true) FeatureSet featureSet) {
     try {
-      InternalContext.LOCAL.set(new InternalContext(dynamicRegistries.getCombinedRegistryManager(), featureSet, contents));
+      InternalContext.LOCAL.set(new InternalContext(
+          dynamicRegistries.getCombinedRegistryManager(), featureSet, contents));
       return original.call(
           manager, reloaders, prepareExecutor, applyExecutor, initialStage, profiled);
     } finally {

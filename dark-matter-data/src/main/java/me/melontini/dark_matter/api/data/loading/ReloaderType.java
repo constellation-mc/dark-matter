@@ -19,10 +19,13 @@ import org.jetbrains.annotations.NotNull;
 @Accessors(fluent = true)
 public final class ReloaderType<T extends ResourceReloader> {
 
-    public static final ReloaderType<TagManagerLoader> TAGS = create(ResourceReloadListenerKeys.TAGS);
-    public static final ReloaderType<RecipeManager> RECIPES = create(ResourceReloadListenerKeys.RECIPES);
-    public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS = create(ResourceReloadListenerKeys.ADVANCEMENTS);
-    public static final ReloaderType<FunctionLoader> FUNCTIONS = create(ResourceReloadListenerKeys.FUNCTIONS);
+  public static final ReloaderType<TagManagerLoader> TAGS = create(ResourceReloadListenerKeys.TAGS);
+  public static final ReloaderType<RecipeManager> RECIPES =
+      create(ResourceReloadListenerKeys.RECIPES);
+  public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS =
+      create(ResourceReloadListenerKeys.ADVANCEMENTS);
+  public static final ReloaderType<FunctionLoader> FUNCTIONS =
+      create(ResourceReloadListenerKeys.FUNCTIONS);
 
   private final Identifier identifier;
 

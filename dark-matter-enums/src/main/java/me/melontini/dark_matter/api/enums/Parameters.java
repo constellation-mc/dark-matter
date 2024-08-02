@@ -1,7 +1,5 @@
 package me.melontini.dark_matter.api.enums;
 
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -10,6 +8,8 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.raid.RaiderEntity;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Supplier;
 
 @UtilityClass
 public class Parameters {
@@ -23,20 +23,22 @@ public class Parameters {
     }
   }
 
-    public record RaidMember(EntityType<? extends RaiderEntity> type, int[] countInWave) implements Base {
-        @Override
-        public Object[] get() {
-            return new Object[] { type(), countInWave() };
-        }
+  public record RaidMember(EntityType<? extends RaiderEntity> type, int[] countInWave)
+      implements Base {
+    @Override
+    public Object[] get() {
+      return new Object[] {type(), countInWave()};
     }
+  }
 
-  public record Rarity(int index, String name, net.minecraft.util.Formatting formatting) implements Base {
+  public record Rarity(int index, String name, net.minecraft.util.Formatting formatting)
+      implements Base {
 
     @Override
     public Object[] get() {
-      return new Object[] {index(), name(), formatting() };
-        }
+      return new Object[] {index(), name(), formatting()};
     }
+  }
 
   public record BoatEntityType(Block baseBlock, String name) implements Base {
     @Override

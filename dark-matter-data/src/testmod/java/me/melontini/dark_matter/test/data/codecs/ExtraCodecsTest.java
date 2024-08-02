@@ -3,8 +3,8 @@ package me.melontini.dark_matter.test.data.codecs;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
-import java.lang.reflect.Type;
 import net.fabricmc.api.ModInitializer;
+
 public class ExtraCodecsTest implements ModInitializer {
   @Override
   public void onInitialize() {}
