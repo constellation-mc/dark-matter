@@ -14,17 +14,37 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(CreativeInventoryScreen.class)
-public abstract class CreativeInventoryScreenMixin extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> {
+public abstract class CreativeInventoryScreenMixin
+    extends AbstractInventoryScreen<CreativeInventoryScreen.CreativeScreenHandler> {
 
-    public CreativeInventoryScreenMixin(CreativeInventoryScreen.CreativeScreenHandler screenHandler, PlayerInventory playerInventory, Text text) {
-        super(screenHandler, playerInventory, text);
-    }
+  public CreativeInventoryScreenMixin(
+      CreativeInventoryScreen.CreativeScreenHandler screenHandler,
+      PlayerInventory playerInventory,
+      Text text) {
+    super(screenHandler, playerInventory, text);
+  }
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;", shift = At.Shift.BEFORE), method = "renderTabIcon", cancellable = true)
-    private void dark_matter$drawGroupIcon(DrawContext context, ItemGroup group, CallbackInfo ci, @Local(index = 3) boolean bl, @Local(index = 4) boolean bl2, @Local(index = 6) int j, @Local(index = 7) int k) {
-        if (((ItemGroupExtensions)group).dm$getIconAnimation() != null) {
-            ((ItemGroupExtensions)group).dm$getIconAnimation().animateIcon(group, context, j, k, bl, bl2);
-            ci.cancel();
-        }
+  @Inject(
+      at =
+          @At(
+              value = "INVOKE",
+              target = "Lnet/minecraft/item/ItemGroup;getIcon()Lnet/minecraft/item/ItemStack;",
+              shift = At.Shift.BEFORE),
+      method = "renderTabIcon",
+      cancellable = true)
+  private void dark_matter$drawGroupIcon(
+      DrawContext context,
+      ItemGroup group,
+      CallbackInfo ci,
+      @Local(index = 3) boolean bl,
+      @Local(index = 4) boolean bl2,
+      @Local(index = 6) int j,
+      @Local(index = 7) int k) {
+    if (((ItemGroupExtensions) group).dm$getIconAnimation() != null) {
+      ((ItemGroupExtensions) group)
+          .dm$getIconAnimation()
+          .animateIcon(group, context, j, k, bl, bl2);
+      ci.cancel();
     }
+  }
 }

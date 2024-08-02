@@ -4,5 +4,5 @@ import net.minecraft.resource.ResourceReloader;
 
 public interface DataPackContentsAccessor {
 
-    <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type);
+  <T extends ResourceReloader> T dm$getReloader(ReloaderType<T> type);
 }

@@ -3,9 +3,15 @@ fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version = "0.1
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version = "0.97.6+1.20.5" }
 handy-tests = { group = "me.melontini", name = "handy-tests", version = "0.2.0-1.20.5-build.13" }
 
+junit-bom = { module = "org.junit:junit-bom", version = "5.10.3" }
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
+junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.26.3" }
+mockito-core = { module = "org.mockito:mockito-core", version = "5.12.0" }
+
 [plugins]
 fabric-loom = { id = "fabric-loom", version = "1.7.2" }
 lombok = { id = "io.freefair.lombok", version = "8.6"}
 spotbugs-base = { id = "com.github.spotbugs-base", version = "6.0.19" }
 spotless = { id = "com.diffplug.spotless", version = "6.25.0" }
-modmuss50-publish = { id = "me.modmuss50.mod-publish-plugin", version = "0.6.1" }
+modmuss50-publish = { id = "me.modmuss50.mod-publish-plugin", version = "0.6.2" }

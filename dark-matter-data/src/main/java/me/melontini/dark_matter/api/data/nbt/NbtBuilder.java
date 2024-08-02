@@ -1,14 +1,13 @@
 package me.melontini.dark_matter.api.data.nbt;
 
+import java.util.List;
+import java.util.UUID;
 import me.melontini.dark_matter.impl.data.nbt.NbtBuilderImpl;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
-import java.util.UUID;
 
 /**
  * A quick builder to make NBTs in one line.
@@ -38,50 +37,49 @@ import java.util.UUID;
 @SuppressWarnings("unused")
 public interface NbtBuilder {
 
+  @Contract(value = " -> new", pure = true)
+  static @NotNull NbtBuilder create() {
+    return new NbtBuilderImpl();
+  }
 
-    @Contract(value = " -> new", pure = true)
-    static @NotNull NbtBuilder create() {
-        return new NbtBuilderImpl();
-    }
+  @Contract("_ -> new")
+  static @NotNull NbtBuilder create(@Nullable NbtCompound nbt) {
+    return new NbtBuilderImpl(nbt);
+  }
 
-    @Contract("_ -> new")
-    static @NotNull NbtBuilder create(@Nullable NbtCompound nbt) {
-        return new NbtBuilderImpl(nbt);
-    }
+  NbtBuilder put(String key, NbtElement element);
 
-    NbtBuilder put(String key, NbtElement element);
+  NbtBuilder put(String key, NbtBuilder builder);
 
-    NbtBuilder put(String key, NbtBuilder builder);
+  NbtBuilder putByte(String key, byte value);
 
-    NbtBuilder putByte(String key, byte value);
+  NbtBuilder putShort(String key, short value);
 
-    NbtBuilder putShort(String key, short value);
+  NbtBuilder putInt(String key, int value);
 
-    NbtBuilder putInt(String key, int value);
+  NbtBuilder putLong(String key, long value);
 
-    NbtBuilder putLong(String key, long value);
+  NbtBuilder putUuid(String key, UUID value);
 
-    NbtBuilder putUuid(String key, UUID value);
+  NbtBuilder putFloat(String key, float value);
 
-    NbtBuilder putFloat(String key, float value);
+  NbtBuilder putDouble(String key, double value);
 
-    NbtBuilder putDouble(String key, double value);
+  NbtBuilder putString(String key, String value);
 
-    NbtBuilder putString(String key, String value);
+  NbtBuilder putByteArray(String key, byte[] value);
 
-    NbtBuilder putByteArray(String key, byte[] value);
+  NbtBuilder putByteArray(String key, List<Byte> value);
 
-    NbtBuilder putByteArray(String key, List<Byte> value);
+  NbtBuilder putIntArray(String key, int[] value);
 
-    NbtBuilder putIntArray(String key, int[] value);
+  NbtBuilder putIntArray(String key, List<Integer> value);
 
-    NbtBuilder putIntArray(String key, List<Integer> value);
+  NbtBuilder putLongArray(String key, long[] value);
 
-    NbtBuilder putLongArray(String key, long[] value);
+  NbtBuilder putLongArray(String key, List<Long> value);
 
-    NbtBuilder putLongArray(String key, List<Long> value);
+  NbtBuilder putBoolean(String key, boolean value);
 
-    NbtBuilder putBoolean(String key, boolean value);
-
-    NbtCompound build();
+  NbtCompound build();
 }

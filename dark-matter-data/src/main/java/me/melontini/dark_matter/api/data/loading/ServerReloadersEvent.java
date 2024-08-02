@@ -15,24 +15,26 @@ import net.minecraft.resource.featuretoggle.FeatureSet;
  */
 public interface ServerReloadersEvent {
 
-    Event<ServerReloadersEvent> EVENT = EventFactory.createArrayBacked(ServerReloadersEvent.class, events -> (c) -> {
+  Event<ServerReloadersEvent> EVENT =
+      EventFactory.createArrayBacked(ServerReloadersEvent.class, events -> (c) -> {
         for (ServerReloadersEvent event : events) {
-            event.onServerReloaders(c);
+          event.onServerReloaders(c);
         }
-    });
+      });
 
-    void onServerReloaders(Context context);
+  void onServerReloaders(Context context);
 
-    interface Context {
-        DynamicRegistryManager registryManager();
-        FeatureSet enabledFeatures();
+  interface Context {
+    DynamicRegistryManager registryManager();
 
-        void register(IdentifiableResourceReloadListener reloadListener);
+    FeatureSet enabledFeatures();
 
-        /**
-         * Returns a reloader by type. <br/>
-         * Due to a design oversight, calling this method during the event will crash the game. Using it during {@code prepare} and {@code apply} is fine.
-         */
-        <T extends ResourceReloader> T reloader(ReloaderType<T> type);
-    }
+    void register(IdentifiableResourceReloadListener reloadListener);
+
+    /**
+     * Returns a reloader by type. <br/>
+     * Due to a design oversight, calling this method during the event will crash the game. Using it during {@code prepare} and {@code apply} is fine.
+     */
+    <T extends ResourceReloader> T reloader(ReloaderType<T> type);
+  }
 }

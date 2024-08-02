@@ -24,10 +24,11 @@ public final class ReloaderType<T extends ResourceReloader> {
     public static final ReloaderType<ServerAdvancementLoader> ADVANCEMENTS = create(ResourceReloadListenerKeys.ADVANCEMENTS);
     public static final ReloaderType<FunctionLoader> FUNCTIONS = create(ResourceReloadListenerKeys.FUNCTIONS);
 
-    private final Identifier identifier;
+  private final Identifier identifier;
 
-    @Contract("_ -> new")
-    public static <T extends ResourceReloader> @NotNull ReloaderType<T> create(Identifier identifier) {
-        return new ReloaderType<>(identifier);
-    }
+  @Contract("_ -> new")
+  public static <T extends ResourceReloader> @NotNull ReloaderType<T> create(
+      Identifier identifier) {
+    return new ReloaderType<>(identifier);
+  }
 }

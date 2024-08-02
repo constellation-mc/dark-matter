@@ -8,11 +8,11 @@ import net.minecraft.item.ItemGroup;
 @Environment(EnvType.CLIENT)
 public interface ItemGroupExtensions {
 
-    default ItemGroup dm$setIconAnimation(ItemGroupAnimaton animation) {
-        throw new IllegalStateException("Interface not implemented");
-    }
+  default ItemGroup dm$setIconAnimation(ItemGroupAnimaton animation) {
+    throw new IllegalStateException("Interface not implemented");
+  }
 
-    default ItemGroupAnimaton dm$getIconAnimation() {
-        throw new IllegalStateException("Interface not implemented");
-    }
+  default ItemGroupAnimaton dm$getIconAnimation() {
+    throw new IllegalStateException("Interface not implemented");
+  }
 }

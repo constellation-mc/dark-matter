@@ -8,15 +8,14 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Mod {
 
-    String value();
+  String value();
 
-    String version() default "*";
+  String version() default "*";
 
-    State state() default State.LOADED;
+  State state() default State.LOADED;
 
-    enum State {
-        LOADED,
-        NOT_LOADED
-    }
-
+  enum State {
+    LOADED,
+    NOT_LOADED
+  }
 }

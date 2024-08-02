@@ -7,6 +7,4 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @AsmTransformers(RecipeBookMutator.class)
 @Mixin(value = RecipeBookOptions.class, priority = 800)
-public class RecipeBookOptionsMixin {
-
-}
+public class RecipeBookOptionsMixin {}
