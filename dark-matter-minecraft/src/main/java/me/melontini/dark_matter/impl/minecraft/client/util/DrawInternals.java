@@ -16,13 +16,13 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.tooltip.HoveredTooltipPositioner;
 import net.minecraft.client.gui.tooltip.TooltipComponent;
 import net.minecraft.client.gui.tooltip.TooltipPositioner;
-import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.client.render.*;
 import net.minecraft.client.render.model.BakedModel;
 import net.minecraft.client.render.model.json.ModelTransformationMode;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.tooltip.TooltipData;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import org.joml.Matrix4f;
@@ -113,7 +113,8 @@ public class DrawInternals {
     RenderSystem.defaultBlendFunc();
     RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     Tessellator tessellator = Tessellator.getInstance();
-    BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+    BufferBuilder bufferBuilder =
+        tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     fillGradient(
         matrices.peek().getPositionMatrix(),
         bufferBuilder,
@@ -165,7 +166,8 @@ public class DrawInternals {
     RenderSystem.defaultBlendFunc();
     RenderSystem.setShader(GameRenderer::getPositionColorProgram);
     Tessellator tessellator = Tessellator.getInstance();
-    BufferBuilder bufferBuilder = tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+    BufferBuilder bufferBuilder =
+        tessellator.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
     fillGradientHorizontal(
         matrices.peek().getPositionMatrix(),
         bufferBuilder,
@@ -309,7 +311,8 @@ public class DrawInternals {
       float v0,
       float v1) {
     RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-    BufferBuilder bufferBuilder = Tessellator.getInstance().begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
+    BufferBuilder bufferBuilder = Tessellator.getInstance()
+        .begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
     bufferBuilder.vertex(matrix, x0, y1, z).texture(u0, v1);
     bufferBuilder.vertex(matrix, x1, y1, z).texture(u1, v1);
     bufferBuilder.vertex(matrix, x1, y0, z).texture(u1, v0);

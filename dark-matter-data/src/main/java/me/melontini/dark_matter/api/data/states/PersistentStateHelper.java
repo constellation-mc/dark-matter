@@ -1,5 +1,10 @@
 package me.melontini.dark_matter.api.data.states;
 
+import java.util.Optional;
+import java.util.function.BiFunction;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
@@ -7,12 +12,6 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.PersistentState;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
 
 @UtilityClass
 @ApiStatus.Experimental

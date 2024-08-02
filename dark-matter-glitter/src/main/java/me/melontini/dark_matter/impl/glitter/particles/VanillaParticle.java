@@ -78,28 +78,31 @@ public class VanillaParticle extends AbstractScreenParticle {
     matrixStack.mul(matrices.peek().getPositionMatrix());
     RenderSystem.applyModelViewMatrix();
 
-        Mirage.getAlwaysBrightLTM().enable();
+    Mirage.getAlwaysBrightLTM().enable();
 
     RenderSystem.setShader(GameRenderer::getParticleProgram);
     RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-    BufferBuilder bufferBuilder = particle.getType().begin(Tessellator.getInstance(), client.getTextureManager());
+    BufferBuilder bufferBuilder =
+        particle.getType().begin(Tessellator.getInstance(), client.getTextureManager());
 
     if (bufferBuilder != null) {
-            try {
-                particle.buildGeometry(bufferBuilder, CAMERA, delta);
-            } catch (Throwable var17) {
-                CrashReport crashReport = CrashReport.create(var17, "[Dark Matter Glitter] Rendering Particle On Screen");
-                CrashReportSection crashReportSection = crashReport.addElement("Particle being rendered on screen");
-                crashReportSection.add("Particle", particle::toString);
-                crashReportSection.add("Particle Type", particle.getType()::toString);
-                throw new CrashException(crashReport);
-            }
+      try {
+        particle.buildGeometry(bufferBuilder, CAMERA, delta);
+      } catch (Throwable var17) {
+        CrashReport crashReport =
+            CrashReport.create(var17, "[Dark Matter Glitter] Rendering Particle On Screen");
+        CrashReportSection crashReportSection =
+            crashReport.addElement("Particle being rendered on screen");
+        crashReportSection.add("Particle", particle::toString);
+        crashReportSection.add("Particle Type", particle.getType()::toString);
+        throw new CrashException(crashReport);
+      }
 
-            BuiltBuffer builtBuffer = bufferBuilder.endNullable();
-            if (builtBuffer != null) {
-                BufferRenderer.drawWithGlobalProgram(builtBuffer);
-            }
-        }
+      BuiltBuffer builtBuffer = bufferBuilder.endNullable();
+      if (builtBuffer != null) {
+        BufferRenderer.drawWithGlobalProgram(builtBuffer);
+      }
+    }
 
     Mirage.getAlwaysBrightLTM().disable();
     matrixStack.popMatrix();

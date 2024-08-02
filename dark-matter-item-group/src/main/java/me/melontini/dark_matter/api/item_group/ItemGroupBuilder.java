@@ -30,9 +30,10 @@ public interface ItemGroupBuilder {
   ItemGroupBuilder icon(Supplier<ItemStack> itemStackSupplier);
 
   default ItemGroupBuilder texture(String texture) {
-        return this.texture(Identifier.of(texture));
-    }
-    ItemGroupBuilder texture(Identifier texture);
+    return this.texture(Identifier.of(texture));
+  }
+
+  ItemGroupBuilder texture(Identifier texture);
 
   ItemGroupBuilder entries(DarkMatterEntries.Collector collector);
 
