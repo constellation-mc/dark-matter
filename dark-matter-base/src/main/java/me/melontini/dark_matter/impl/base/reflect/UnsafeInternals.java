@@ -67,7 +67,8 @@ public class UnsafeInternals {
 
   public static Class<?> defineClass(
       ClassLoader loader, String name, byte[] bytes, @Nullable ProtectionDomain domain) {
-    return (Class<?>) supply(() -> DEFINE_CLASS.get().invoke(loader, name, bytes, domain));
+    return (Class<?>)
+        supply(() -> DEFINE_CLASS.get().invoke(loader, name, bytes, 0, bytes.length, domain));
   }
 
   public static void setReference(@NonNull Field field, Object o, Object value) {

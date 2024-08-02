@@ -20,15 +20,16 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-import lombok.Getter;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.reflect.Reflect;
 import me.melontini.dark_matter.api.base.reflect.UnsafeUtils;
+import me.melontini.dark_matter.api.base.util.*;
 import me.melontini.dark_matter.api.instrumentation.InstrumentationAccess;
 import me.melontini.dark_matter.api.instrumentation.TransformationException;
 import me.melontini.dark_matter.impl.base.DarkMatterLog;
 import net.fabricmc.loader.api.FabricLoader;
 import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.tree.ClassNode;
@@ -42,14 +43,11 @@ import org.objectweb.asm.tree.ClassNode;
 @UtilityClass
 public class InstrumentationInternals {
 
-  public static final Path GAME_DIR = FabricLoader.getInstance().getGameDir();
-  public static final Path EXPORT_DIR = GAME_DIR.resolve(".dark-matter/class");
-  public static final Path AGENT_DIR = GAME_DIR.resolve(".dark-matter/agent");
+  public static final Path EXPORT_DIR =
+      FabricLoader.getInstance().getGameDir().resolve(".dark-matter/class");
 
-  @Getter
   private static Instrumentation instrumentation;
-
-  private static boolean canInstrument = false;
+  private static boolean triedAttaching = false;
 
   public static void retransform(
       InstrumentationAccess.AsmTransformer transformer, boolean export, String... cls)
@@ -113,11 +111,7 @@ public class InstrumentationInternals {
     }
   }
 
-  public static boolean canInstrument() {
-    return canInstrument;
-  }
-
-  static {
+  public static void tryCleanup() {
     try {
       if (Files.exists(EXPORT_DIR)) {
         Files.walkFileTree(
@@ -145,30 +139,28 @@ public class InstrumentationInternals {
     } catch (Exception e) {
       DarkMatterLog.error(String.format("Couldn't clean %s", EXPORT_DIR), e);
     }
-
-    bootstrap();
   }
 
-  public static void bootstrap() {
-    if (canInstrument()) return;
+  public static @Nullable Instrumentation getInstrumentation() {
+    if (instrumentation != null) return instrumentation;
+    if (triedAttaching) return null;
 
-    try {
-      Files.deleteIfExists(AGENT_DIR.resolve("dark_matter_instrumentation_agent.jar"));
-    } catch (IOException ignored) {
-      // rip
-    }
-    try {
-      try {
-        instrumentation = unsafeAttach();
-      } catch (Throwable t) {
-        throw new IllegalStateException("Failed to attach using InstrumentationImpl#loadAgent", t);
+    synchronized (InstrumentationAccess.class) {
+      if (instrumentation == null) {
+        var result = Exceptions.supplyAsResult(InstrumentationInternals::unsafeAttach)
+            .mapErr(t -> new IllegalStateException(
+                "Failed to attach using InstrumentationImpl#loadAgent", t));
+
+        if (result.value().isPresent()) {
+          DarkMatterLog.info("Successfully attached instrumentation agent.");
+          return instrumentation = result.value().orElseThrow();
+        }
+        DarkMatterLog.error(
+            "An error occurred during an attempt to attach an instrumentation agent.",
+            result.error().orElse(null));
+        triedAttaching = true;
       }
-
-      canInstrument = true;
-      DarkMatterLog.info("Successfully attached instrumentation agent.");
-    } catch (final Throwable throwable) {
-      DarkMatterLog.error(
-          "An error occurred during an attempt to attach an instrumentation agent.", throwable);
+      return null;
     }
   }
 

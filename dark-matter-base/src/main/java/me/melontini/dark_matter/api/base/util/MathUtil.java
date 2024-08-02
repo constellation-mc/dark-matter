@@ -3,6 +3,8 @@ package me.melontini.dark_matter.api.base.util;
 import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.experimental.UtilityClass;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
 public final class MathUtil {
@@ -44,11 +46,13 @@ public final class MathUtil {
     return ThreadLocalRandom.current();
   }
 
-  public static Random random() {
+  @Contract(" -> new")
+  public static @NotNull Random random() {
     return new Random();
   }
 
-  public static Random random(long seed) {
+  @Contract("_ -> new")
+  public static @NotNull Random random(long seed) {
     return new Random(seed);
   }
 

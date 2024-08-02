@@ -4,6 +4,8 @@ import java.util.function.Function;
 import lombok.Getter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 @SuppressWarnings("unused")
 public class PrependingLogger {
@@ -76,7 +78,7 @@ public class PrependingLogger {
     this.backing = backing;
   }
 
-  public static PrependingLogger get() {
+  public static @NotNull PrependingLogger get() {
     String[] cls = Utilities.getCallerClass(2)
         .map(Class::getName)
         .map(PrependingLogger::split)
@@ -84,23 +86,27 @@ public class PrependingLogger {
     return new PrependingLogger(LogManager.getLogger(cls[cls.length - 1]), LOGGER_NAME);
   }
 
-  public static PrependingLogger get(String name) {
+  @Contract("_ -> new")
+  public static @NotNull PrependingLogger get(String name) {
     return new PrependingLogger(LogManager.getLogger(name), LOGGER_NAME);
   }
 
-  public static PrependingLogger get(String name, Function<Logger, String> prefixGetter) {
+  @Contract("_, _ -> new")
+  public static @NotNull PrependingLogger get(String name, Function<Logger, String> prefixGetter) {
     return new PrependingLogger(LogManager.getLogger(name), prefixGetter);
   }
 
-  public static PrependingLogger withClass(String name) {
+  @Contract("_ -> new")
+  public static @NotNull PrependingLogger withClass(String name) {
     return new PrependingLogger(LogManager.getLogger(name), NAME_CLASS_MIX);
   }
 
-  public static PrependingLogger withMethod(String name) {
+  @Contract("_ -> new")
+  public static @NotNull PrependingLogger withMethod(String name) {
     return new PrependingLogger(LogManager.getLogger(name), NAME_METHOD_MIX);
   }
 
-  private static String getNameOrEmpty(Logger logger) {
+  private static @NotNull String getNameOrEmpty(Logger logger) {
     return !Utilities.isDev() ? "(" + logger.getName() + ") " : "";
   }
 

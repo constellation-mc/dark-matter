@@ -3,10 +3,13 @@ package me.melontini.dark_matter.api.base.util.functions;
 import java.util.*;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 
 public class Memoize {
 
-  public static <T> Supplier<T> supplier(Supplier<T> delegate) {
+  @Contract(value = "_ -> new", pure = true)
+  public static <T> @NotNull Supplier<T> supplier(Supplier<T> delegate) {
     return new Supplier<>() {
       T value;
       volatile boolean initialized;
@@ -32,7 +35,8 @@ public class Memoize {
    * A simple memoizing function based on {@link HashMap}. <br/>
    * This implementation does not remove any of the entries.
    */
-  public static <T, R> Function<T, R> function(Function<T, R> delegate) {
+  @Contract("_ -> new")
+  public static <T, R> @NotNull Function<T, R> function(Function<T, R> delegate) {
     return cachedFunction(new HashMap<>(), delegate);
   }
 
@@ -40,7 +44,8 @@ public class Memoize {
    * A simple memoizing function based on {@link IdentityHashMap}. <br/>
    * This implementation does not remove any of the entries.
    */
-  public static <T, R> Function<T, R> identityFunction(Function<T, R> delegate) {
+  @Contract("_ -> new")
+  public static <T, R> @NotNull Function<T, R> identityFunction(Function<T, R> delegate) {
     return cachedFunction(new IdentityHashMap<>(), delegate);
   }
 
@@ -48,7 +53,8 @@ public class Memoize {
    * A simple memoizing function based on {@link LinkedHashMap}. <br/>
    * Unlike previous functions, this one will evict unused entries when capacity is too high.
    */
-  public static <T, R> Function<T, R> lruFunction(Function<T, R> delegate, int capacity) {
+  @Contract("_, _ -> new")
+  public static <T, R> @NotNull Function<T, R> lruFunction(Function<T, R> delegate, int capacity) {
     return cachedFunction(
         Collections.synchronizedMap(new LinkedHashMap<>(capacity + 1, 0.75f, true) {
           @Override
@@ -59,7 +65,9 @@ public class Memoize {
         delegate);
   }
 
-  public static <T, R> Function<T, R> cachedFunction(Map<T, R> cache, Function<T, R> delegate) {
+  @Contract(value = "_, _ -> new", pure = true)
+  public static <T, R> @NotNull Function<T, R> cachedFunction(
+      Map<T, R> cache, Function<T, R> delegate) {
     return new Function<>() {
       @Override
       public R apply(T t) {

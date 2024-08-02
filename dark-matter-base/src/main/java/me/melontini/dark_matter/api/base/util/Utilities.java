@@ -9,6 +9,7 @@ import java.util.function.Supplier;
 import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.loader.api.FabricLoader;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
 @UtilityClass
@@ -17,7 +18,7 @@ public final class Utilities {
   private static final StackWalker STACK_WALKER =
       StackWalker.getInstance(StackWalker.Option.RETAIN_CLASS_REFERENCE);
 
-  public static <T> T pickAtRandom(@NotNull T[] list) {
+  public static <T> T pickAtRandom(T @NotNull [] list) {
     return list[MathUtil.threadRandom().nextInt(MakeSure.notEmpty(list).length)];
   }
 
@@ -25,11 +26,13 @@ public final class Utilities {
     return list.get(MathUtil.threadRandom().nextInt(MakeSure.notEmpty(list).size()));
   }
 
-  public static BooleanSupplier getTruth() {
+  @Contract(pure = true)
+  public static @NotNull BooleanSupplier getTruth() {
     return () -> true;
   }
 
-  public static BooleanSupplier getFalse() {
+  @Contract(pure = true)
+  public static @NotNull BooleanSupplier getFalse() {
     return () -> false;
   }
 
@@ -37,11 +40,12 @@ public final class Utilities {
     return (U) o;
   }
 
-  public static <T> T supply(Supplier<T> supplier) {
+  public static <T> T supply(@NotNull Supplier<T> supplier) {
     return supplier.get();
   }
 
-  public static <T> T supply(T obj, Consumer<T> consumer) {
+  @Contract("_, _ -> param1")
+  public static <T> T supply(T obj, @NotNull Consumer<T> consumer) {
     consumer.accept(obj);
     return obj;
   }

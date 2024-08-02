@@ -32,7 +32,7 @@ public class InstrumentationAccess {
   }
 
   public static boolean canInstrument() {
-    return InstrumentationInternals.canInstrument();
+    return get() != null;
   }
 
   public static Instrumentation getInstrumentation() {
