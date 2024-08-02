@@ -1,5 +1,6 @@
 package me.melontini.dark_matter.api.enums;
 
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -8,8 +9,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.raid.RaiderEntity;
 import net.minecraft.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.function.Supplier;
 
 @UtilityClass
 public class Parameters {

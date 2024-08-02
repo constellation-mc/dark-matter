@@ -4,6 +4,11 @@ import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableList;
 import com.mojang.authlib.GameProfile;
 import com.mojang.serialization.Lifecycle;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+import java.util.function.Supplier;
 import lombok.experimental.UtilityClass;
 import me.melontini.dark_matter.api.base.util.Utilities;
 import me.melontini.dark_matter.api.minecraft.client.events.AfterFirstReload;
@@ -24,12 +29,6 @@ import net.minecraft.world.World;
 import net.minecraft.world.dimension.DimensionOptionsRegistryHolder;
 import net.minecraft.world.dimension.DimensionTypes;
 import net.minecraft.world.gen.WorldPresets;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import java.util.function.Supplier;
 
 @UtilityClass
 public class FakeWorld {

@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.JsonOps;
+import java.util.Map;
+import java.util.function.BiConsumer;
 import net.fabricmc.fabric.api.resource.IdentifiableResourceReloadListener;
 import net.minecraft.resource.JsonDataLoader;
 import net.minecraft.resource.ResourceManager;
@@ -12,9 +14,6 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.profiler.Profiler;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-
-import java.util.Map;
-import java.util.function.BiConsumer;
 
 public abstract class JsonCodecDataLoader<T> extends JsonDataLoader
     implements IdentifiableResourceReloadListener {
