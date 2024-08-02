@@ -14,38 +14,38 @@ import net.minecraft.util.math.RotationAxis;
 @Environment(EnvType.CLIENT)
 public class ItemStackParticle extends AbstractScreenParticle {
 
-    public final ItemStack stack;
+  public final ItemStack stack;
 
-    public ItemStackParticle(double x, double y, double velX, double velY, ItemStack stack) {
-        super(x, y, velX, velY);
-        this.stack = stack;
-    }
+  public ItemStackParticle(double x, double y, double velX, double velY, ItemStack stack) {
+    super(x, y, velX, velY);
+    this.stack = stack;
+  }
 
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        MatrixStack matrices = context.getMatrices();
-        float x = (float) MathHelper.lerp(delta, this.prevX, this.x);
-        float y = (float) MathHelper.lerp(delta, this.prevY, this.y);
-        matrices.push();
-        matrices.translate(x, y, 500);
-        float angle = (float) Math.toDegrees(Math.atan2(velY, velX) * 0.5);
-        matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angle));
-        BakedModel model = client.getItemRenderer().getModel(stack, null, null, 0);
-        DrawUtil.renderGuiItemModelCustomMatrix(matrices, stack, -8, -8, model);
-        matrices.pop();
-    }
+  @Override
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    MatrixStack matrices = context.getMatrices();
+    float x = (float) MathHelper.lerp(delta, this.prevX, this.x);
+    float y = (float) MathHelper.lerp(delta, this.prevY, this.y);
+    matrices.push();
+    matrices.translate(x, y, 500);
+    float angle = (float) Math.toDegrees(Math.atan2(velY, velX) * 0.5);
+    matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angle));
+    BakedModel model = client.getItemRenderer().getModel(stack, null, null, 0);
+    DrawUtil.renderGuiItemModelCustomMatrix(matrices, stack, -8, -8, model);
+    matrices.pop();
+  }
 
-    @Override
-    protected void tick() {
-        x += velX *= 0.99;
-        y += velY * 0.99;
-        velY += MathUtil.nextDouble(0.4, 0.9);
-    }
+  @Override
+  protected void tick() {
+    x += velX *= 0.99;
+    y += velY * 0.99;
+    velY += MathUtil.nextDouble(0.4, 0.9);
+  }
 
-    @Override
-    protected boolean checkRemoval() {
-        int w = client.getWindow().getScaledWidth();
-        int h = client.getWindow().getScaledWidth();
-        return ((x > w + 80) || (x < -80)) || ((y > h + 80) || (y < -80));
-    }
+  @Override
+  protected boolean checkRemoval() {
+    int w = client.getWindow().getScaledWidth();
+    int h = client.getWindow().getScaledWidth();
+    return ((x > w + 80) || (x < -80)) || ((y > h + 80) || (y < -80));
+  }
 }

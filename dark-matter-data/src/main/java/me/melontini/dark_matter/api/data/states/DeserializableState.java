@@ -4,5 +4,5 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.registry.RegistryWrapper;
 
 public interface DeserializableState {
-    void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup);
+  void readNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup);
 }

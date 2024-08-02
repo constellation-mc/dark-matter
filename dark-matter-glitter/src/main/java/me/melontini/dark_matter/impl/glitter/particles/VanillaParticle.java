@@ -26,64 +26,65 @@ import org.joml.Matrix4fStack;
 @Environment(EnvType.CLIENT)
 public class VanillaParticle extends AbstractScreenParticle {
 
-    public static final ThreadLocal<ClientWorld> WORLD = ThreadLocal.withInitial(() -> null);
-    private static final Camera CAMERA = new Camera();
-    private final Particle particle;
+  public static final ThreadLocal<ClientWorld> WORLD = ThreadLocal.withInitial(() -> null);
+  private static final Camera CAMERA = new Camera();
+  private final Particle particle;
 
-    public VanillaParticle(ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
-        super(0, 0, 0, 0);
+  public VanillaParticle(
+      ParticleEffect parameters, double x, double y, double velX, double velY, double velZ) {
+    super(0, 0, 0, 0);
 
-        this.particle = createScreenParticle(parameters, x, y, velX, velY, velZ);
-        if (this.particle != null) {
-            this.particle.collidesWithWorld = false;
-        } else {
-            this.removed = true;
-        }
+    this.particle = createScreenParticle(parameters, x, y, velX, velY, velZ);
+    if (this.particle != null) {
+      this.particle.collidesWithWorld = false;
+    } else {
+      this.removed = true;
     }
+  }
 
-    public VanillaParticle(ParticleEffect parameters, double x, double y, double velX, double velY) {
-        this(parameters, x, y, velX, velY, 0);
+  public VanillaParticle(ParticleEffect parameters, double x, double y, double velX, double velY) {
+    this(parameters, x, y, velX, velY, 0);
+  }
+
+  public VanillaParticle(Particle particle) {
+    super(0, 0, 0, 0);
+
+    this.particle = particle;
+    if (this.particle != null) {
+      this.particle.collidesWithWorld = false;
+    } else {
+      this.removed = true;
     }
+  }
 
-    public VanillaParticle(Particle particle) {
-        super(0, 0, 0, 0);
+  @Override
+  protected void tick() {
+    particle.tick();
+  }
 
-        this.particle = particle;
-        if (this.particle != null) {
-            this.particle.collidesWithWorld = false;
-        } else {
-            this.removed = true;
-        }
-    }
+  @Override
+  public void render(DrawContext context, int mouseX, int mouseY, float delta) {
+    MatrixStack matrices = context.getMatrices();
+    RenderSystem.disableCull();
+    RenderSystem.enableDepthTest();
 
-    @Override
-    protected void tick() {
-        particle.tick();
-    }
-
-    @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        MatrixStack matrices = context.getMatrices();
-        RenderSystem.disableCull();
-        RenderSystem.enableDepthTest();
-
-        matrices.push();
-        Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
-        matrixStack.pushMatrix();
-        matrixStack.translate(0, 0, 500);
-        matrixStack.scale(24, 24, 1);
-        matrixStack.translate(0, client.getWindow().getScaledHeight() / 24f, 0);
-        matrixStack.scale(1, -1, 1);
-        matrixStack.mul(matrices.peek().getPositionMatrix());
-        RenderSystem.applyModelViewMatrix();
+    matrices.push();
+    Matrix4fStack matrixStack = RenderSystem.getModelViewStack();
+    matrixStack.pushMatrix();
+    matrixStack.translate(0, 0, 500);
+    matrixStack.scale(24, 24, 1);
+    matrixStack.translate(0, client.getWindow().getScaledHeight() / 24f, 0);
+    matrixStack.scale(1, -1, 1);
+    matrixStack.mul(matrices.peek().getPositionMatrix());
+    RenderSystem.applyModelViewMatrix();
 
         Mirage.getAlwaysBrightLTM().enable();
 
-        RenderSystem.setShader(GameRenderer::getParticleProgram);
-        RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-        BufferBuilder bufferBuilder = particle.getType().begin(Tessellator.getInstance(), client.getTextureManager());
+    RenderSystem.setShader(GameRenderer::getParticleProgram);
+    RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
+    BufferBuilder bufferBuilder = particle.getType().begin(Tessellator.getInstance(), client.getTextureManager());
 
-        if (bufferBuilder != null) {
+    if (bufferBuilder != null) {
             try {
                 particle.buildGeometry(bufferBuilder, CAMERA, delta);
             } catch (Throwable var17) {
@@ -100,29 +101,38 @@ public class VanillaParticle extends AbstractScreenParticle {
             }
         }
 
-        Mirage.getAlwaysBrightLTM().disable();
-        matrixStack.popMatrix();
-        RenderSystem.applyModelViewMatrix();
-        matrices.pop();
+    Mirage.getAlwaysBrightLTM().disable();
+    matrixStack.popMatrix();
+    RenderSystem.applyModelViewMatrix();
+    matrices.pop();
 
-        RenderSystem.depthMask(true);
-        RenderSystem.enableCull();
-        RenderSystem.disableBlend();
-    }
+    RenderSystem.depthMask(true);
+    RenderSystem.enableCull();
+    RenderSystem.disableBlend();
+  }
 
-    @Override
-    protected boolean checkRemoval() {
-        return !particle.isAlive();
-    }
+  @Override
+  protected boolean checkRemoval() {
+    return !particle.isAlive();
+  }
 
-    public static <T extends ParticleEffect> Particle createScreenParticle(T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
-        Particle particle;
-        try {
-            WORLD.set(Mirage.getFakeWorld());
-            particle = ((ParticleManagerAccessor)MinecraftClient.getInstance().particleManager).dark_matter$createParticle(parameters, x / 24, (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24, 0, velocityX, velocityY, velocityZ);
-        } finally {
-            WORLD.remove();
-        }
-        return particle;
+  public static <T extends ParticleEffect> Particle createScreenParticle(
+      T parameters, double x, double y, double velocityX, double velocityY, double velocityZ) {
+    Particle particle;
+    try {
+      WORLD.set(Mirage.getFakeWorld());
+      particle = ((ParticleManagerAccessor) MinecraftClient.getInstance().particleManager)
+          .dark_matter$createParticle(
+              parameters,
+              x / 24,
+              (MinecraftClient.getInstance().getWindow().getScaledHeight() - y) / 24,
+              0,
+              velocityX,
+              velocityY,
+              velocityZ);
+    } finally {
+      WORLD.remove();
     }
+    return particle;
+  }
 }

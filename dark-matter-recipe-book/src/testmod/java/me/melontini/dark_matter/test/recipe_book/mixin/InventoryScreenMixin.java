@@ -12,19 +12,25 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 @Mixin(InventoryScreen.class)
 public class InventoryScreenMixin implements InventoryScreenAccessor {
 
-    @Unique private TexturedButtonWidget recipeBookButton;
+  @Unique private TexturedButtonWidget recipeBookButton;
 
-    @ModifyArg(method = "init", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
-    private Element steal(Element par1) {
-        if (par1 instanceof TexturedButtonWidget widget) {
-            this.recipeBookButton = widget;
-            return widget;
-        }
-        return par1;
+  @ModifyArg(
+      method = "init",
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/client/gui/screen/ingame/InventoryScreen;addDrawableChild(Lnet/minecraft/client/gui/Element;)Lnet/minecraft/client/gui/Element;"))
+  private Element steal(Element par1) {
+    if (par1 instanceof TexturedButtonWidget widget) {
+      this.recipeBookButton = widget;
+      return widget;
     }
+    return par1;
+  }
 
-    @Override
-    public void dark_matter$pressRecipeBookButton() {
-        this.recipeBookButton.onPress();
-    }
+  @Override
+  public void dark_matter$pressRecipeBookButton() {
+    this.recipeBookButton.onPress();
+  }
 }

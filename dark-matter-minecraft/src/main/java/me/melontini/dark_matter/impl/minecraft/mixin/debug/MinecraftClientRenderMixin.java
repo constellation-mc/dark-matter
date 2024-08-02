@@ -13,8 +13,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(GameRenderer.class)
 public class MinecraftClientRenderMixin {
 
-    @Inject(at = @At(value = "INVOKE", target = "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V", shift = At.Shift.AFTER), method = "render")
-    private void dark_matter$renderValueTrack(RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, @Local DrawContext context) {
-        ValueTrackerImpl.Renderer.render(context);
-    }
+  @Inject(
+      at =
+          @At(
+              value = "INVOKE",
+              target =
+                  "Lnet/minecraft/client/toast/ToastManager;draw(Lnet/minecraft/client/gui/DrawContext;)V",
+              shift = At.Shift.AFTER),
+      method = "render")
+  private void dark_matter$renderValueTrack(
+      RenderTickCounter tickCounter, boolean tick, CallbackInfo ci, @Local DrawContext context) {
+    ValueTrackerImpl.Renderer.render(context);
+  }
 }

@@ -6,11 +6,11 @@ import net.fabricmc.api.Environment;
 @Environment(EnvType.CLIENT)
 public interface PaginatedRecipeGroupButtonWidget {
 
-    default int dm$getPage() {
-        throw new IllegalStateException("Interface not implemented");
-    }
+  default int dm$getPage() {
+    throw new IllegalStateException("Interface not implemented");
+  }
 
-    default void dm$setPage(int page) {
-        throw new IllegalStateException("Interface not implemented");
-    }
+  default void dm$setPage(int page) {
+    throw new IllegalStateException("Interface not implemented");
+  }
 }

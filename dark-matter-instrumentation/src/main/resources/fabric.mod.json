@@ -12,6 +12,9 @@
   "icon": "assets/dark-matter-instrumentation/icon.png",
   "environment": "*",
   "entrypoints": {
+    "preLaunch": [
+      "me.melontini.dark_matter.impl.instrumentation.InstrumentationInternals::tryCleanup"
+    ]
   },
   "depends": {
     "fabricloader": ">=${loader_version}",

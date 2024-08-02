@@ -11,13 +11,13 @@ import org.spongepowered.asm.mixin.*;
 @AsmTransformers(StaticEnumTransformer.class)
 @Mixin(value = Raid.Member.class, priority = 1001)
 public abstract class RaidMemberMixin implements ExtendableEnum<Parameters.RaidMember> {
-    @Shadow
-    @Final
-    @Mutable
-    private static Raid.Member[] VALUES;
+  @Shadow
+  @Final
+  @Mutable
+  private static Raid.Member[] VALUES;
 
-    @Override
-    public void dark_matter$init(Parameters.RaidMember args) {
-        VALUES = Raid.Member.values();
-    }
+  @Override
+  public void dark_matter$init(Parameters.RaidMember args) {
+    VALUES = Raid.Member.values();
+  }
 }
