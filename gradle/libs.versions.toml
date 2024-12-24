@@ -3,7 +3,7 @@ fabric-loader = { group = "net.fabricmc", name = "fabric-loader", version = "0.1
 fabric-api = { group = "net.fabricmc.fabric-api", name = "fabric-api", version = "0.92.1+1.20.1" }
 handy-tests = { group = "me.melontini", name = "handy-tests", version = "0.2.0-1.20.1-build.9" }
 
-junit-bom = { module = "org.junit:junit-bom", version = "5.11.0" }
+junit-bom = { module = "org.junit:junit-bom", version = "5.11.4" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 assertj-core = { module = "org.assertj:assertj-core", version = "3.26.3" }
