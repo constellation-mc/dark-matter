@@ -6,7 +6,7 @@ handy-tests = { group = "me.melontini", name = "handy-tests", version = "0.2.0-1
 junit-bom = { module = "org.junit:junit-bom", version = "5.11.4" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
-assertj-core = { module = "org.assertj:assertj-core", version = "3.26.3" }
+assertj-core = { module = "org.assertj:assertj-core", version = "3.27.0" }
 mockito-core = { module = "org.mockito:mockito-core", version = "5.14.2" }
 
 [plugins]
