@@ -7,7 +7,7 @@ junit-bom = { module = "org.junit:junit-bom", version = "5.11.4" }
 junit-jupiter = { module = "org.junit.jupiter:junit-jupiter" }
 junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 assertj-core = { module = "org.assertj:assertj-core", version = "3.26.3" }
-mockito-core = { module = "org.mockito:mockito-core", version = "5.14.2" }
+mockito-core = { module = "org.mockito:mockito-core", version = "5.15.2" }
 
 [plugins]
 fabric-loom = { id = "fabric-loom", version = "1.7.3" }
